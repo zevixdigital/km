@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { ArrowRight, ChevronDown, ChevronUp, Award, Shield, Scale, Calendar, Users } from 'lucide-react';
+import { ArrowRight, ChevronDown, ChevronUp, Award, Scale, Calendar, Users } from 'lucide-react';
 import { Link } from 'react-router';
 
 gsap.registerPlugin(ScrollTrigger);

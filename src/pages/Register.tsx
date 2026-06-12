@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { ref, push, set, get } from 'firebase/database';
+import { ref, push, set } from 'firebase/database';
 import { db } from '@/lib/firebase';
 import { uploadToCloudinary } from '@/lib/cloudinary';
 import { toast } from 'sonner';
 import gsap from 'gsap';
 import {
-  User, Mail, School, Users, MapPin,
-  Upload, AlertCircle, CheckCircle, FileText, Image, Loader2, Search, ChevronDown
+  User, Mail, School, MapPin,
+  Upload, CheckCircle, FileText, Image, Loader2, Search, ChevronDown
 } from 'lucide-react';
 
 const sports = [
@@ -21,7 +21,6 @@ const NUH_BLOCKS = [
 
 export default function Register() {
   const formRef = useRef<HTMLDivElement>(null);
-  const [settings, setSettings] = useState({ lastDate: '', formEnabled: true });
   const [loading, setLoading] = useState(false);
 
   // Dropdown & Search UI States
@@ -57,18 +56,6 @@ export default function Register() {
     photoUrl: '',
     certificateUrl: '',
   });
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const snapshot = await get(ref(db, 'settings'));
-        if (snapshot.exists()) setSettings(snapshot.val());
-      } catch (error) {
-        console.error("Error loading settings:", error);
-      }
-    };
-    fetchSettings();
-  }, []);
 
   useEffect(() => {
     if (!formRef.current) return;
@@ -341,7 +328,7 @@ export default function Register() {
                   )}
                 </div>
 
-                {/* Village Input - Changed to 100% Manual Plain Text Input */}
+                {/* Village Input - 100% Manual Plain Text Input */}
                 <div>
                   <label className="text-slate-700 text-xs font-semibold mb-1 block">Village / Area *</label>
                   <input
