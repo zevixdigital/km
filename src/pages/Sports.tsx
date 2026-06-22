@@ -11,7 +11,7 @@ const sports = [
     name: 'Cricket',
     tagline: "The Gentleman's Game",
     description: 'The premium championship of Mewat. High-octane 15-over matches designed to showcase top-tier regional cricket talent under strict standard playing compliance.',
-    image: '/images/cricket1.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157479/cricket1_d9qbc6.jpg',
     teamSize: '11 Active Players (Squad: 17)',
     tournaments: '15 Overs per Side',
     registrationOpen: true,
@@ -29,7 +29,7 @@ const sports = [
     name: 'Football',
     tagline: 'The Beautiful Game',
     description: 'The ultimate exhibition of strategic teamwork, spatial dominance, and athletic endurance on standard tournament-grade pitches.',
-    image: '/images/Football.png',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157482/Football_zqgruj.png',
     teamSize: '11 Active Players (Squad: 16)',
     tournaments: 'Standard Match Format',
     registrationOpen: true,
@@ -46,7 +46,7 @@ const sports = [
     name: 'Volleyball',
     tagline: 'Rise and Spike',
     description: 'Fast-paced tactical sets calling for exceptional net coordination, precision spiking, and rigorous defensive discipline.',
-    image: '/images/volleyball1.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157492/volleyball1_sbabh6.jpg',
     teamSize: '6 Active Players (Squad: 12)',
     tournaments: 'Best of 3 Sets Series',
     registrationOpen: true,
@@ -60,10 +60,27 @@ const sports = [
     }
   },
   {
+    name: 'Wrestling',
+    tagline: 'Ultimate Strength & Leverage',
+    description: 'A legendary arena testing technical takedowns, heavy pinning combinations, and pure combative tactical leverage on professional mat surfaces.',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1781318974/wrestling1_zlcwme.jpg',
+    teamSize: 'Individual Weight Classes',
+    tournaments: 'Direct Knockout Pools',
+    registrationOpen: true,
+    details: {
+      categories: ['57kg', '65kg', '74kg', '86kg', '97kg', 'Above 97kg'],
+      rules: [
+        'Tournament runs strictly on direct knockout elimination brackets.',
+        'Athletes must clear official medical and weight compliance checks on scheduled match days.',
+        'Mat-referee and jury decisions are final and absolute.'
+      ]
+    }
+  },
+  {
     name: 'Kabaddi',
     tagline: 'Strength Meets Tradition',
     description: 'Rooted in heritage, driven by raw power. A premier mat-surface competitive framework evaluating agility and team coordination.',
-    image: '/images/Kabaddi.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157494/Kabaddi_iaynpu.jpg',
     teamSize: '7 Active Players (Squad: 12)',
     tournaments: 'Standard Mat Specifications',
     registrationOpen: true,
@@ -80,7 +97,7 @@ const sports = [
     name: 'Athletics',
     tagline: 'Faster, Higher, Stronger',
     description: 'High-stakes track and field events benchmarking elite velocity, biomechanical precision, and explosive power.',
-    image: '/images/runner1.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/runner1_uwe5nf.jpg',
     teamSize: 'Individual & Relay Fields',
     tournaments: 'Track & Field Series',
     registrationOpen: true,
@@ -94,10 +111,27 @@ const sports = [
     }
   },
   {
+    name: 'Tug of War',
+    tagline: 'Power in Absolute Unity',
+    description: 'The ultimate showcase of sheer pulling power, lower body traction, and synchronized explosive team endurance.',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/Tugofwars1_xnddng.jpg',
+    teamSize: '8 Active Pullers (Squad: 10)',
+    tournaments: 'Best of 3 Pulls System',
+    registrationOpen: true,
+    details: {
+      squad: 'Maximum Squad Allocation: 10 Players | 8 Active on Rope',
+      rules: [
+        'Teams must clear the targeted alignment marker to confirm a set win.',
+        'Strict footwear check enforced; absolute prohibition of custom spikes or anchors.',
+        'Rope alignment rules and warnings are governed by match monitors.'
+      ]
+    }
+  },
+  {
     name: 'Kho-Kho',
     tagline: 'Speed and Strategy',
     description: 'A traditional pursuit of instantaneous reflexes, sudden directional changes, and high-intensity chasing sequences.',
-    image: '/images/KhoKho.png',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157497/KhoKho_nity9q.png',
     teamSize: '9 Active Players (Squad: 12)',
     tournaments: 'Standard Inning System',
     registrationOpen: true,
@@ -113,7 +147,7 @@ const sports = [
     name: 'Boxing',
     tagline: 'Pound for Pound',
     description: 'A structural bracket tournament emphasizing technical ring craftsmanship, targeted precision, and rigorous safety protocols.',
-    image: '/images/Boxing.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157491/Boxing_wdnwak.jpg',
     teamSize: 'Weight Classified Segregation',
     tournaments: 'Knockout Tournament Tree',
     registrationOpen: true,
@@ -129,7 +163,7 @@ const sports = [
     name: 'Judo',
     tagline: 'The Gentle Way',
     description: 'Leverage, balance, and tactical immobilization. Combative disciplines split perfectly by weight limits and gender classes.',
-    image: '/images/Judo.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157480/Judo_cvquo0.jpg',
     teamSize: 'Gender Classified Brackets',
     tournaments: 'Direct Elimination Pools',
     registrationOpen: true,
@@ -146,7 +180,7 @@ const sports = [
     name: 'Badminton',
     tagline: 'Precision and Pace',
     description: 'Fast-paced court dominance. High-precision racket rallies tracking Gram Panchayat athletic supremacy.',
-    image: '/images/Badminton.png',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157489/Badminton_xcuuzf.png',
     teamSize: 'Max 2 Reps per GP',
     tournaments: 'Singles/Doubles Bracket',
     registrationOpen: true,
@@ -161,7 +195,7 @@ const sports = [
     name: 'Weightlifting',
     tagline: 'Pure Power',
     description: 'The definitive evaluation of human skeletal strength and dynamic extension across standard clean & jerk and snatch categories.',
-    image: '/images/WeightLifting.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157488/WeightLifting_rmgkg4.jpg',
     teamSize: 'Weight Classified Tiers',
     tournaments: 'Calibrated Platform Series',
     registrationOpen: true,
@@ -224,7 +258,7 @@ function SportCard({ sport, index }: { sport: typeof sports[0]; index: number })
             </div>
           </div>
 
-          {/* Interactive Drawers: Auto-Expand on Desktop Hover | Click on Mobile */}
+          {/* Interactive Drawers */}
           <div 
             onClick={() => setMobileExpanded(!mobileExpanded)}
             className="mb-6 bg-slate-50/80 border border-slate-200/80 rounded-xl overflow-hidden cursor-pointer lg:cursor-default"
@@ -377,7 +411,7 @@ export default function Sports() {
         </div>
       </section>
 
-      {/* --- Premium Financial Reward Matrix (Official Prize Structure Restyled) --- */}
+      {/* --- Premium Financial Reward Matrix --- */}
       <section className="py-12 bg-slate-900 text-white relative overflow-hidden border-t border-slate-800">
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10 border-b border-slate-800 pb-6">
@@ -445,7 +479,7 @@ export default function Sports() {
         </div>
       </section>
 
-      {/* --- Regulatory Framework (General Terms & Conditions Redrafted) --- */}
+      {/* --- Regulatory Framework --- */}
       <section className="py-16 bg-white border-t border-slate-200">
         <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 mb-8 border-b border-slate-100 pb-5">
