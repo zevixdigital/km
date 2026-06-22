@@ -7,6 +7,8 @@ import {
   Clock,
   AlertCircle,
   ArrowRight,
+  Download,
+  FileText
 } from "lucide-react";
 
 interface Tournament {
@@ -43,15 +45,14 @@ export default function TournamentSection() {
     return unsub;
   }, []);
 
-  // Timezone safe Date Formatter (Prevents single day lag/shift glitches)
+  // Timezone safe Date Formatter
   const formatIndianDate = (dateStr: string) => {
     if (!dateStr) return "N/A";
-    const parts = dateStr.split("-"); // Expecting YYYY-MM-DD from input type="date"
+    const parts = dateStr.split("-");
     if (parts.length === 3 && parts[0].length === 4) {
-      return `${parts[2]}/${parts[1]}/${parts[0]}`; // DD/MM/YYYY Format
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
     }
     
-    // Fallback if data format varies
     const parsedDate = new Date(dateStr);
     return isNaN(parsedDate.getTime()) ? dateStr : parsedDate.toLocaleDateString("en-IN");
   };
@@ -62,7 +63,7 @@ export default function TournamentSection() {
     if (!lastDateStr) return false;
 
     const today = new Date();
-    today.setHours(0, 0, 0, 0); // Reset time for accurate date comparisons
+    today.setHours(0, 0, 0, 0);
     const deadline = new Date(lastDateStr);
     return today > deadline;
   };
@@ -80,7 +81,7 @@ export default function TournamentSection() {
       <div className="max-w-7xl mx-auto px-4">
         
         {/* Section Header */}
-        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end mb-10">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end mb-8">
           <div>
             <h2 className="text-4xl font-bold text-[#f37022] mb-3">
               Current Tournament Schedule
@@ -97,6 +98,30 @@ export default function TournamentSection() {
             View All Tournaments
             <ArrowRight size={16} />
           </Link>
+        </div>
+
+        {/* Top Download Bar Added Natively */}
+        <div className="mb-8 p-4 bg-white border border-slate-200 rounded-xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-slate-800 text-sm font-bold font-inter uppercase tracking-wider">
+            <FileText className="w-5 h-5 text-[#f37022]" /> 
+            <span>Download Required Documents:</span>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            <a 
+              href="https://drive.google.com/file/d/1-bGXqtQPvixKyRYFqovw6ptiY5u4-tVY/view?usp=sharing" 
+              download
+              className="inline-flex items-center gap-1.5 bg-slate-50 hover:bg-orange-50/50 border border-slate-200 hover:border-[#f37022] text-slate-700 hover:text-[#f37022] px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition-all"
+            >
+              <Download className="w-3.5 h-3.5" /> Participant Entry Form
+            </a>
+            <a 
+              href="https://drive.google.com/file/d/1d7RT6YhCm0iaBf7yJS91M_WOJN0KQkWE/view?usp=sharing" 
+              download
+              className="inline-flex items-center gap-1.5 bg-slate-50 hover:bg-orange-50/50 border border-slate-200 hover:border-[#f37022] text-slate-700 hover:text-[#f37022] px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition-all"
+            >
+              <Download className="w-3.5 h-3.5" /> Sarpanch Performa
+            </a>
+          </div>
         </div>
 
         {/* Counter */}
@@ -149,8 +174,6 @@ export default function TournamentSection() {
                     </h3>
 
                     <div className="space-y-3 text-sm text-slate-600">
-          
-
                       <div className="flex items-center gap-2">
                         <MapPin size={16} className="text-[#f37022] shrink-0" />
                         <span className="line-clamp-1">{tournament.location}</span>

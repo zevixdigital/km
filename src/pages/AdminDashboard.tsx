@@ -58,28 +58,28 @@ const sportsList = [
 ];
 
 const venueList = [
-  'Mewat Stadium, Nuh',
-  'Tau Devi Lal Stadium, Taoru',
-  'Government School Ground, Punahana',
-  'Sports Complex, Nagina',
-  'Ch. Ranbir Singh Stadium, Ferozepur Jhirka',
-  'Gram Panchayat Ground, Pinangwan',
-  'Indri Sports Ground, Nuh'
+  'Rajiv Gandhi Khel Stadium Jhamuwash',
+  'Vyamshala Indri',
+  'Shahpur Nangli Khel Stadium Nuh',
+  'Rajiv Gandhi Khel Stadium Nagina',
+  'Rajiv Gandhi Khel Stadium Pingwan',
+  'Rajiv Gandhi Khel Stadium Siroli',
+  'Rajiv Gandhi Khel Stadium Kameda'
 ];
 
 const sportImageMap: Record<string, string> = {
-  'cricket': 'public/images/cricket1.jpg',
-  'volleyball': 'public/images/volleyball.jpg',
-  'wrestling': 'public/images/wrestling.jpg',
-  'athletics': 'public/images/athletics.jpg',
-  'tug of war': 'public/images/tug-of-war.jpg',
-  'kabaddi': 'public/images/kabaddi.jpg',
-  'football': 'public/images/football.jpg',
-  'kho-kho': 'public/images/kho-kho.jpg',
-  'boxing': 'public/images/boxing.jpg',
-  'judo': 'public/images/judo.jpg',
-  'badminton': 'public/images/badminton.jpg',
-  'weightlifting': 'public/images/weightlifting.jpg'
+  'cricket': 'images/cricket1.jpg',
+  'volleyball': 'images/volleyball1.jpg',
+  'wrestling': 'images/wrestling1.jpg',
+  'athletics': 'images/runner1.jpg',
+  'tug of war': 'images/Tugofwars1.jpg',
+  'kabaddi': 'images/Kabaddi.jpg',
+  'football': 'images/Football.png',
+  'kho-kho': 'images/KhoKho.png',
+  'boxing': 'images/Boxing.jpg',
+  'judo': 'images/Judo.jpg',
+  'badminton': 'images/Badminton.png',
+  'weightlifting': 'images/WeightLifting.jpg'
 };
 
 const statusList = ['all', 'pending', 'approved', 'rejected'];
