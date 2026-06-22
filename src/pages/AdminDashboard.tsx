@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import gsap from 'gsap';
 import {
   LayoutDashboard, Users, Calendar, Settings, LogOut, Search,
-  Filter, FileText, Image, Trash2, CheckCircle, XCircle,
+  Filter, FileText, Trash2, CheckCircle, XCircle,
   PauseCircle, PlayCircle, AlertCircle, Loader2,
   TrendingUp, UserCheck, Clock, BarChart3, Eye, CreditCard
 } from 'lucide-react';
