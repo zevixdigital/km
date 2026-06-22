@@ -49,7 +49,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3">
             <img
-              src="/images/logop.png"
+              src="https://res.cloudinary.com/dadqwaqis/image/upload/v1782157494/logop_cruash.png"
               alt="Khelo Mewat"
               className="h-12 w-auto"
             />
