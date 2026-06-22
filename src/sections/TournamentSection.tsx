@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ref, onValue } from "firebase/database";
 import { db } from "@/lib/firebase";
 import {
-  Calendar,
   MapPin,
   Clock,
   AlertCircle,
