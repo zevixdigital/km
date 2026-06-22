@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Users, Calendar, Settings, LogOut, Search,
   Filter, FileText, Image, Trash2, CheckCircle, XCircle,
   PauseCircle, PlayCircle, AlertCircle, Loader2,
-  TrendingUp, UserCheck, Clock, BarChart3, Eye
+  TrendingUp, UserCheck, Clock, BarChart3, Eye, CreditCard
 } from 'lucide-react';
 
 interface Registration {
@@ -21,11 +21,16 @@ interface Registration {
   email: string;
   phone: string;
   schoolName: string;
+  state: string;
+  district: string;
+  block: string;
+  village: string;
+  pincode: string;
   address: string;
   sport: string;
-  idProofUrl: string;
-  photoUrl: string;
-  certificateUrl: string;
+  entryFormUrl: string;       
+  sarpanchPerformaUrl: string; 
+  govIdUrl: string;            
   submittedAt: number;
   status: string;
 }
@@ -41,14 +46,42 @@ interface Tournament {
   id: string;
   name: string;
   sport: string;
-  date: string;
-  lastDate: string;
+  lastDate: string; // Only keeping the registration deadline date
   location: string;
   status: string;
   image: string;
 }
 
-const sportsList = ['all', 'cricket', 'volleyball', 'wrestling', 'athletics', 'tug of war', 'kabaddi'];
+const sportsList = [
+  'all', 'cricket', 'volleyball', 'wrestling', 'athletics', 'tug of war', 
+  'kabaddi', 'football', 'kho-kho', 'boxing', 'judo', 'badminton', 'weightlifting'
+];
+
+const venueList = [
+  'Mewat Stadium, Nuh',
+  'Tau Devi Lal Stadium, Taoru',
+  'Government School Ground, Punahana',
+  'Sports Complex, Nagina',
+  'Ch. Ranbir Singh Stadium, Ferozepur Jhirka',
+  'Gram Panchayat Ground, Pinangwan',
+  'Indri Sports Ground, Nuh'
+];
+
+const sportImageMap: Record<string, string> = {
+  'cricket': 'public/images/cricket1.jpg',
+  'volleyball': 'public/images/volleyball.jpg',
+  'wrestling': 'public/images/wrestling.jpg',
+  'athletics': 'public/images/athletics.jpg',
+  'tug of war': 'public/images/tug-of-war.jpg',
+  'kabaddi': 'public/images/kabaddi.jpg',
+  'football': 'public/images/football.jpg',
+  'kho-kho': 'public/images/kho-kho.jpg',
+  'boxing': 'public/images/boxing.jpg',
+  'judo': 'public/images/judo.jpg',
+  'badminton': 'public/images/badminton.jpg',
+  'weightlifting': 'public/images/weightlifting.jpg'
+};
+
 const statusList = ['all', 'pending', 'approved', 'rejected'];
 
 export default function AdminDashboard() {
@@ -68,16 +101,23 @@ export default function AdminDashboard() {
   const [lastDateInput, setLastDateInput] = useState('');
   const [viewRegistration, setViewRegistration] = useState<Registration | null>(null);
   
-  // Tournament States
-  const [tournaments, setTournaments] = useState<Tournament[]>([]);
+  // Tournament Input States (Removed tournamentDate)
   const [tournamentName, setTournamentName] = useState("");
   const [tournamentSport, setTournamentSport] = useState("");
-  const [tournamentDate, setTournamentDate] = useState("");
   const [tournamentLastDate, setTournamentLastDate] = useState("");
   const [tournamentLocation, setTournamentLocation] = useState("");
   const [tournamentImage, setTournamentImage] = useState("");
+  const [tournaments, setTournaments] = useState<Tournament[]>([]);
 
   const dashboardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (tournamentSport && sportImageMap[tournamentSport]) {
+      setTournamentImage(sportImageMap[tournamentSport]);
+    } else {
+      setTournamentImage('/images/default-tournament.jpg');
+    }
+  }, [tournamentSport]);
 
   // Auth check
   useEffect(() => {
@@ -95,7 +135,6 @@ export default function AdminDashboard() {
       list.sort((a, b) => b.submittedAt - a.submittedAt);
       setRegistrations(list);
 
-      // Stats
       setStats({
         total: list.length,
         pending: list.filter((r) => r.status === 'pending').length,
@@ -150,7 +189,9 @@ export default function AdminDashboard() {
           r.studentName?.toLowerCase().includes(q) ||
           r.schoolName?.toLowerCase().includes(q) ||
           r.email?.toLowerCase().includes(q) ||
-          r.phone?.includes(q)
+          r.phone?.includes(q) ||
+          r.block?.toLowerCase().includes(q) ||
+          r.village?.toLowerCase().includes(q)
       );
     }
     if (selectedDate) {
@@ -213,10 +254,10 @@ export default function AdminDashboard() {
     }
   };
 
-  // Tournament Action Handlers
+  // Tournament Action Handlers (Validated using tournamentLastDate only)
   const addTournament = async () => {
-    if (!tournamentName || !tournamentSport || !tournamentDate || !tournamentLocation) {
-      toast.error("Please fill required fields");
+    if (!tournamentName.trim() || !tournamentSport || !tournamentLastDate || !tournamentLocation) {
+      toast.error("Please fill all required tournament fields");
       return;
     }
     try {
@@ -224,21 +265,18 @@ export default function AdminDashboard() {
       await set(newTournamentRef, {
         id: newTournamentRef.key,
         name: tournamentName,
-        sport: tournamentSport.toLowerCase(),
-        date: tournamentDate,
+        sport: tournamentSport,
         lastDate: tournamentLastDate,
         location: tournamentLocation,
-        image: tournamentImage || '/images/default-tournament.jpg',
+        image: tournamentImage,
         status: "open",
       });
 
       toast.success("Tournament Added Successfully");
       setTournamentName("");
       setTournamentSport("");
-      setTournamentDate("");
       setTournamentLastDate("");
       setTournamentLocation("");
-      setTournamentImage("");
     } catch {
       toast.error("Failed to add tournament");
     }
@@ -344,7 +382,6 @@ export default function AdminDashboard() {
         {/* Registrations Core Tab */}
         {activeTab === 'registrations' && (
           <div className="space-y-6">
-            {/* Filters UI */}
             <div className="bg-white border border-slate-200 rounded-xl p-4 lg:p-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
@@ -356,7 +393,7 @@ export default function AdminDashboard() {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-3 py-2 text-slate-900 font-inter text-xs focus:border-[#f37022] focus:outline-none"
-                      placeholder="Name, school, email..."
+                      placeholder="Name, block, village..."
                     />
                   </div>
                 </div>
@@ -405,7 +442,6 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Submissions Datatable */}
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full">
@@ -502,11 +538,11 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {/* Tournament Management Tab (Option B Integration) */}
+        {/* Tournament Management Tab */}
         {activeTab === 'tournaments' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            {/* Form Panel */}
+            {/* Form Panel - Simplified Date Controls */}
             <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm h-fit">
               <h3 className="text-slate-900 font-playfair font-bold text-lg mb-5">
                 Create New Tournament
@@ -524,54 +560,53 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <label className="text-slate-600 text-xs font-inter mb-1 block">Sport Category *</label>
-                  <input
-                    placeholder="e.g. cricket, volleyball"
+                  <label className="text-slate-600 text-xs font-inter mb-1 block">Select Sport Category *</label>
+                  <select
                     value={tournamentSport}
                     onChange={(e) => setTournamentSport(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 font-inter text-sm focus:border-[#f37022] focus:outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900 font-inter text-sm focus:border-[#f37022] focus:outline-none"
+                  >
+                    <option value="">Choose a sport</option>
+                    {sportsList.filter(s => s !== 'all').map((sport) => (
+                      <option key={sport} value={sport}>{sport.toUpperCase()}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Event Date Completely Removed - Only Deadline Preserved */}
+                <div>
+                  <label className="text-slate-600 text-xs font-inter mb-1 block">Last Registration Date *</label>
+                  <input
+                    type="date"
+                    value={tournamentLastDate}
+                    onChange={(e) => setTournamentLastDate(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-inter text-xs focus:border-[#f37022] focus:outline-none"
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="text-slate-600 text-xs font-inter mb-1 block">Event Date *</label>
-                    <input
-                      type="date"
-                      value={tournamentDate}
-                      onChange={(e) => setTournamentDate(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-inter text-xs focus:border-[#f37022] focus:outline-none"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-slate-600 text-xs font-inter mb-1 block">Last Reg Date</label>
-                    <input
-                      type="date"
-                      value={tournamentLastDate}
-                      onChange={(e) => setTournamentLastDate(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-inter text-xs focus:border-[#f37022] focus:outline-none"
-                    />
-                  </div>
-                </div>
-
                 <div>
-                  <label className="text-slate-600 text-xs font-inter mb-1 block">Location / Venue *</label>
-                  <input
-                    placeholder="e.g. Mewat Stadium, Nuh"
+                  <label className="text-slate-600 text-xs font-inter mb-1 block">Select Location / Venue *</label>
+                  <select
                     value={tournamentLocation}
                     onChange={(e) => setTournamentLocation(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 font-inter text-sm focus:border-[#f37022] focus:outline-none"
-                  />
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2.5 text-slate-900 font-inter text-sm focus:border-[#f37022] focus:outline-none"
+                  >
+                    <option value="">Choose a playground stadium</option>
+                    {venueList.map((venue) => (
+                      <option key={venue} value={venue}>{venue}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
-                  <label className="text-slate-600 text-xs font-inter mb-1 block">Image Pathway URL</label>
+                  <label className="text-slate-400 text-xs font-inter mb-1 block">Automated Image Pathway Path</label>
                   <input
-                    placeholder="/images/cricket1.jpg"
+                    type="text"
                     value={tournamentImage}
-                    onChange={(e) => setTournamentImage(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 font-inter text-sm focus:border-[#f37022] focus:outline-none"
+                    disabled
+                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-500 font-inter text-sm font-medium cursor-not-allowed"
                   />
+                  <p className="text-[10px] text-slate-400 mt-1">Changes automatically relative to selected sports category.</p>
                 </div>
 
                 <button
@@ -608,11 +643,13 @@ export default function AdminDashboard() {
                           </span>
                         </div>
                         <p className="text-slate-500 text-xs font-inter flex items-center gap-1">
-                          <Calendar className="w-3 h-3" /> Event Date: {t.date} 
-                          {t.lastDate && ` | Deadline: ${t.lastDate}`}
+                          <Calendar className="w-3 h-3" /> Registration Deadline: {t.lastDate || 'No limit'}
                         </p>
                         <p className="text-slate-500 text-xs font-inter opacity-80">
                           📍 {t.location}
+                        </p>
+                        <p className="text-[10px] text-slate-400 font-mono">
+                          🖼️ Img Path: {t.image}
                         </p>
                       </div>
 
@@ -678,7 +715,6 @@ export default function AdminDashboard() {
           <div className="bg-white border border-slate-200 rounded-xl p-6 space-y-6 shadow-sm">
             <h3 className="text-slate-900 font-playfair font-bold text-lg">Registration Settings</h3>
 
-            {/* Last Date Configuration */}
             <div className="bg-slate-50 rounded-lg p-5 border border-slate-200">
               <label className="text-slate-600 font-inter text-sm mb-3 block flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#f37022]" />
@@ -705,7 +741,6 @@ export default function AdminDashboard() {
               )}
             </div>
 
-            {/* Form Open/Close Global Toggle */}
             <div className="bg-slate-50 rounded-lg p-5 border border-slate-200">
               <div className="flex items-center justify-between">
                 <div>
@@ -741,7 +776,6 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Dynamic Status Banner */}
             <div className={`rounded-lg p-4 flex items-center gap-3 ${
               settings.formEnabled ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'
             }`}>
@@ -761,10 +795,10 @@ export default function AdminDashboard() {
         )}
       </div>
 
-      {/* View Detailed Registration Modal */}
+      {/* Detailed Modal */}
       {viewRegistration && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-xl font-playfair font-bold text-[#f37022]">
@@ -813,22 +847,44 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
-                  <label className="text-slate-500 text-xs font-inter">School</label>
+                  <label className="text-slate-500 text-xs font-inter">School Name</label>
                   <p className="text-slate-900 font-inter text-sm">{viewRegistration.schoolName}</p>
                 </div>
 
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-slate-500 text-xs font-inter">Block / Tehsil</label>
+                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.block}</p>
+                  </div>
+                  <div>
+                    <label className="text-slate-500 text-xs font-inter">Village / Area</label>
+                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.village}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-slate-500 text-xs font-inter">Pincode</label>
+                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.pincode}</p>
+                  </div>
+                  <div>
+                    <label className="text-slate-500 text-xs font-inter">District / State</label>
+                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.district}, {viewRegistration.state}</p>
+                  </div>
+                </div>
+
                 <div>
-                  <label className="text-slate-500 text-xs font-inter">Address</label>
+                  <label className="text-slate-500 text-xs font-inter">Full Street Address</label>
                   <p className="text-slate-900 font-inter text-sm">{viewRegistration.address}</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-slate-500 text-xs font-inter">Sport</label>
+                    <label className="text-slate-500 text-xs font-inter">Sport Selected</label>
                     <p className="text-[#f37022] font-inter text-sm font-semibold capitalize">{viewRegistration.sport}</p>
                   </div>
                   <div>
-                    <label className="text-slate-500 text-xs font-inter">Status</label>
+                    <label className="text-slate-500 text-xs font-inter">Review Status</label>
                     <p className="text-slate-900 font-inter text-sm capitalize">{viewRegistration.status}</p>
                   </div>
                 </div>
@@ -840,39 +896,38 @@ export default function AdminDashboard() {
                   </p>
                 </div>
 
-                {/* Uploaded Documents Attachment Links */}
                 <div className="flex flex-wrap gap-3 pt-2">
-                  {viewRegistration.idProofUrl && (
+                  {viewRegistration.entryFormUrl && (
                     <a
-                      href={viewRegistration.idProofUrl}
+                      href={viewRegistration.entryFormUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1.5 bg-[#f37022]/10 border border-[#f37022]/30 text-[#f37022] px-3 py-1.5 rounded-lg text-xs font-inter hover:bg-[#f37022]/20 transition-colors"
                     >
                       <FileText className="w-3.5 h-3.5" />
-                      ID Proof
+                      Entry Form
                     </a>
                   )}
-                  {viewRegistration.photoUrl && (
+                  {viewRegistration.sarpanchPerformaUrl && (
                     <a
-                      href={viewRegistration.photoUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1.5 bg-[#f37022]/10 border border-[#f37022]/30 text-[#f37022] px-3 py-1.5 rounded-lg text-xs font-inter hover:bg-[#f37022]/20 transition-colors"
-                    >
-                      <Image className="w-3.5 h-3.5" />
-                      Photo
-                    </a>
-                  )}
-                  {viewRegistration.certificateUrl && (
-                    <a
-                      href={viewRegistration.certificateUrl}
+                      href={viewRegistration.sarpanchPerformaUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-1.5 bg-[#f37022]/10 border border-[#f37022]/30 text-[#f37022] px-3 py-1.5 rounded-lg text-xs font-inter hover:bg-[#f37022]/20 transition-colors"
                     >
                       <FileText className="w-3.5 h-3.5" />
-                      Certificate
+                      Sarpanch Performa
+                    </a>
+                  )}
+                  {viewRegistration.govIdUrl && (
+                    <a
+                      href={viewRegistration.govIdUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 bg-[#f37022]/10 border border-[#f37022]/30 text-[#f37022] px-3 py-1.5 rounded-lg text-xs font-inter hover:bg-[#f37022]/20 transition-colors"
+                    >
+                      <CreditCard className="w-3.5 h-3.5" />
+                      Government ID
                     </a>
                   )}
                 </div>

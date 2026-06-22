@@ -1,12 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
 import { ref, push, set } from 'firebase/database';
 import { db } from '@/lib/firebase';
-import { uploadToCloudinary } from '@/lib/cloudinary';
 import { toast } from 'sonner';
 import gsap from 'gsap';
 import {
   User, Mail, School, MapPin,
-  Upload, CheckCircle, FileText, Image, Loader2, Search, ChevronDown
+  Upload, CheckCircle, FileText, Loader2, Search, ChevronDown, CreditCard
 } from 'lucide-react';
 
 const sports = [
@@ -14,24 +13,96 @@ const sports = [
   'Kabaddi', 'Football', 'Kho-Kho', 'Boxing', 'Judo', 'Badminton', 'Weightlifting'
 ];
 
-// 7 Official Blocks of Nuh District
-const NUH_BLOCKS = [
-  'Nuh', 'Taoru', 'Nagina', 'Ferozepur Jhirka', 'Punahana', 'Pinangwan', 'Indri'
-];
+// Comprehensive Official Dataset for Nuh District Blocks and Villages
+const blockVillageData: Record<string, string[]> = {
+  Nuh: [
+    "Untka", "Adbar", "Akera", "Alawal Pur", "Babupur", "Bai", "Bajhera", 
+    "Barka Alimudin", "Bar Oji", "Bhapawali", "Bibipur", "Binwa", "Birsika", 
+    "Chandeni", "Devlanangli", "Dhanduka", "Dihana", "Firozepur Namak", "Ghasera", 
+    "Husainpur", "Kalinjar", "Kherla", "Kotla", "Malab", "Marora", "Meoli", 
+    "Muradbas", "Nalhar", "Palla", "Rai Puri", "Ranika", "Rehna", "Rithora", 
+    "Sahpur Nangli", "Salaheri", "Salamba", "Sangail", "Shadai", "Sonkh", 
+    "Tain", "Tapkan", "Ujina"
+  ],
+  Punahana: [
+    "Aminabad", "Andhaki", "Badli", "Bandholi", "Bhuriyaki", "Bichhor", "Bisru", 
+    "Chandanki", "Dudoli", "Fardari", "Gheeda", "Godhola", "Gubradi", "Gulalta", 
+    "Hathangaon", "Hazipur", "Indana", "Jadoli", "Jaiwant", "Jakhokar", "Jamalgarh", 
+    "Jehtana", "Jharokari", "Kherla Punhana", "Lafoori", "Leharwari", "Luhinga Kalan", 
+    "Madhiyaki", "Mubarikpur", "Naharpur", "Naheda", "Nai", "Neemka", "Newana", 
+    "Pemakhera", "Piproli", "Raipur", "Rajpur", "Samsabad Khurd", "Sihiri Singal Heri", 
+    "Singar", "Siroli", "Sunheda", "Thek", "Tirwara", "Tundlaka", "Tusaini", 
+    "Rahida", "Shikrawa", "Falendi", "Khori Shah Choka", "Badka", "Samsabad"
+  ],
+  Pingwan: [
+    "Akbarpur", "Anchwari", "Aoutha", "Baded", "Basai Khanzada", "Bazidpur", 
+    "Bubalheri", "Chandraka", "Dhadolikalan", "Dhana", "Dondal", "Dungeja", 
+    "Dungra Shahazadpur", "Firozpur Meo", "Flendi", "Gangwani", "Gokalpur", 
+    "Hinganpur", "Jalika", "Jharpuri", "Jhimrawat", "Khanpur Ghati", "Khawajli Kalan", 
+    "Khedli Kalan", "Khori Shah Chokha", "Lahabas", "Malhaka", "Mamlika", "Manota", 
+    "Mohd. Pur Ter", "Mohlaka", "Mundheta", "Neemkhera", "Papra", "Pinagwan", 
+    "Raniyalapatakpur", "Rehpura", "Rithad", "Sikrawa", "Sultanpur Punhana", "Ter"
+  ],
+  Tauru: [
+    "Bawla", "Beri Nisfi", "Bhajlaka", "Bhangoh", "Bissarakbarpur", "Buraka Tauru", 
+    "Chahalka", "Cheela", "Chharora", "Chilawali", "Dadu", "Dalawas", "Dhulawat", 
+    "Didhara", "Dingerheri", "Fatehpur", "Gogjaka", "Goyla", "Gudhi", "Gwarka", 
+    "Hasanpur", "Jafrab...", "Jalalpur Sohna", "Jaurasi", "Jhamuwas", "Kalarpuri", 
+    "Kaliyaka", "Kalwari", "Kharkhari", "Khori Kalan", "Khori Khurd", "Kota Khandewla", 
+    "M.P.Ahir", "Malhaka", "Mandarka", "Nizampur", "Pachgaon", "Padheni", "Para", 
+    "Raheri", "Rangala", "Raniyaki", "Rathwas", "Sabras", "Sahsola", "Salhaka", 
+    "Sarai", "Sewka", "Sheelkho", "Shikarpur", "Subaseri", "Sunari", "Sundh", "Uton"
+  ],
+  "Ferozepur Jhirka": [
+    "Agon", "Ahmedbass", "Akhnaka", "Alipur Tigra", "Baghola", "Baikhera", 
+    "Basai Meo", "Bhakroj", "Bhond", "Biwan", "Chitora", "Dhamala", "Doha", 
+    "F. Jhirka", "Ghata Samsabad", "Gujar Nangla", "Hamjapur", "Hasanpur Bilonda", 
+    "Hirwari Bawanteri", "Ibrahimbass", "Kameda", "Kherla Khurd", "Kolgaon", 
+    "Luhinga Khurd", "Madapur", "Maholi", "Mahun", "Mohd. Bass (Buchaka)", 
+    "Mohd. Bass (Pol)", "Nasirbass", "Nawli", "Padla Shahpuri", "Patan Udaypuri", 
+    "Pathrali", "Patkhori", "Ranyala Ferozpur", "Ranyali", "Rawa", "Rawli", 
+    "Reegarh", "Sahapur", "Saimeerbass", "Sakarpuri", "Sakras", "Shekhpur", 
+    "Sidhrawat", "Sulela", "Tigaon"
+  ],
+  Nagina: [
+    "Aklimpur", "Aklimpur Nuh", "Aterna Samsabad", "Badarpur", "Balai", "Banarsi", 
+    "Bhadas", "Bukharaka", "Ganduri", "Ghagas", "Gohana", "Gumat Bihari", 
+    "Hasanpur Nuh", "Imam Nagar", "Jaitaka", "Jalalpur Firozpur", "Jalalpur Nuh", 
+    "Kansali", "Karheda", "Karhedi", "Khan Mohammadpur", "Khedli Khurd", "Khedli Nuh", 
+    "Khushpuri", "Kultajpur Kalan", "Madhi", "Mandi Kheda", "Maroda", "Mohammad Nagar", 
+    "Moolthan", "Nagina", "Nai Nangla", "Nangal Mubarikpur", "Notki", "Rajaka", 
+    "Ranika", "Sadipur", "Santhawari", "Siswana Jatka", "Sukhpuri", "Sultanpur Nuh", 
+    "Uleta", "Umra", "Umri", "Basai"
+  ],
+  Indri: [
+    "Alduka", "Atta", "Bainsi", "Bajarka", "Barota", "Basai", "Bhirawati", 
+    "Chhachera", "Chhapera", "Dhenkli", "Dubalu", "Gajarpur", "Gangoli", "Golpuri", 
+    "Hasanpur Sohana", "Hilalpur", "Hirmathla", "Indri", "Jai Singh Pur", "Kairaka", 
+    "Kaliyaka", "Kanwarsika", "Khanpur", "Khera Khalilpur", "Kheri Kankar", "Kherli Dosa", 
+    "Kira", "Kiranj", "Kiranj Patti Jattan", "Kontlaka", "Kurthala", "Kutubgarh", 
+    "Mahrola", "Manuwas", "Naushera", "Rahuka", "Rewasan", "Rozkameo", "Sudaka", 
+    "Udaka", "Uleta"
+  ],
+};
 
 export default function Register() {
   const formRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
 
-  // Dropdown & Search UI States
+  // Dropdown Filtering and Search Logic States
   const [blockDropdownOpen, setBlockDropdownOpen] = useState(false);
   const [blockSearch, setBlockSearch] = useState('');
   const [manualBlock, setManualBlock] = useState(false);
 
+  const [villageDropdownOpen, setVillageDropdownOpen] = useState(false);
+  const [villageSearch, setVillageSearch] = useState('');
+  const [manualVillage, setManualVillage] = useState(false);
+
+  // Updated Document Target Upload Trackers
   const [uploadProgress, setUploadProgress] = useState({
-    idProof: false,
-    photo: false,
-    certificate: false,
+    entryForm: false,
+    sarpanchPerforma: false,
+    govId: false,
   });
 
   const [form, setForm] = useState({
@@ -42,20 +113,25 @@ export default function Register() {
     email: '',
     phone: '',
     schoolName: '',
-    state: 'Haryana',       // Fixed natively
-    district: 'Nuh (Mewat)', // Fixed natively
+    state: 'Haryana',       
+    district: 'Nuh (Mewat)', 
     block: '',
-    village: '',             // 100% Manual input text
-    pincode: '',             // 100% Manual input text
+    village: '',             
+    pincode: '',             
     address: '',
     sport: '',
   });
 
+  // Updated Document Storage States
   const [urls, setUrls] = useState({
-    idProofUrl: '',
-    photoUrl: '',
-    certificateUrl: '',
+    entryFormUrl: '',
+    sarpanchPerformaUrl: '',
+    govIdUrl: '',
   });
+
+  const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/de3vcuioj/upload";
+  const UPLOAD_PRESET = "PDF_Hai";
+  const MAX_FILE_SIZE = 300 * 1024; // 300KB Strict Size Limit
 
   useEffect(() => {
     if (!formRef.current) return;
@@ -65,22 +141,48 @@ export default function Register() {
     return () => ctx.revert();
   }, []);
 
-  // Close custom block panel on clicking outside window viewport area
   useEffect(() => {
-    const closeDropdown = () => setBlockDropdownOpen(false);
-    window.addEventListener('click', closeDropdown);
-    return () => window.removeEventListener('click', closeDropdown);
+    const closeDropdowns = () => {
+      setBlockDropdownOpen(false);
+      setVillageDropdownOpen(false);
+    };
+    window.addEventListener('click', closeDropdowns);
+    return () => window.removeEventListener('click', closeDropdowns);
   }, []);
 
-  const handleFileChange = async (field: 'idProof' | 'photo' | 'certificate', file: File | null) => {
+  // Native File Upload Handler with Cloudinary Integration & Sizing Filters
+  const handleFileChange = async (field: 'entryForm' | 'sarpanchPerforma' | 'govId', file: File | null) => {
     if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      const fieldLabel = field === 'entryForm' ? 'Entry Form' : field === 'sarpanchPerforma' ? 'Sarpanch Performa' : 'Government ID';
+      toast.error(`${fieldLabel} exceeds file size limit. Must be strictly below 300KB.`);
+      return;
+    }
+
     try {
       setUploadProgress(prev => ({ ...prev, [field]: true }));
-      const url = await uploadToCloudinary(file, field);
-      setUrls(prev => ({ ...prev, [`${field}Url`]: url }));
-      toast.success("Document uploaded successfully.");
-    } catch (err) {
-      toast.error("Failed to upload document.");
+      
+      const fileData = new FormData();
+      fileData.append("file", file);
+      fileData.append("upload_preset", UPLOAD_PRESET);
+
+      const response = await fetch(CLOUDINARY_URL, {
+        method: "POST",
+        body: fileData,
+      });
+
+      const data = await response.json();
+
+      if (!data.secure_url) {
+        throw new Error(data.error?.message || "Cloudinary upload core engine mapping error");
+      }
+
+      setUrls(prev => ({ ...prev, [`${field}Url`]: data.secure_url }));
+      toast.success(`${field === 'entryForm' ? 'Entry Form' : field === 'sarpanchPerforma' ? 'Sarpanch Performa' : 'Government ID'} attached successfully.`);
+    } catch (err: any) {
+      console.error(`Upload pipeline error for context field [${field}]:`, err);
+      toast.error(`Upload error configuration mismatch: ${err.message || 'Network exception'}`);
     } finally {
       setUploadProgress(prev => ({ ...prev, [field]: false }));
     }
@@ -88,43 +190,67 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.studentName || !form.fatherName || !form.dateOfBirth || !form.gender ||
-        !form.email || !form.phone || !form.schoolName || !form.district || 
-        !form.block || !form.village || !form.pincode || !form.address || !form.sport || 
-        !urls.idProofUrl || !urls.photoUrl) {
-      toast.error('Please complete all required fields and upload files.');
+
+    // Strict Validation Validation Logic for all fields including updated 3 mandatory files
+    if (!form.studentName.trim() || !form.fatherName.trim() || !form.dateOfBirth || !form.gender ||
+        !form.email.trim() || !form.phone.match(/^\d{10}$/) || !form.schoolName.trim() || !form.district || 
+        !form.block || !form.village.trim() || !form.pincode.match(/^\d{6}$/) || !form.address.trim() || !form.sport || 
+        !urls.entryFormUrl || !urls.sarpanchPerformaUrl || !urls.govIdUrl) {
+      toast.error('Validation failure: Complete all fields and ensure Entry Form, Sarpanch Performa, and Government ID are correctly uploaded under 300KB.');
       return;
     }
 
     setLoading(true);
     try {
       const registrationRef = push(ref(db, 'registrations'));
-      await set(registrationRef, {
+      
+      const schemaPayload = {
         id: registrationRef.key,
-        ...form,
-        idProofUrl: urls.idProofUrl,
-        photoUrl: urls.photoUrl,
-        certificateUrl: urls.certificateUrl,
+        studentName: form.studentName,
+        fatherName: form.fatherName,
+        dateOfBirth: form.dateOfBirth,
+        gender: form.gender,
+        email: form.email,
+        phone: form.phone,
+        schoolName: form.schoolName,
+        state: form.state,
+        district: form.district,
+        block: form.block,
+        village: form.village,
+        pincode: form.pincode,
+        address: form.address,
+        sport: form.sport,
+        entryFormUrl: urls.entryFormUrl,
+        sarpanchPerformaUrl: urls.sarpanchPerformaUrl,
+        govIdUrl: urls.govIdUrl,
         submittedAt: Date.now(),
         status: 'pending',
-      });
+      };
 
-      toast.success('Registration submitted successfully!');
+      await set(registrationRef, schemaPayload);
+
+      toast.success('Registration data submitted successfully into database infrastructure!');
+      
+      // Clear data fields
       setForm({
         studentName: '', fatherName: '', dateOfBirth: '', gender: '',
         email: '', phone: '', schoolName: '', state: 'Haryana', district: 'Nuh (Mewat)',
         block: '', village: '', pincode: '', address: '', sport: '',
       });
-      setUrls({ idProofUrl: '', photoUrl: '', certificateUrl: '' });
+      setUrls({ entryFormUrl: '', sarpanchPerformaUrl: '', govIdUrl: '' });
       setManualBlock(false);
-    } catch (err) {
-      toast.error('Failed to save registration details.');
+      setManualVillage(false);
+    } catch (err: any) {
+      console.error("Firebase database layer runtime mismatch:", err);
+      toast.error(`Database layer rejection: ${err.message || 'Fatal execution payload mismatch'}`);
     } finally {
       setLoading(false);
     }
   };
 
-  const filteredBlocks = NUH_BLOCKS.filter(b => b.toLowerCase().includes(blockSearch.toLowerCase()));
+  const filteredBlocks = Object.keys(blockVillageData).filter(b => b.toLowerCase().includes(blockSearch.toLowerCase()));
+  const currentVillagesList = form.block && blockVillageData[form.block] ? blockVillageData[form.block] : [];
+  const filteredVillages = currentVillagesList.filter(v => v.toLowerCase().includes(villageSearch.toLowerCase()));
 
   return (
     <main className="min-h-screen bg-[#F7F2E9] pt-24 pb-16 font-sans">
@@ -220,7 +346,7 @@ export default function Register() {
                 <input
                   type="tel"
                   value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                  onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
                   placeholder="10-digit phone number"
                   required
@@ -238,7 +364,6 @@ export default function Register() {
             <div className="space-y-4">
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* State Input - Fixed and Disabled */}
                 <div>
                   <label className="text-slate-400 text-xs font-semibold mb-1 block">State</label>
                   <input
@@ -249,7 +374,6 @@ export default function Register() {
                   />
                 </div>
 
-                {/* District Input - Fixed and Disabled */}
                 <div>
                   <label className="text-slate-400 text-xs font-semibold mb-1 block">District</label>
                   <input
@@ -262,7 +386,7 @@ export default function Register() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Searchable Block Picker Dropdown */}
+                {/* Searchable Block Picker Dropdown Engine */}
                 <div className="relative" onClick={(e) => e.stopPropagation()}>
                   <label className="text-slate-700 text-xs font-semibold mb-1 block">Block / Tehsil *</label>
                   {manualBlock ? (
@@ -270,14 +394,14 @@ export default function Register() {
                       <input
                         type="text"
                         value={form.block}
-                        onChange={(e) => setForm({ ...form, block: e.target.value })}
+                        onChange={(e) => setForm({ ...form, block: e.target.value, village: '' })}
                         placeholder="Type Block Name Manually"
                         className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
                         required
                       />
                       <button
                         type="button"
-                        onClick={() => { setManualBlock(false); setForm(prev => ({ ...prev, block: '' })); }}
+                        onClick={() => { setManualBlock(false); setManualVillage(false); setForm(prev => ({ ...prev, block: '', village: '' })); }}
                         className="absolute right-3 top-2 text-xs text-[#f37022] hover:underline font-semibold"
                       >
                         Reset List
@@ -286,7 +410,7 @@ export default function Register() {
                   ) : (
                     <>
                       <div 
-                        onClick={() => setBlockDropdownOpen(!blockDropdownOpen)}
+                        onClick={() => { setBlockDropdownOpen(!blockDropdownOpen); setVillageDropdownOpen(false); }}
                         className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm flex items-center justify-between cursor-pointer select-none"
                       >
                         <span className={form.block ? 'text-slate-900' : 'text-slate-400'}>
@@ -310,14 +434,24 @@ export default function Register() {
                           {filteredBlocks.map(b => (
                             <div 
                               key={b}
-                              onClick={() => { setForm(prev => ({ ...prev, block: b })); setBlockDropdownOpen(false); setBlockSearch(''); }}
+                              onClick={() => { 
+                                setForm(prev => ({ ...prev, block: b, village: '' })); 
+                                setBlockDropdownOpen(false); 
+                                setBlockSearch('');
+                                setManualVillage(false);
+                              }}
                               className="px-3.5 py-2 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer"
                             >
                               {b}
                             </div>
                           ))}
                           <div 
-                            onClick={() => { setManualBlock(true); setBlockDropdownOpen(false); setForm(prev => ({ ...prev, block: '' })); }}
+                            onClick={() => { 
+                              setManualBlock(true); 
+                              setManualVillage(true); 
+                              setBlockDropdownOpen(false); 
+                              setForm(prev => ({ ...prev, block: '', village: '' })); 
+                            }}
                             className="px-3.5 py-2 text-sm text-[#f37022] font-bold border-t border-slate-100 hover:bg-orange-50 cursor-pointer"
                           >
                             Can't find? Type manually
@@ -328,21 +462,84 @@ export default function Register() {
                   )}
                 </div>
 
-                {/* Village Input - 100% Manual Plain Text Input */}
-                <div>
+                {/* Searchable Village Picker Dropdown Engine */}
+                <div className="relative" onClick={(e) => e.stopPropagation()}>
                   <label className="text-slate-700 text-xs font-semibold mb-1 block">Village / Area *</label>
-                  <input
-                    type="text"
-                    value={form.village}
-                    onChange={(e) => setForm({ ...form, village: e.target.value })}
-                    placeholder="Enter your Village name"
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
-                    required
-                  />
+                  {manualVillage || manualBlock ? (
+                    <div className="relative">
+                      <input
+                        type="text"
+                        value={form.village}
+                        onChange={(e) => setForm({ ...form, village: e.target.value })}
+                        placeholder="Type Village Name Manually"
+                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                        required
+                      />
+                      {!manualBlock && (
+                        <button
+                          type="button"
+                          onClick={() => { setManualVillage(false); setForm(prev => ({ ...prev, village: '' })); }}
+                          className="absolute right-3 top-2 text-xs text-[#f37022] hover:underline font-semibold"
+                        >
+                          Reset List
+                        </button>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <div 
+                        onClick={() => { 
+                          if(!form.block) {
+                            toast.error("Please choose a Block first.");
+                            return;
+                          }
+                          setVillageDropdownOpen(!villageDropdownOpen); 
+                          setBlockDropdownOpen(false);
+                        }}
+                        className={`w-full border rounded-lg px-3.5 py-2 text-sm flex items-center justify-between cursor-pointer select-none ${
+                          form.block ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
+                        }`}
+                      >
+                        <span className={form.village ? 'text-slate-900' : 'text-slate-400'}>
+                          {form.village || (form.block ? 'Search or Select Village' : 'Choose Block First')}
+                        </span>
+                        <ChevronDown className="w-4 h-4 text-slate-400" />
+                      </div>
+
+                      {villageDropdownOpen && form.block && (
+                        <div className="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                          <div className="p-2 border-b border-slate-100 bg-slate-50 sticky top-0 flex items-center gap-2">
+                            <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <input 
+                              type="text"
+                              value={villageSearch}
+                              onChange={(e) => setVillageSearch(e.target.value)}
+                              placeholder="Search village..."
+                              className="w-full bg-transparent text-xs text-slate-800 outline-none"
+                            />
+                          </div>
+                          {filteredVillages.map(v => (
+                            <div 
+                              key={v}
+                              onClick={() => { setForm(prev => ({ ...prev, village: v })); setVillageDropdownOpen(false); setVillageSearch(''); }}
+                              className="px-3.5 py-2 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer"
+                            >
+                              {v}
+                            </div>
+                          ))}
+                          <div 
+                            onClick={() => { setManualVillage(true); setVillageDropdownOpen(false); setForm(prev => ({ ...prev, village: '' })); }}
+                            className="px-3.5 py-2 text-sm text-[#f37022] font-bold border-t border-slate-100 hover:bg-orange-50 cursor-pointer"
+                          >
+                            Can't find? Type manually
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
 
-              {/* Pincode Input - Manual Input */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-slate-700 text-xs font-semibold mb-1 block">Pincode *</label>
@@ -407,28 +604,29 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Section 5: Document Upload */}
+          {/* Section 5: Document Upload (Modified to handle Entry Form, Sarpanch Performa, and Govt ID) */}
           <div>
             <h3 className="text-slate-900 font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
               <Upload className="w-4 h-4 text-[#f37022]" />
               Upload Documents
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {/* ID Card */}
+              
+              {/* Card 1: Entry Form */}
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-colors hover:border-slate-300">
                 <label className="flex flex-col items-center gap-2 cursor-pointer">
                   <FileText className="w-6 h-6 text-[#f37022]" />
-                  <span className="text-slate-800 text-xs font-semibold text-center">ID Proof *</span>
-                  <p className="text-[10px] text-slate-400 text-center">Aadhar or School ID</p>
+                  <span className="text-slate-800 text-xs font-semibold text-center">Entry Form *</span>
+                  <p className="text-[10px] text-slate-400 text-center">PDF, JPG, JPEG (Max 300KB)</p>
                   <input
                     type="file"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => handleFileChange('idProof', e.target.files?.[0] || null)}
+                    accept=".pdf,.jpg,.jpeg"
+                    onChange={(e) => handleFileChange('entryForm', e.target.files?.[0] || null)}
                     className="hidden"
                   />
-                  {uploadProgress.idProof ? (
+                  {uploadProgress.entryForm ? (
                     <Loader2 className="w-4 h-4 text-[#f37022] animate-spin mt-1" />
-                  ) : urls.idProofUrl ? (
+                  ) : urls.entryFormUrl ? (
                     <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
                   ) : (
                     <span className="text-[#f37022] text-xs font-bold mt-1">Upload File</span>
@@ -436,49 +634,50 @@ export default function Register() {
                 </label>
               </div>
 
-              {/* Photo */}
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-colors hover:border-slate-300">
-                <label className="flex flex-col items-center gap-2 cursor-pointer">
-                  <Image className="w-6 h-6 text-[#f37022]" />
-                  <span className="text-slate-800 text-xs font-semibold text-center">Passport Photo *</span>
-                  <p className="text-[10px] text-slate-400 text-center">Recent passport size</p>
-                  <input
-                    type="file"
-                    accept=".jpg,.jpeg,.png"
-                    onChange={(e) => handleFileChange('photo', e.target.files?.[0] || null)}
-                    className="hidden"
-                  />
-                  {uploadProgress.photo ? (
-                    <Loader2 className="w-4 h-4 text-[#f37022] animate-spin mt-1" />
-                  ) : urls.photoUrl ? (
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
-                  ) : (
-                    <span className="text-[#f37022] text-xs font-bold mt-1">Upload Image</span>
-                  )}
-                </label>
-              </div>
-
-              {/* Sports Certificate */}
+              {/* Card 2: Sarpanch Performa */}
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-colors hover:border-slate-300">
                 <label className="flex flex-col items-center gap-2 cursor-pointer">
                   <FileText className="w-6 h-6 text-[#f37022]" />
-                  <span className="text-slate-800 text-xs font-semibold text-center">Sports Certificate</span>
-                  <p className="text-[10px] text-slate-400 text-center">Previous record (Optional)</p>
+                  <span className="text-slate-800 text-xs font-semibold text-center">Sarpanch Performa *</span>
+                  <p className="text-[10px] text-slate-400 text-center">PDF, JPG, JPEG (Max 300KB)</p>
                   <input
                     type="file"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => handleFileChange('certificate', e.target.files?.[0] || null)}
+                    accept=".pdf,.jpg,.jpeg"
+                    onChange={(e) => handleFileChange('sarpanchPerforma', e.target.files?.[0] || null)}
                     className="hidden"
                   />
-                  {uploadProgress.certificate ? (
+                  {uploadProgress.sarpanchPerforma ? (
                     <Loader2 className="w-4 h-4 text-[#f37022] animate-spin mt-1" />
-                  ) : urls.certificateUrl ? (
+                  ) : urls.sarpanchPerformaUrl ? (
                     <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
                   ) : (
                     <span className="text-[#f37022] text-xs font-bold mt-1">Upload File</span>
                   )}
                 </label>
               </div>
+
+              {/* Card 3: Government ID */}
+              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-colors hover:border-slate-300">
+                <label className="flex flex-col items-center gap-2 cursor-pointer">
+                  <CreditCard className="w-6 h-6 text-[#f37022]" />
+                  <span className="text-slate-800 text-xs font-semibold text-center">Government ID *</span>
+                  <p className="text-[10px] text-slate-400 text-center">Aadhar, Voter or PAN Card</p>
+                  <input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png"
+                    onChange={(e) => handleFileChange('govId', e.target.files?.[0] || null)}
+                    className="hidden"
+                  />
+                  {uploadProgress.govId ? (
+                    <Loader2 className="w-4 h-4 text-[#f37022] animate-spin mt-1" />
+                  ) : urls.govIdUrl ? (
+                    <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
+                  ) : (
+                    <span className="text-[#f37022] text-xs font-bold mt-1">Upload ID</span>
+                  )}
+                </label>
+              </div>
+
             </div>
           </div>
 

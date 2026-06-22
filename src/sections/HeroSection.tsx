@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import gsap from 'gsap';
-import { Trophy, ChevronRight } from 'lucide-react';
+import { Trophy, ChevronRight, Download, FileText } from 'lucide-react';
 
 const slideImages = ['/images/banerbg.jpg', '/images/banerbg2.jpg', '/images/banerbg3.jpg'];
 
@@ -17,7 +17,8 @@ export default function HeroSection() {
       tl.from('.hero-title', { y: 60, opacity: 0, duration: 1.2, ease: 'power3.out' })
         .from('.hero-subtitle', { y: 40, opacity: 0, duration: 1, ease: 'power3.out' }, '-=0.7')
         .from('.hero-cta', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
-        .from('.hero-stats', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4');
+        .from('.hero-stats', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.4')
+        .from('.hero-download-bar', { y: 20, opacity: 0, duration: 0.7, ease: 'power3.out' }, '-=0.3');
     }, contentRef);
 
     return () => ctx.revert();
@@ -50,7 +51,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-white/20" />
 
       {/* Content Container */}
-      <div ref={contentRef} className="relative z-10 mx-auto max-w-6xl px-3 sm:px-4 md:px-6 lg:px-8 pt-20 sm:pt-28 pb-16 sm:pb-20">
+      <div ref={contentRef} className="relative z-10 mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-16 sm:pb-20">
         <div className="max-w-2xl">
           <div className="flex items-center gap-2 mb-4 sm:mb-6 hero-stats">
             <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-[#f37022]" />
@@ -70,31 +71,56 @@ export default function HeroSection() {
           <div className="hero-cta flex flex-col sm:flex-row gap-3 sm:gap-4 mb-8 sm:mb-12">
             <Link
               to="/register"
-              className="bg-[#f37022] text-[#0A1628] px-5 sm:px-7 py-2.5 sm:py-3 rounded-full font-bold text-sm hover:scale-105 transition-transform flex items-center justify-center sm:justify-start gap-2"
+              className="bg-[#f37022] text-[#0A1628] px-5 sm:px-7 py-2.5 sm:py-3 rounded-full font-bold text-sm hover:scale-105 transition-transform flex items-center justify-center sm:justify-start gap-2 shadow-sm"
             >
               Register Now
               <ChevronRight className="w-4 h-4" />
             </Link>
             <Link
               to="/sports"
-              className="border-2 border-[#f37022] text-[#f37022] px-5 sm:px-7 py-2.5 sm:py-3 rounded-full font-bold text-sm hover:bg-[#f37022] hover:text-[#0A1628] transition-all flex items-center justify-center"
+              className="border-2 border-[#f37022] text-[#f37022] px-5 sm:px-7 py-2.5 sm:py-3 rounded-full font-bold text-sm hover:bg-[#f37022] hover:text-[#0A1628] transition-all flex items-center justify-center shadow-sm"
             >
               View Tournaments
             </Link>
           </div>
 
-          <div className="hero-stats grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 max-w-2xl">
+          {/* Stats Section */}
+          <div className="hero-stats grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 lg:gap-6 max-w-2xl mb-8 sm:mb-12">
             {[
-              { value: '50+', label: 'Schools' },
-              { value: '12', label: 'Districts' },
-              { value: '5000+', label: 'Athletes' },
+              { value: '50+', label: 'Schools Registered' },
+              { value: '12', label: 'Sports Categories' },
+              { value: '5000+', label: 'Active Athletes' },
             ].map((stat) => (
-              <div key={stat.label} className="rounded-2xl sm:rounded-3xl border border-slate-200 bg-white/90 p-4 sm:p-6 shadow-sm">
-                <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-[#f37022]">{stat.value}</div>
-                <div className="text-slate-600 text-xs sm:text-sm mt-1 sm:mt-2">{stat.label}</div>
+              <div key={stat.label} className="rounded-2xl border border-slate-200 bg-white/90 p-4 sm:p-5 shadow-sm">
+                <div className="text-2xl sm:text-3xl font-bold text-[#f37022]">{stat.value}</div>
+                <div className="text-slate-600 text-xs mt-1">{stat.label}</div>
               </div>
             ))}
           </div>
+
+          {/* Added Natively: Quick Download Bar for PDFs */}
+          <div className="hero-download-bar border-t border-slate-200/60 pt-6 max-w-xl">
+            <div className="text-slate-800 text-xs font-bold font-inter mb-3 flex items-center gap-1.5 uppercase tracking-wider">
+              <FileText className="w-4 h-4 text-[#f37022]" /> Required Registration Documents:
+            </div>
+            <div className="flex flex-wrap gap-2.5">
+              <a 
+                href="/docs/participant-entry-form.pdf" 
+                download
+                className="inline-flex items-center gap-1.5 bg-white hover:bg-orange-50/50 border border-slate-200 hover:border-[#f37022] text-slate-700 hover:text-[#f37022] px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all"
+              >
+                <Download className="w-3.5 h-3.5" /> Participant Entry Form
+              </a>
+              <a 
+                href="/docs/sarpanch-performa.pdf" 
+                download
+                className="inline-flex items-center gap-1.5 bg-white hover:bg-orange-50/50 border border-slate-200 hover:border-[#f37022] text-slate-700 hover:text-[#f37022] px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all"
+              >
+                <Download className="w-3.5 h-3.5" /> Sarpanch Performa
+              </a>
+            </div>
+          </div>
+
         </div>
       </div>
     </section>

@@ -150,10 +150,7 @@ export default function TournamentSection() {
                     </h3>
 
                     <div className="space-y-3 text-sm text-slate-600">
-                      <div className="flex items-center gap-2">
-                        <Calendar size={16} className="text-[#f37022] shrink-0" />
-                        <span className="font-medium text-slate-800">Event Date:</span> {formatIndianDate(tournament.date)}
-                      </div>
+          
 
                       <div className="flex items-center gap-2">
                         <MapPin size={16} className="text-[#f37022] shrink-0" />
