@@ -10,7 +10,7 @@ const sports = [
   {
     name: 'Cricket',
     description: 'The premier championship of Mewat. Elite 15-over matches designed to showcase top-tier regional cricket talent under strict standard playing conditions.',
-    image: '/images/cricket1.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157479/cricket1_d9qbc6.jpg',
     players: '11 Active Players (Squad Size: 17)',
     details: {
       format: '15 Overs per Innings',
@@ -26,7 +26,7 @@ const sports = [
   {
     name: 'Football',
     description: 'The ultimate exhibition of strategic teamwork, spatial dominance, and athletic endurance on standard dimensions.',
-    image: '/images/Football.png',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157482/Football_zqgruj.png',
     players: '11 Active Players (Squad Size: 16)',
     details: {
       format: 'Full-Scale Tournament Format',
@@ -41,7 +41,7 @@ const sports = [
   {
     name: 'Volleyball',
     description: 'High-speed tactical sets calling for exceptional net coordination, precision spiking, and rigorous defensive discipline.',
-    image: '/images/volleyball1.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157492/volleyball1_sbabh6.jpg',
     players: '6 Active Players (Squad Size: 12)',
     details: {
       format: 'Best of 3 Sets Series',
@@ -54,9 +54,24 @@ const sports = [
     }
   },
   {
+    name: 'Wrestling',
+    description: 'A legendary arena testing technical takedowns, heavy pinning combinations, and pure combative tactical leverage on professional mat surfaces.',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1781318974/wrestling1_zlcwme.jpg',
+    players: 'Individual Weight Classes',
+    details: {
+      format: 'Direct Knockout Pools',
+      categories: ['57kg Class', '65kg Class', '74kg Class', '86kg Class', '97kg Class', 'Above 97kg Heavyweight'],
+      rules: [
+        'Tournament runs strictly on direct knockout elimination brackets.',
+        'Athletes must clear official medical and weight compliance checks on scheduled match days.',
+        'Mat-referee and jury decisions are final and absolute.'
+      ]
+    }
+  },
+  {
     name: 'Kabaddi',
     description: 'Rooted in heritage, driven by raw power. A premier mat-surface competitive framework evaluating agility and breath management.',
-    image: '/images/Kabaddi.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157494/Kabaddi_iaynpu.jpg',
     players: '7 Active Players (Squad Size: 12)',
     details: {
       format: 'Standard Professional Mat Specifications',
@@ -71,7 +86,7 @@ const sports = [
   {
     name: 'Athletics',
     description: 'High-stakes track and field events benchmarking elite velocity, biomechanical precision, and explosive power.',
-    image: '/images/runner1.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/runner1_uwe5nf.jpg',
     players: 'Individual Matrix & Relay Fields',
     details: {
       format: 'Track & Field Technical Series',
@@ -84,9 +99,24 @@ const sports = [
     }
   },
   {
+    name: 'Tug of War',
+    description: 'The ultimate showcase of sheer pulling power, lower body traction, and synchronized explosive team endurance.',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/Tugofwars1_xnddng.jpg',
+    players: '8 Active Pullers (Squad Size: 10)',
+    details: {
+      format: 'Best of 3 Pulls System',
+      squad: 'Maximum Squad Allocation: 10 Players | 8 Active on Rope',
+      rules: [
+        'Teams must clear the targeted alignment marker to confirm a set win.',
+        'Strict footwear check enforced; absolute prohibition of custom spikes or anchors.',
+        'Rope alignment rules and warnings are governed by match monitors.'
+      ]
+    }
+  },
+  {
     name: 'Kho-Kho',
     description: 'A traditional pursuit of instantaneous reflexes, sudden directional changes, and high-intensity chasing sequences.',
-    image: '/images/KhoKho.png',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157497/KhoKho_nity9q.png',
     players: '9 Active Players (Squad Size: 12)',
     details: {
       format: 'Standard Inning System',
@@ -100,7 +130,7 @@ const sports = [
   {
     name: 'Boxing',
     description: 'A structural bracket tournament emphasizing technical ring craftsmanship, targeted precision, and rigorous safety protocols.',
-    image: '/images/Boxing.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157491/Boxing_wdnwak.jpg',
     players: 'Weight Classified Segregation',
     details: {
       format: 'Direct Knockout Elimination Bracket',
@@ -114,7 +144,7 @@ const sports = [
   {
     name: 'Judo',
     description: 'Leverage, balance, and tactical immobilization. Combative disciplines governed under professional martial art metrics.',
-    image: '/images/Judo.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157480/Judo_cvquo0.jpg',
     players: 'Gender/Weight Classified Brackets',
     details: {
       format: 'Official Judogi Weight Classes',
@@ -129,7 +159,7 @@ const sports = [
   {
     name: 'Badminton',
     description: 'Fast-paced court dominance. High-precision racket rallies tracking regional athletic supremacy.',
-    image: '/images/Badminton.png',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157489/Badminton_xcuuzf.png',
     players: 'Max 2 Representatives per GP',
     details: {
       format: 'Singles / Doubles Knockout Tree',
@@ -142,7 +172,7 @@ const sports = [
   {
     name: 'Weightlifting',
     description: 'The definitive evaluation of human skeletal strength and dynamic extension across clean & jerk and snatch categories.',
-    image: '/images/WeightLifting.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157488/WeightLifting_rmgkg4.jpg',
     players: 'Class-Based Weight Inclusions',
     details: {
       format: 'Olympic Lifting Standard Protocols',
@@ -202,7 +232,6 @@ function ShowcaseItem({ sport, index }: { sport: typeof sports[0]; index: number
     return () => ctx.revert();
   }, [index]);
 
-  // Hybrid Expand Triggers: Device Detection and Handlers
   const handleMouseEnter = () => {
     if (window.innerWidth >= 1024) setIsExpanded(true);
   };
@@ -260,14 +289,12 @@ function ShowcaseItem({ sport, index }: { sport: typeof sports[0]; index: number
               <Calendar className="w-4 h-4 text-slate-500" /> 
               Official Statutory Rules & Categories
             </span>
-            {/* Desktop status subtle label, Mobile shows accordion icon */}
             <div className="lg:hidden">
               {isExpanded ? <ChevronUp className="w-4 h-4 text-[#f37022]" /> : <ChevronDown className="w-4 h-4 text-slate-400" />}
             </div>
             <span className="hidden lg:inline text-xs text-slate-400 font-normal italic">Autohovers on desktop</span>
           </div>
           
-          {/* Transition-friendly Smooth Expand Area */}
           <div className={`grid transition-all duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
             <div className="overflow-hidden">
               <div className="p-4 pt-0 border-t border-slate-200/80 bg-white font-inter text-xs sm:text-sm text-slate-700 space-y-4">
@@ -276,7 +303,6 @@ function ShowcaseItem({ sport, index }: { sport: typeof sports[0]; index: number
                   {sport.details.squad && <div><span className="text-slate-400 font-medium">Composition:</span> <span className="text-slate-900 font-medium">{sport.details.squad}</span></div>}
                 </div>
                 
-                {/* Embedded Multi-category pills safely structured */}
                 {sport.details.events && (
                   <div>
                     <span className="text-slate-500 font-semibold block mb-1.5">Scheduled Events Matrix:</span>
@@ -391,7 +417,7 @@ export default function SportsShowcase() {
           ))}
         </ul>
 
-        {/* --- Financial Reward Matrix (Official Prize Structure Restyled) --- */}
+        {/* --- Financial Reward Matrix --- */}
         <div className="mt-28 bg-gradient-to-br from-slate-900 to-slate-950 text-white rounded-2xl p-6 sm:p-10 lg:p-12 shadow-xl border border-slate-800 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-[300px] h-[300px] bg-[#f37022]/5 blur-[120px] rounded-full pointer-events-none" />
           
@@ -460,7 +486,7 @@ export default function SportsShowcase() {
           </div>
         </div>
 
-        {/* --- Regulatory Framework (General Terms & Conditions Redrafted) --- */}
+        {/* --- Regulatory Framework --- */}
         <div className="mt-16 bg-white border border-slate-200/80 rounded-2xl p-6 sm:p-10 shadow-sm">
           <div className="flex items-center gap-3 mb-8 border-b border-slate-100 pb-5">
             <Scale className="w-6 h-6 text-slate-800" />
