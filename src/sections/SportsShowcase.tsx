@@ -26,7 +26,7 @@ const sports = [
   {
     name: 'Football',
     description: 'The ultimate exhibition of strategic teamwork, spatial dominance, and athletic endurance on standard dimensions.',
-    image: '/images/football1.jpg',
+    image: '/images/Football.png',
     players: '11 Active Players (Squad Size: 16)',
     details: {
       format: 'Full-Scale Tournament Format',
@@ -56,7 +56,7 @@ const sports = [
   {
     name: 'Kabaddi',
     description: 'Rooted in heritage, driven by raw power. A premier mat-surface competitive framework evaluating agility and breath management.',
-    image: '/images/kabaddi1.jpg',
+    image: '/images/Kabaddi.jpg',
     players: '7 Active Players (Squad Size: 12)',
     details: {
       format: 'Standard Professional Mat Specifications',
@@ -86,7 +86,7 @@ const sports = [
   {
     name: 'Kho-Kho',
     description: 'A traditional pursuit of instantaneous reflexes, sudden directional changes, and high-intensity chasing sequences.',
-    image: '/images/khokho1.jpg',
+    image: '/images/KhoKho.png',
     players: '9 Active Players (Squad Size: 12)',
     details: {
       format: 'Standard Inning System',
@@ -100,7 +100,7 @@ const sports = [
   {
     name: 'Boxing',
     description: 'A structural bracket tournament emphasizing technical ring craftsmanship, targeted precision, and rigorous safety protocols.',
-    image: '/images/boxing1.jpg',
+    image: '/images/Boxing.jpg',
     players: 'Weight Classified Segregation',
     details: {
       format: 'Direct Knockout Elimination Bracket',
@@ -114,7 +114,7 @@ const sports = [
   {
     name: 'Judo',
     description: 'Leverage, balance, and tactical immobilization. Combative disciplines governed under professional martial art metrics.',
-    image: '/images/judo1.jpg',
+    image: '/images/Judo.jpg',
     players: 'Gender/Weight Classified Brackets',
     details: {
       format: 'Official Judogi Weight Classes',
@@ -129,7 +129,7 @@ const sports = [
   {
     name: 'Badminton',
     description: 'Fast-paced court dominance. High-precision racket rallies tracking regional athletic supremacy.',
-    image: '/images/badminton1.jpg',
+    image: '/images/Badminton.png',
     players: 'Max 2 Representatives per GP',
     details: {
       format: 'Singles / Doubles Knockout Tree',
@@ -142,7 +142,7 @@ const sports = [
   {
     name: 'Weightlifting',
     description: 'The definitive evaluation of human skeletal strength and dynamic extension across clean & jerk and snatch categories.',
-    image: '/images/weightlifting1.jpg',
+    image: '/images/WeightLifting.jpg',
     players: 'Class-Based Weight Inclusions',
     details: {
       format: 'Olympic Lifting Standard Protocols',
