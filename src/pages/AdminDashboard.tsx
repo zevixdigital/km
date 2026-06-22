@@ -46,7 +46,7 @@ interface Tournament {
   id: string;
   name: string;
   sport: string;
-  lastDate: string; // Only keeping the registration deadline date
+  lastDate: string; 
   location: string;
   status: string;
   image: string;
@@ -67,19 +67,20 @@ const venueList = [
   'Rajiv Gandhi Khel Stadium Kameda'
 ];
 
+// Updated Cloudinary Image Mapping
 const sportImageMap: Record<string, string> = {
-  'cricket': 'images/cricket1.jpg',
-  'volleyball': 'images/volleyball1.jpg',
-  'wrestling': 'images/wrestling1.jpg',
-  'athletics': 'images/runner1.jpg',
-  'tug of war': 'images/Tugofwars1.jpg',
-  'kabaddi': 'images/Kabaddi.jpg',
-  'football': 'images/Football.png',
-  'kho-kho': 'images/KhoKho.png',
-  'boxing': 'images/Boxing.jpg',
-  'judo': 'images/Judo.jpg',
-  'badminton': 'images/Badminton.png',
-  'weightlifting': 'images/WeightLifting.jpg'
+  'cricket': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157479/cricket1_d9qbc6.jpg',
+  'volleyball': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157492/volleyball1_sbabh6.jpg',
+  'wrestling': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1781318974/wrestling1_zlcwme.jpg', 
+  'athletics': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/runner1_uwe5nf.jpg',
+  'tug of war': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/Tugofwars1_xnddng.jpg',
+  'kabaddi': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157494/Kabaddi_iaynpu.jpg',
+  'football': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157482/Football_zqgruj.png',
+  'kho-kho': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157497/KhoKho_nity9q.png',
+  'boxing': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157491/Boxing_wdnwak.jpg',
+  'judo': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157480/Judo_cvquo0.jpg',
+  'badminton': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157489/Badminton_xcuuzf.png',
+  'weightlifting': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157488/WeightLifting_rmgkg4.jpg'
 };
 
 const statusList = ['all', 'pending', 'approved', 'rejected'];
@@ -100,8 +101,11 @@ export default function AdminDashboard() {
   const [selectedDate, setSelectedDate] = useState('');
   const [lastDateInput, setLastDateInput] = useState('');
   const [viewRegistration, setViewRegistration] = useState<Registration | null>(null);
+
+  // Lazy Loading Controls State
+  const [visibleRecords, setVisibleRecords] = useState(20);
   
-  // Tournament Input States (Removed tournamentDate)
+  // Tournament Input States
   const [tournamentName, setTournamentName] = useState("");
   const [tournamentSport, setTournamentSport] = useState("");
   const [tournamentLastDate, setTournamentLastDate] = useState("");
@@ -172,7 +176,7 @@ export default function AdminDashboard() {
     return unsub;
   }, []);
 
-  // Filter registrations
+  // Filter registrations & Reset Lazy Loading Count
   useEffect(() => {
     let result = [...registrations];
 
@@ -201,6 +205,7 @@ export default function AdminDashboard() {
     }
 
     setFiltered(result);
+    setVisibleRecords(20); // Reset chunk count to initial when filter changes
   }, [registrations, sportFilter, statusFilter, searchQuery, selectedDate]);
 
   // Animation
@@ -254,7 +259,7 @@ export default function AdminDashboard() {
     }
   };
 
-  // Tournament Action Handlers (Validated using tournamentLastDate only)
+  // Tournament Action Handlers
   const addTournament = async () => {
     if (!tournamentName.trim() || !tournamentSport || !tournamentLastDate || !tournamentLocation) {
       toast.error("Please fill all required tournament fields");
@@ -311,6 +316,9 @@ export default function AdminDashboard() {
   if (!user || !isAdmin) return null;
 
   const sportCounts = getSportCounts();
+  
+  // Slice data for client-side Lazy Loading
+  const displayedRegistrations = filtered.slice(0, visibleRecords);
 
   return (
     <main className="min-h-screen bg-[#F7F2E9] pt-20 pb-10" ref={dashboardRef}>
@@ -455,14 +463,14 @@ export default function AdminDashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filtered.length === 0 ? (
+                    {displayedRegistrations.length === 0 ? (
                       <tr>
                         <td colSpan={6} className="text-center py-12 text-slate-500 font-inter text-sm">
                           No registrations found matching your filters.
                         </td>
                       </tr>
                     ) : (
-                      filtered.map((reg) => (
+                      displayedRegistrations.map((reg) => (
                         <tr key={reg.id} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
                           <td className="px-4 py-3">
                             <div className="text-slate-900 font-inter text-sm font-medium">{reg.studentName}</div>
@@ -531,8 +539,20 @@ export default function AdminDashboard() {
                   </tbody>
                 </table>
               </div>
-              <div className="px-4 py-3 border-t border-slate-200 text-slate-500 text-xs font-inter">
-                Showing {filtered.length} of {registrations.length} registrations
+
+              {/* Lazy Loading Action Bar */}
+              <div className="px-4 py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
+                <div className="text-slate-500 text-xs font-inter order-2 sm:order-1">
+                  Showing {displayedRegistrations.length} of {filtered.length} matching registrations (Total: {registrations.length})
+                </div>
+                {filtered.length > visibleRecords && (
+                  <button
+                    onClick={() => setVisibleRecords((prev) => prev + 20)}
+                    className="w-full sm:w-auto px-4 py-2 bg-slate-100 hover:bg-[#f37022]/10 text-[#f37022] font-inter text-xs font-bold rounded-lg border border-[#f37022]/20 transition-colors order-1 sm:order-2"
+                  >
+                    Load More Registrations
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -542,7 +562,7 @@ export default function AdminDashboard() {
         {activeTab === 'tournaments' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             
-            {/* Form Panel - Simplified Date Controls */}
+            {/* Form Panel */}
             <div className="bg-white border border-slate-200 rounded-xl p-6 shadow-sm h-fit">
               <h3 className="text-slate-900 font-playfair font-bold text-lg mb-5">
                 Create New Tournament
@@ -573,7 +593,6 @@ export default function AdminDashboard() {
                   </select>
                 </div>
 
-                {/* Event Date Completely Removed - Only Deadline Preserved */}
                 <div>
                   <label className="text-slate-600 text-xs font-inter mb-1 block">Last Registration Date *</label>
                   <input
@@ -604,7 +623,7 @@ export default function AdminDashboard() {
                     type="text"
                     value={tournamentImage}
                     disabled
-                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-500 font-inter text-sm font-medium cursor-not-allowed"
+                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-500 font-inter text-sm font-medium cursor-not-allowed text-ellipsis overflow-hidden"
                   />
                   <p className="text-[10px] text-slate-400 mt-1">Changes automatically relative to selected sports category.</p>
                 </div>
@@ -635,8 +654,8 @@ export default function AdminDashboard() {
                       key={t.id}
                       className="border border-slate-100 bg-slate-50 rounded-xl p-4 flex justify-between items-center hover:border-slate-200 transition-all"
                     >
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
+                      <div className="space-y-1 overflow-hidden mr-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <h4 className="font-bold text-slate-900 text-sm font-inter">{t.name}</h4>
                           <span className="bg-[#f37022]/10 text-[#f37022] text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded">
                             {t.sport}
@@ -648,14 +667,14 @@ export default function AdminDashboard() {
                         <p className="text-slate-500 text-xs font-inter opacity-80">
                           📍 {t.location}
                         </p>
-                        <p className="text-[10px] text-slate-400 font-mono">
-                          🖼️ Img Path: {t.image}
+                        <p className="text-[10px] text-slate-400 font-mono text-ellipsis overflow-hidden whitespace-nowrap">
+                          🖼️ Img: {t.image}
                         </p>
                       </div>
 
                       <button
                         onClick={() => deleteTournament(t.id)}
-                        className="p-2 bg-red-500/10 rounded-lg hover:bg-red-500/20 text-red-600 transition-colors"
+                        className="p-2 bg-red-500/10 rounded-lg hover:bg-red-500/20 text-red-600 transition-colors shrink-0"
                         title="Delete Tournament"
                       >
                         <Trash2 className="w-4 h-4" />
