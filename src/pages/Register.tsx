@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 
 const sports = [
-  'Cricket', 'Volleyball', 'Wrestling', 'Athletics', 'Tug of War', 
+  'Cricket', 'Volleyball', 'Wrestling', 'Athletics', 
   'Kabaddi', 'Football', 'Kho-Kho', 'Boxing', 'Judo', 'Badminton', 'Weightlifting'
 ];
 
@@ -83,6 +83,22 @@ const blockVillageData: Record<string, string[]> = {
     "Mahrola", "Manuwas", "Naushera", "Rahuka", "Rewasan", "Rozkameo", "Sudaka", 
     "Udaka", "Uleta"
   ],
+  Hathin: [
+    "Ali Brahman", "Ali Meo", "Andhop", "Bahin", "Dhakalpur", "Ghurawali", "Khaika Hathin", 
+    "Kot", "Mahulka", "Manpur", "Nangal Jat", "Nangal Sabha", "Pahari", "Paosar", 
+    "Raniala Khurd", "Rupnagar Natoli", "Tonka", "Udepur Bhanguri", "Akbarpur Natol", 
+    "Aluka", "Andhrola", "Babupur Hathin", "Bajada Pahari", "Bamnola Jogi", "Bhanguri Palwal", 
+    "Bhimsika", "Bhodpur", "Bichpuri", "Bighawali", "Buraka Hathin", "Chandaka", "Chhainsa", 
+    "Chilli", "Dhiranka", "Dumka", "Durenchi", "Ferozepur Rajput", "Gahlab", "Garhi Binoda", 
+    "Gharot", "Ghigraka", "Gohpur", "Gulesra", "Guraksar", "Hathin (rural)(part)", 
+    "Huchpuri Kalan", "Hudithal", "Jainpur", "Jalalpur Hathin", "Janacholi", "Jarari", 
+    "Kalsara", "Kanoli", "Khanda Wali", "Kherli Brahman", "Kherli Jita", "Khilluka", 
+    "Khokiaka", "Kondal", "Kourali Hathin", "Kukkar Chati", "Kumrera", "Ladmaki", "Lakaka", 
+    "Lakhnaka", "Malai", "Malokhra", "Mandhnaka", "Mandkola", "Mandori", "Mangoraka", 
+    "Mankaka", "Mathepur", "Mehluka", "Mirka", "Mohdamka", "Pachanka", "Paharpur", "Pondri", 
+    "Pothli", "Ranika Hathin", "Ransika", "Ribar", "Rindka", "Rupraka", "Sanpal", "Saroli", 
+    "Swamika", "Utawar"
+  ]
 };
 
 export default function Register() {
