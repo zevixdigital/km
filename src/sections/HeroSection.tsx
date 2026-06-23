@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import gsap from 'gsap';
 import { Trophy, ChevronRight, Download, FileText } from 'lucide-react';
 
-const slideImages = ['/images/banerbg.jpg', '/images/banerbg2.jpg', '/images/banerbg3.jpg'];
+const slideImages = ['https://res.cloudinary.com/dadqwaqis/image/upload/v1782190089/IMG-20260622-WA0013_iivgkc.jpg', 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782190088/IMG-20260622-WA0007_k2s64j.jpg', 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782190090/IMG-20260622-WA0011_xv0rp7.jpg'];
 
 export default function HeroSection() {
   const contentRef = useRef<HTMLDivElement>(null);
