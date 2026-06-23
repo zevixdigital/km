@@ -10,7 +10,7 @@ const sports = [
   {
     name: 'Cricket',
     description: 'The premier championship of Mewat. Elite 15-over matches designed to showcase top-tier regional cricket talent under strict standard playing conditions.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157479/cricket1_d9qbc6.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157479/cricket1_d9qbc6.jpg',
     players: '11 Active Players (Squad Size: 17)',
     details: {
       format: '15 Overs per Innings',
@@ -26,7 +26,7 @@ const sports = [
   {
     name: 'Football',
     description: 'The ultimate exhibition of strategic teamwork, spatial dominance, and athletic endurance on standard dimensions.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157482/Football_zqgruj.png',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157482/Football_zqgruj.png',
     players: '11 Active Players (Squad Size: 16)',
     details: {
       format: 'Full-Scale Tournament Format',
@@ -41,7 +41,7 @@ const sports = [
   {
     name: 'Volleyball',
     description: 'High-speed tactical sets calling for exceptional net coordination, precision spiking, and rigorous defensive discipline.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157492/volleyball1_sbabh6.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157492/volleyball1_sbabh6.jpg',
     players: '6 Active Players (Squad Size: 12)',
     details: {
       format: 'Best of 3 Sets Series',
@@ -56,7 +56,7 @@ const sports = [
   {
     name: 'Wrestling',
     description: 'A legendary arena testing technical takedowns, heavy pinning combinations, and pure combative tactical leverage on professional mat surfaces.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1781318974/wrestling1_zlcwme.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1781318974/wrestling1_zlcwme.jpg',
     players: 'Individual Weight Classes',
     details: {
       format: 'Direct Knockout Pools',
@@ -71,7 +71,7 @@ const sports = [
   {
     name: 'Kabaddi',
     description: 'Rooted in heritage, driven by raw power. A premier mat-surface competitive framework evaluating agility and breath management.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157494/Kabaddi_iaynpu.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157494/Kabaddi_iaynpu.jpg',
     players: '7 Active Players (Squad Size: 12)',
     details: {
       format: 'Standard Professional Mat Specifications',
@@ -86,7 +86,7 @@ const sports = [
   {
     name: 'Athletics',
     description: 'High-stakes track and field events benchmarking elite velocity, biomechanical precision, and explosive power.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/runner1_uwe5nf.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157493/runner1_uwe5nf.jpg',
     players: 'Individual Matrix & Relay Fields',
     details: {
       format: 'Track & Field Technical Series',
@@ -101,7 +101,7 @@ const sports = [
   {
     name: 'Kho-Kho',
     description: 'A traditional pursuit of instantaneous reflexes, sudden directional changes, and high-intensity chasing sequences.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157497/KhoKho_nity9q.png',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157497/KhoKho_nity9q.png',
     players: '9 Active Players (Squad Size: 12)',
     details: {
       format: 'Standard Inning System',
@@ -115,7 +115,7 @@ const sports = [
   {
     name: 'Boxing',
     description: 'A structural bracket tournament emphasizing technical ring craftsmanship, targeted precision, and rigorous safety protocols.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157491/Boxing_wdnwak.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157491/Boxing_wdnwak.jpg',
     players: 'Weight Classified Segregation',
     details: {
       format: 'Direct Knockout Elimination Bracket',
@@ -129,7 +129,7 @@ const sports = [
   {
     name: 'Judo',
     description: 'Leverage, balance, and tactical immobilization. Combative disciplines governed under professional martial art metrics.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157480/Judo_cvquo0.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157480/Judo_cvquo0.jpg',
     players: 'Gender/Weight Classified Brackets',
     details: {
       format: 'Official Judogi Weight Classes',
@@ -144,7 +144,7 @@ const sports = [
   {
     name: 'Badminton',
     description: 'Fast-paced court dominance. High-precision racket rallies tracking regional athletic supremacy.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157489/Badminton_xcuuzf.png',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157489/Badminton_xcuuzf.png',
     players: 'Max 2 Representatives per GP',
     details: {
       format: 'Singles / Doubles Knockout Tree',
@@ -157,7 +157,7 @@ const sports = [
   {
     name: 'Weightlifting',
     description: 'The definitive evaluation of human skeletal strength and dynamic extension across clean & jerk and snatch categories.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157488/WeightLifting_rmgkg4.jpg',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157488/WeightLifting_rmgkg4.jpg',
     players: 'Class-Based Weight Inclusions',
     details: {
       format: 'Olympic Lifting Standard Protocols',
