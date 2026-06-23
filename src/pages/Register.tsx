@@ -1,12 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { ref, push, set, onValue } from 'firebase/database'; // Added onValue for dynamic settings tracking
+import { ref, push, set, onValue } from 'firebase/database';
 import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
 import gsap from 'gsap';
 import {
   User, Mail, School, MapPin,
-  Upload, CheckCircle, FileText, Loader2, Search, ChevronDown, CreditCard, AlertCircle
+  Upload, CheckCircle, FileText, Loader2, Search, ChevronDown, CreditCard
 } from 'lucide-react';
+
+// Bypassing strict TypeScript JSX compiler for legacy marquee element safely
+const MarqueeElement = 'marquee' as any;
 
 const sports = [
   'Cricket', 'Volleyball', 'Wrestling', 'Athletics', 
@@ -314,13 +317,13 @@ export default function Register() {
           }`}>
             {settings.formEnabled ? 'LIVE UPDATES' : 'NOTICE'}
           </div>
-          <marquee className="cursor-default" behavior="scroll" direction="left" scrollamount="5">
+          <MarqueeElement className="cursor-default" behavior="scroll" direction="left" scrollamount="5">
             {!settings.formEnabled ? (
               "⚠️ ATTENTION APPLICANTS: The online registration portal is temporarily PAUSED by the administration. New form submissions are currently locked."
             ) : (
               `📢 OFFICIAL NOTIFICATION: Online registration window is actively OPEN. Timeframe: From ${formatIndianDate(settings.startDate)} up to ${formatIndianDate(settings.lastDate)}. Please complete validations and upload verified document variants strictly below 300KB.`
             )}
-          </marquee>
+          </MarqueeElement>
         </div>
 
         <div className="text-center mb-8">
