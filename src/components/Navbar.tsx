@@ -47,13 +47,17 @@ export default function Navbar() {
       >
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-3">
-            <img
-              src="https://res.cloudinary.com/dadqwaqis/image/upload/v1782157494/logop_cruash.png"
-              alt="Khelo Mewat"
-              className="h-12 w-auto"
-            />
-          </Link>
+          {/* Logo */}
+<Link to="/" className="flex items-center gap-3">
+  <img
+    src="https://res.cloudinary.com/dadqwaqis/image/upload/v1782157494/logop_cruash.png"
+    alt="Khelo Mewat"
+    className="h-12 w-auto"
+  />
+  <h1 className="text-xl font-bold text-slate-900">
+    Khelo Mewat <span className="text-[#f37022]">2.0</span>
+  </h1>
+</Link>
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-8">
