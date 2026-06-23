@@ -1,11 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { ref, push, set } from 'firebase/database';
+import { ref, push, set, onValue } from 'firebase/database'; // Added onValue for dynamic settings tracking
 import { db } from '@/lib/firebase';
 import { toast } from 'sonner';
 import gsap from 'gsap';
 import {
   User, Mail, School, MapPin,
-  Upload, CheckCircle, FileText, Loader2, Search, ChevronDown, CreditCard
+  Upload, CheckCircle, FileText, Loader2, Search, ChevronDown, CreditCard, AlertCircle
 } from 'lucide-react';
 
 const sports = [
@@ -105,6 +105,9 @@ export default function Register() {
   const formRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
 
+  // Administrative Settings State Integration
+  const [settings, setSettings] = useState({ startDate: '', lastDate: '', formEnabled: true });
+
   // Dropdown Filtering and Search Logic States
   const [blockDropdownOpen, setBlockDropdownOpen] = useState(false);
   const [blockSearch, setBlockSearch] = useState('');
@@ -149,6 +152,17 @@ export default function Register() {
   const UPLOAD_PRESET = "PDF_Hai";
   const MAX_FILE_SIZE = 300 * 1024; // 300KB Strict Size Limit
 
+  // Fetch Settings Object for Realtime Marquee Synchronization
+  useEffect(() => {
+    const settingsRef = ref(db, 'settings');
+    const unsub = onValue(settingsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setSettings(snapshot.val());
+      }
+    });
+    return unsub;
+  }, []);
+
   useEffect(() => {
     if (!formRef.current) return;
     const ctx = gsap.context(() => {
@@ -165,6 +179,17 @@ export default function Register() {
     window.addEventListener('click', closeDropdowns);
     return () => window.removeEventListener('click', closeDropdowns);
   }, []);
+
+  // Timezone Safe Indian Format Utility
+  const formatIndianDate = (dateStr: string) => {
+    if (!dateStr) return "N/A";
+    const parts = dateStr.split("-");
+    if (parts.length === 3 && parts[0].length === 4) {
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    const parsedDate = new Date(dateStr);
+    return isNaN(parsedDate.getTime()) ? dateStr : parsedDate.toLocaleDateString("en-IN");
+  };
 
   // Native File Upload Handler with Cloudinary Integration & Sizing Filters
   const handleFileChange = async (field: 'entryForm' | 'sarpanchPerforma' | 'govId', file: File | null) => {
@@ -206,6 +231,12 @@ export default function Register() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Prevent submission if form is disabled globally in database architecture
+    if (!settings.formEnabled) {
+      toast.error('Submission Blocked: The registration window is closed or paused by the administration.');
+      return;
+    }
 
     // Strict Validation Validation Logic for all fields including updated 3 mandatory files
     if (!form.studentName.trim() || !form.fatherName.trim() || !form.dateOfBirth || !form.gender ||
@@ -272,6 +303,26 @@ export default function Register() {
     <main className="min-h-screen bg-[#F7F2E9] pt-24 pb-16 font-sans">
       <div ref={formRef} className="max-w-[800px] mx-auto px-4 sm:px-6 w-full">
         
+        {/* Dynamic Professional Marquee Notification Banner */}
+        <div className={`w-full text-white text-xs font-inter py-3 px-4 mb-8 rounded-xl shadow-sm overflow-hidden whitespace-nowrap relative flex items-center border ${
+          settings.formEnabled 
+            ? 'bg-gradient-to-r from-orange-600 to-amber-600 border-orange-500' 
+            : 'bg-gradient-to-r from-red-600 to-rose-600 border-red-500'
+        }`}>
+          <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mr-3 z-10 shrink-0 select-none shadow-sm ${
+            settings.formEnabled ? 'bg-orange-800' : 'bg-red-800'
+          }`}>
+            {settings.formEnabled ? 'LIVE UPDATES' : 'NOTICE'}
+          </div>
+          <marquee className="cursor-default" behavior="scroll" direction="left" scrollamount="5">
+            {!settings.formEnabled ? (
+              "⚠️ ATTENTION APPLICANTS: The online registration portal is temporarily PAUSED by the administration. New form submissions are currently locked."
+            ) : (
+              `📢 OFFICIAL NOTIFICATION: Online registration window is actively OPEN. Timeframe: From ${formatIndianDate(settings.startDate)} up to ${formatIndianDate(settings.lastDate)}. Please complete validations and upload verified document variants strictly below 300KB.`
+            )}
+          </marquee>
+        </div>
+
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">
             Student Registration Form
@@ -620,7 +671,7 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Section 5: Document Upload (Modified to handle Entry Form, Sarpanch Performa, and Govt ID) */}
+          {/* Section 5: Document Upload */}
           <div>
             <h3 className="text-slate-900 font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
               <Upload className="w-4 h-4 text-[#f37022]" />
@@ -700,14 +751,20 @@ export default function Register() {
           {/* Form Submit Button */}
           <button
             type="submit"
-            disabled={loading}
-            className="w-full bg-[#f37022] text-white py-3 rounded-lg font-bold text-sm transition-colors hover:bg-[#e26212] disabled:opacity-50 flex items-center justify-center gap-2 mt-4"
+            disabled={loading || !settings.formEnabled}
+            className={`w-full text-white py-3 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 mt-4 ${
+              settings.formEnabled 
+                ? 'bg-[#f37022] hover:bg-[#e26212] disabled:opacity-50' 
+                : 'bg-slate-400 cursor-not-allowed'
+            }`}
           >
             {loading ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 Submitting Registration...
               </>
+            ) : !settings.formEnabled ? (
+              'Form Submission Paused'
             ) : (
               'Submit Registration'
             )}
