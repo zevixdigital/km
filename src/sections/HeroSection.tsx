@@ -1,13 +1,36 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
+import { ref, onValue } from 'firebase/database'; // Added for Realtime Database tracking
+import { db } from '@/lib/firebase'; // Added Firebase instance config
 import gsap from 'gsap';
 import { Trophy, ChevronRight, Download, FileText } from 'lucide-react';
 
-const slideImages = ['https://res.cloudinary.com/dadqwaqis/image/upload/v1782190089/IMG-20260622-WA0013_iivgkc.jpg', 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782190088/IMG-20260622-WA0007_k2s64j.jpg', 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782190090/IMG-20260622-WA0011_xv0rp7.jpg'];
+// Bypassing strict TypeScript JSX compiler for legacy marquee element safely
+const MarqueeElement = 'marquee' as any;
+
+const slideImages = [
+  'https://res.cloudinary.com/dadqwaqis/image/upload/v1782190089/IMG-20260622-WA0013_iivgkc.jpg', 
+  'https://res.cloudinary.com/dadqwaqis/image/upload/v1782190088/IMG-20260622-WA0007_k2s64j.jpg', 
+  'https://res.cloudinary.com/dadqwaqis/image/upload/v1782190090/IMG-20260622-WA0011_xv0rp7.jpg'
+];
 
 export default function HeroSection() {
   const contentRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  
+  // Administrative Settings State Integration
+  const [settings, setSettings] = useState({ startDate: '', lastDate: '', formEnabled: true });
+
+  // Fetch Settings Object for Realtime Banner Synchronizations
+  useEffect(() => {
+    const settingsRef = ref(db, 'settings');
+    const unsub = onValue(settingsRef, (snapshot) => {
+      if (snapshot.exists()) {
+        setSettings(snapshot.val());
+      }
+    });
+    return unsub;
+  }, []);
 
   useEffect(() => {
     if (!contentRef.current) return;
@@ -32,6 +55,17 @@ export default function HeroSection() {
     return () => window.clearInterval(interval);
   }, []);
 
+  // Timezone Safe Indian Format Utility
+  const formatIndianDate = (dateStr: string) => {
+    if (!dateStr) return "N/A";
+    const parts = dateStr.split("-");
+    if (parts.length === 3 && parts[0].length === 4) {
+      return `${parts[2]}/${parts[1]}/${parts[0]}`;
+    }
+    const parsedDate = new Date(dateStr);
+    return isNaN(parsedDate.getTime()) ? dateStr : parsedDate.toLocaleDateString("en-IN");
+  };
+
   return (
     <section className="relative min-h-screen overflow-hidden bg-[#F7F2E9]">
       <div className="absolute inset-0">
@@ -53,6 +87,27 @@ export default function HeroSection() {
       {/* Content Container */}
       <div ref={contentRef} className="relative z-10 mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-16 sm:pb-20">
         <div className="max-w-2xl">
+          
+          {/* Dynamic Professional Marquee Notification Banner */}
+          <div className={`w-full text-white text-xs font-inter py-3 px-4 mb-8 rounded-xl shadow-sm overflow-hidden whitespace-nowrap relative flex items-center border ${
+            settings.formEnabled 
+              ? 'bg-gradient-to-r from-orange-600 to-amber-600 border-orange-500/30 backdrop-blur-sm' 
+              : 'bg-gradient-to-r from-red-600 to-rose-600 border-red-500/30 backdrop-blur-sm'
+          }`}>
+            <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider mr-3 z-10 shrink-0 select-none shadow-sm ${
+              settings.formEnabled ? 'bg-orange-800' : 'bg-red-800'
+            }`}>
+              {settings.formEnabled ? 'LIVE UPDATES' : 'NOTICE'}
+            </div>
+            <MarqueeElement className="cursor-default" behavior="scroll" direction="left" scrollamount="5">
+              {!settings.formEnabled ? (
+                "⚠️ ATTENTION APPLICANTS: The online registration portal is temporarily PAUSED by the administration. New form submissions are currently locked."
+              ) : (
+                `📢 OFFICIAL NOTIFICATION: Online registration window is actively OPEN. Timeframe: From ${formatIndianDate(settings.startDate)} up to ${formatIndianDate(settings.lastDate)}. Please complete validations and upload verified document variants strictly below 300KB.`
+              )}
+            </MarqueeElement>
+          </div>
+
           <div className="flex items-center gap-2 mb-4 sm:mb-6 hero-stats">
             <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-[#f37022]" />
             <span className="text-[#f37022] font-inter text-xs sm:text-sm font-semibold tracking-wider uppercase">
@@ -98,7 +153,7 @@ export default function HeroSection() {
             ))}
           </div>
 
-          {/* Added Natively: Quick Download Bar for PDFs */}
+          {/* Quick Download Bar for PDFs */}
           <div className="hero-download-bar border-t border-slate-200/60 pt-6 max-w-xl">
             <div className="text-slate-800 text-xs font-bold font-inter mb-3 flex items-center gap-1.5 uppercase tracking-wider">
               <FileText className="w-4 h-4 text-[#f37022]" /> Required Registration Documents:
