@@ -53,7 +53,7 @@ interface Tournament {
 }
 
 const sportsList = [
-  'all', 'cricket', 'volleyball', 'wrestling', 'athletics', 'tug of war', 
+  'all', 'cricket', 'volleyball', 'wrestling', 'athletics', 
   'kabaddi', 'football', 'kho-kho', 'boxing', 'judo', 'badminton', 'weightlifting'
 ];
 
@@ -73,7 +73,6 @@ const sportImageMap: Record<string, string> = {
   'volleyball': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157492/volleyball1_sbabh6.jpg',
   'wrestling': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1781318974/wrestling1_zlcwme.jpg', 
   'athletics': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/runner1_uwe5nf.jpg',
-  'tug of war': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/Tugofwars1_xnddng.jpg',
   'kabaddi': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157494/Kabaddi_iaynpu.jpg',
   'football': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157482/Football_zqgruj.png',
   'kho-kho': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157497/KhoKho_nity9q.png',
