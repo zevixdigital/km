@@ -8,14 +8,15 @@ import {
   AlertCircle,
   ArrowRight,
   Download,
-  FileText
+  FileText,
+  Calendar
 } from "lucide-react";
 
 interface Tournament {
   id: string;
   name: string;
   sport: string;
-  date: string;
+  startDate: string; // Added Start Date field
   location: string;
   lastDate: string;
   status: "open" | "closed";
@@ -148,7 +149,7 @@ export default function TournamentSection() {
                       className="w-full h-full object-cover"
                       onError={(e) => {
                         e.currentTarget.src =
-                          "https://placehold.co/600x400?text=Tournament";
+                          "https://placehold.co/600x400?text=Sports+Tournament";
                       }}
                     />
 
@@ -177,6 +178,13 @@ export default function TournamentSection() {
                       <div className="flex items-center gap-2">
                         <MapPin size={16} className="text-[#f37022] shrink-0" />
                         <span className="line-clamp-1">{tournament.location}</span>
+                      </div>
+
+                      {/* Rendered Tournament Start Date */}
+                      <div className="flex items-center gap-2">
+                        <Calendar size={16} className="text-[#f37022] shrink-0" />
+                        <span className="font-medium text-slate-800">Start Date:</span>{" "}
+                        {formatIndianDate(tournament.startDate)}
                       </div>
 
                       <div className="flex items-center gap-2">
