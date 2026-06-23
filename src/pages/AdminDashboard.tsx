@@ -46,6 +46,7 @@ interface Tournament {
   id: string;
   name: string;
   sport: string;
+  startDate: string; // Dynamic field preserve
   lastDate: string; 
   location: string;
   status: string;
@@ -53,7 +54,7 @@ interface Tournament {
 }
 
 const sportsList = [
-  'all', 'cricket', 'volleyball', 'wrestling', 'athletics', 
+  'all', 'cricket', 'volleyball', 'wrestling', 'athletics',
   'kabaddi', 'football', 'kho-kho', 'boxing', 'judo', 'badminton', 'weightlifting'
 ];
 
@@ -67,7 +68,7 @@ const venueList = [
   'Rajiv Gandhi Khel Stadium Kameda'
 ];
 
-// Updated Cloudinary Image Mapping
+// Production Safe Cloudinary Image Pipeline
 const sportImageMap: Record<string, string> = {
   'cricket': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157479/cricket1_d9qbc6.jpg',
   'volleyball': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157492/volleyball1_sbabh6.jpg',
@@ -91,22 +92,26 @@ export default function AdminDashboard() {
   // Registration States
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [filtered, setFiltered] = useState<Registration[]>([]);
-  const [settings, setSettings] = useState({ lastDate: '', formEnabled: true });
+  const [settings, setSettings] = useState({ startDate: '', lastDate: '', formEnabled: true });
   const [stats, setStats] = useState<DashboardStats>({ total: 0, pending: 0, approved: 0, rejected: 0 });
   const [activeTab, setActiveTab] = useState('registrations');
   const [sportFilter, setSportFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
+  
+  // Settings Inputs States
+  const [startDateInput, setStartDateInput] = useState('');
   const [lastDateInput, setLastDateInput] = useState('');
   const [viewRegistration, setViewRegistration] = useState<Registration | null>(null);
 
   // Lazy Loading Controls State
   const [visibleRecords, setVisibleRecords] = useState(20);
   
-  // Tournament Input States
+  // Tournament Input States with Start Date Included
   const [tournamentName, setTournamentName] = useState("");
   const [tournamentSport, setTournamentSport] = useState("");
+  const [tournamentStartDate, setTournamentStartDate] = useState("");
   const [tournamentLastDate, setTournamentLastDate] = useState("");
   const [tournamentLocation, setTournamentLocation] = useState("");
   const [tournamentImage, setTournamentImage] = useState("");
@@ -114,11 +119,13 @@ export default function AdminDashboard() {
 
   const dashboardRef = useRef<HTMLDivElement>(null);
 
+  // Auto matching Cloudinary URLs case-insensitively
   useEffect(() => {
-    if (tournamentSport && sportImageMap[tournamentSport]) {
-      setTournamentImage(sportImageMap[tournamentSport]);
+    const activeSportKey = tournamentSport?.toLowerCase();
+    if (activeSportKey && sportImageMap[activeSportKey]) {
+      setTournamentImage(sportImageMap[activeSportKey]);
     } else {
-      setTournamentImage('/images/default-tournament.jpg');
+      setTournamentImage('https://placehold.co/600x400?text=Sports+Tournament');
     }
   }, [tournamentSport]);
 
@@ -155,6 +162,7 @@ export default function AdminDashboard() {
       if (snapshot.exists()) {
         const data = snapshot.val();
         setSettings(data);
+        setStartDateInput(data.startDate || '');
         setLastDateInput(data.lastDate || '');
       }
     });
@@ -204,7 +212,7 @@ export default function AdminDashboard() {
     }
 
     setFiltered(result);
-    setVisibleRecords(20); // Reset chunk count to initial when filter changes
+    setVisibleRecords(20); 
   }, [registrations, sportFilter, statusFilter, searchQuery, selectedDate]);
 
   // Animation
@@ -221,12 +229,15 @@ export default function AdminDashboard() {
   }, []);
 
   // Action Handlers
-  const updateLastDate = async () => {
+  const updateSettingsDates = async () => {
     try {
-      await update(ref(db, 'settings'), { lastDate: lastDateInput });
-      toast.success('Last date updated successfully');
+      await update(ref(db, 'settings'), { 
+        startDate: startDateInput,
+        lastDate: lastDateInput 
+      });
+      toast.success('Registration schedule timeframe updated');
     } catch {
-      toast.error('Failed to update last date');
+      toast.error('Failed to update timeframe settings');
     }
   };
 
@@ -258,9 +269,9 @@ export default function AdminDashboard() {
     }
   };
 
-  // Tournament Action Handlers
+  // Tournament Action Handlers with dual start/end validation
   const addTournament = async () => {
-    if (!tournamentName.trim() || !tournamentSport || !tournamentLastDate || !tournamentLocation) {
+    if (!tournamentName.trim() || !tournamentSport || !tournamentStartDate || !tournamentLastDate || !tournamentLocation) {
       toast.error("Please fill all required tournament fields");
       return;
     }
@@ -270,6 +281,7 @@ export default function AdminDashboard() {
         id: newTournamentRef.key,
         name: tournamentName,
         sport: tournamentSport,
+        startDate: tournamentStartDate,
         lastDate: tournamentLastDate,
         location: tournamentLocation,
         image: tournamentImage,
@@ -279,6 +291,7 @@ export default function AdminDashboard() {
       toast.success("Tournament Added Successfully");
       setTournamentName("");
       setTournamentSport("");
+      setTournamentStartDate("");
       setTournamentLastDate("");
       setTournamentLocation("");
     } catch {
@@ -315,8 +328,6 @@ export default function AdminDashboard() {
   if (!user || !isAdmin) return null;
 
   const sportCounts = getSportCounts();
-  
-  // Slice data for client-side Lazy Loading
   const displayedRegistrations = filtered.slice(0, visibleRecords);
 
   return (
@@ -592,6 +603,17 @@ export default function AdminDashboard() {
                   </select>
                 </div>
 
+                {/* Added Tournament Start Date Form Field Input */}
+                <div>
+                  <label className="text-slate-600 text-xs font-inter mb-1 block">Tournament Start Date *</label>
+                  <input
+                    type="date"
+                    value={tournamentStartDate}
+                    onChange={(e) => setTournamentStartDate(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-slate-900 font-inter text-xs focus:border-[#f37022] focus:outline-none"
+                  />
+                </div>
+
                 <div>
                   <label className="text-slate-600 text-xs font-inter mb-1 block">Last Registration Date *</label>
                   <input
@@ -660,8 +682,9 @@ export default function AdminDashboard() {
                             {t.sport}
                           </span>
                         </div>
-                        <p className="text-slate-500 text-xs font-inter flex items-center gap-1">
-                          <Calendar className="w-3 h-3" /> Registration Deadline: {t.lastDate || 'No limit'}
+                        <p className="text-slate-500 text-xs font-inter flex flex-wrap gap-x-3 gap-y-1">
+                          <span>📅 Start Date: {t.startDate || 'N/A'}</span>
+                          <span>⏳ Deadline: {t.lastDate || 'No limit'}</span>
                         </p>
                         <p className="text-slate-500 text-xs font-inter opacity-80">
                           📍 {t.location}
@@ -736,27 +759,41 @@ export default function AdminDashboard() {
             <div className="bg-slate-50 rounded-lg p-5 border border-slate-200">
               <label className="text-slate-600 font-inter text-sm mb-3 block flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-[#f37022]" />
-                Last Date for Registration
+                Global Registration Timeframe Configuration
               </label>
-              <div className="flex gap-3">
-                <input
-                  type="date"
-                  value={lastDateInput}
-                  onChange={(e) => setLastDateInput(e.target.value)}
-                  className="flex-1 bg-slate-50 border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 font-inter text-sm focus:border-[#f37022] focus:outline-none"
-                />
-                <button
-                  onClick={updateLastDate}
-                  className="bg-[#f37022] text-[#0A1628] px-5 py-2.5 rounded-lg font-inter font-bold text-sm hover:scale-105 transition-transform"
-                >
-                  Update
-                </button>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="text-slate-500 text-xs font-inter mb-1 block">Start Date</label>
+                  <input
+                    type="date"
+                    value={startDateInput}
+                    onChange={(e) => setStartDateInput(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 font-inter text-sm focus:border-[#f37022] focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-slate-500 text-xs font-inter mb-1 block">Last Date</label>
+                  <input
+                    type="date"
+                    value={lastDateInput}
+                    onChange={(e) => setLastDateInput(e.target.value)}
+                    className="w-full bg-white border border-slate-200 rounded-lg px-4 py-2.5 text-slate-900 font-inter text-sm focus:border-[#f37022] focus:outline-none"
+                  />
+                </div>
               </div>
-              {settings.lastDate && (
-                <p className="text-slate-500 text-xs font-inter mt-2">
-                  Current last date: {new Date(settings.lastDate).toLocaleDateString('en-IN')}
-                </p>
-              )}
+
+              <button
+                onClick={updateSettingsDates}
+                className="bg-[#f37022] text-[#0A1628] px-6 py-2.5 rounded-lg font-inter font-bold text-sm hover:scale-105 transition-transform"
+              >
+                Update Timeframe Range
+              </button>
+
+              <div className="text-slate-500 text-xs font-inter mt-3 space-y-1 bg-white p-3 border border-slate-100 rounded-lg">
+                <p>📍 <strong>Current Start Date:</strong> {settings.startDate ? new Date(settings.startDate).toLocaleDateString('en-IN') : 'Not set'}</p>
+                <p>⏳ <strong>Current Last Date:</strong> {settings.lastDate ? new Date(settings.lastDate).toLocaleDateString('en-IN') : 'Not set'}</p>
+              </div>
             </div>
 
             <div className="bg-slate-50 rounded-lg p-5 border border-slate-200">
@@ -804,7 +841,7 @@ export default function AdminDashboard() {
                 </div>
                 <div className="text-slate-500 text-xs font-inter">
                   {settings.lastDate
-                    ? `Last date: ${new Date(settings.lastDate).toLocaleDateString('en-IN')}`
+                    ? `Deadline schedule: ${new Date(settings.lastDate).toLocaleDateString('en-IN')}`
                     : 'No last date set'}
                 </div>
               </div>
