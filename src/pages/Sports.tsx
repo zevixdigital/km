@@ -111,23 +111,6 @@ const sports = [
     }
   },
   {
-    name: 'Tug of War',
-    tagline: 'Power in Absolute Unity',
-    description: 'The ultimate showcase of sheer pulling power, lower body traction, and synchronized explosive team endurance.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/Tugofwars1_xnddng.jpg',
-    teamSize: '8 Active Pullers (Squad: 10)',
-    tournaments: 'Best of 3 Pulls System',
-    registrationOpen: true,
-    details: {
-      squad: 'Maximum Squad Allocation: 10 Players | 8 Active on Rope',
-      rules: [
-        'Teams must clear the targeted alignment marker to confirm a set win.',
-        'Strict footwear check enforced; absolute prohibition of custom spikes or anchors.',
-        'Rope alignment rules and warnings are governed by match monitors.'
-      ]
-    }
-  },
-  {
     name: 'Kho-Kho',
     tagline: 'Speed and Strategy',
     description: 'A traditional pursuit of instantaneous reflexes, sudden directional changes, and high-intensity chasing sequences.',
