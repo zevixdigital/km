@@ -13,7 +13,7 @@ const MarqueeElement = 'marquee' as any;
 
 const sports = [
   'Cricket', 'Volleyball', 'Wrestling', 'Athletics', 
-  'Kabaddi', 'Football', 'Kho-Kho', 'Boxing', 'Judo', 'Badminton', 'Weightlifting'
+  'Kabaddi', 'Football', 'Kho-Kho', 'Boxing', 'Judo', 'Badminton', 'Weightlifting', 'Tug of War'
 ];
 
 // Comprehensive Official Dataset for Nuh District Blocks and Villages
@@ -83,7 +83,7 @@ const blockVillageData: Record<string, string[]> = {
     "Hasanpur Sohana", "Hilalpur", "Hirmathla", "Indri", "Jai Singh Pur", "Kairaka", 
     "Kaliyaka", "Kanwarsika", "Khanpur", "Khera Khalilpur", "Kheri Kankar", "Kherli Dosa", 
     "Kira", "Kiranj", "Kiranj Patti Jattan", "Kontlaka", "Kurthala", "Kutubgarh", 
-    "Mahrola", "Manuwas", "Naushera", "Rahuka", "Rewasan", "Rozkameo", "Sudaka", 
+    "Mahrola", "Manuwas", "Naushera", "Rewasan", "Rozkameo", "Sudaka", 
     "Udaka", "Uleta"
   ],
   Hathin: [
@@ -235,20 +235,30 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Prevent submission if form is disabled globally in database architecture
+    // 1. Prevent submission if form is disabled globally
     if (!settings.formEnabled) {
       toast.error('Submission Blocked: The registration window is closed or paused by the administration.');
       return;
     }
 
-    // Strict Validation Validation Logic for all fields including updated 3 mandatory files
-    if (!form.studentName.trim() || !form.fatherName.trim() || !form.dateOfBirth || !form.gender ||
-        !form.email.trim() || !form.phone.match(/^\d{10}$/) || !form.schoolName.trim() || !form.district || 
-        !form.block || !form.village.trim() || !form.pincode.match(/^\d{6}$/) || !form.address.trim() || !form.sport || 
-        !urls.entryFormUrl || !urls.sarpanchPerformaUrl || !urls.govIdUrl) {
-      toast.error('Validation failure: Complete all fields and ensure Entry Form, Sarpanch Performa, and Government ID are correctly uploaded under 300KB.');
-      return;
-    }
+    // 2. Granular Field-by-Field Smart Validation
+    if (!form.studentName.trim()) { toast.error('Please enter Student Name'); return; }
+    if (!form.fatherName.trim()) { toast.error("Please enter Father's Name"); return; }
+    if (!form.dateOfBirth) { toast.error('Please select Date of Birth'); return; }
+    if (!form.gender) { toast.error('Please select Gender'); return; }
+    if (!form.email.trim()) { toast.error('Please enter a valid Email Address'); return; }
+    if (!form.phone.match(/^\d{10}$/)) { toast.error('Please enter a valid 10-digit Mobile Number'); return; }
+    if (!form.schoolName.trim()) { toast.error('Please enter School Name'); return; }
+    if (!form.block) { toast.error('Please select or type your Block'); return; }
+    if (!form.village.trim()) { toast.error('Please select or type your Village'); return; }
+    if (!form.pincode.match(/^\d{6}$/)) { toast.error('Please enter a valid 6-digit Pincode'); return; }
+    if (!form.address.trim()) { toast.error('Please enter Full Street Address'); return; }
+    if (!form.sport) { toast.error('Please select a Sport'); return; }
+    
+    // Document Upload Verifications
+    if (!urls.entryFormUrl) { toast.error('Validation failure: Please upload the Entry Form (under 300KB)'); return; }
+    if (!urls.sarpanchPerformaUrl) { toast.error('Validation failure: Please upload the Sarpanch Performa (under 300KB)'); return; }
+    if (!urls.govIdUrl) { toast.error('Validation failure: Please upload your Government ID (under 300KB)'); return; }
 
     setLoading(true);
     try {
