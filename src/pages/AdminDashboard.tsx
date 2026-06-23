@@ -70,17 +70,17 @@ const venueList = [
 
 // Production Safe Cloudinary Image Pipeline
 const sportImageMap: Record<string, string> = {
-  'cricket': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157479/cricket1_d9qbc6.jpg',
-  'volleyball': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157492/volleyball1_sbabh6.jpg',
-  'wrestling': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1781318974/wrestling1_zlcwme.jpg', 
-  'athletics': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157493/runner1_uwe5nf.jpg',
-  'kabaddi': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157494/Kabaddi_iaynpu.jpg',
-  'football': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157482/Football_zqgruj.png',
-  'kho-kho': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157497/KhoKho_nity9q.png',
-  'boxing': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157491/Boxing_wdnwak.jpg',
-  'judo': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157480/Judo_cvquo0.jpg',
-  'badminton': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157489/Badminton_xcuuzf.png',
-  'weightlifting': 'https://res.cloudinary.com/dadqwaqis/image/upload/v1782157488/WeightLifting_rmgkg4.jpg'
+  'cricket': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157479/cricket1_d9qbc6.jpg',
+  'volleyball': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157492/volleyball1_sbabh6.jpg',
+  'wrestling': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1781318974/wrestling1_zlcwme.jpg', 
+  'athletics': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157493/runner1_uwe5nf.jpg',
+  'kabaddi': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157494/Kabaddi_iaynpu.jpg',
+  'football': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157482/Football_zqgruj.png',
+  'kho-kho': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157497/KhoKho_nity9q.png',
+  'boxing': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157491/Boxing_wdnwak.jpg',
+  'judo': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157480/Judo_cvquo0.jpg',
+  'badminton': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157489/Badminton_xcuuzf.png',
+  'weightlifting': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157488/WeightLifting_rmgkg4.jpg'
 };
 
 const statusList = ['all', 'pending', 'approved', 'rejected'];
