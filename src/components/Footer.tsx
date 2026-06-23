@@ -66,7 +66,7 @@ export default function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start gap-2.5 text-slate-600 text-sm">
                 <MapPin className="w-4 h-4 text-[#f37022] mt-0.5 shrink-0" />
-                Sports Authority Office, Mewat District, Haryana, India
+                Sports Authority Office, Mewat Development Agency Nuh (MDA)
               </li>
               <li className="flex items-center gap-2.5 text-slate-600 text-sm">
                 <Phone className="w-4 h-4 text-[#f37022] shrink-0" />
@@ -74,7 +74,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center gap-2.5 text-slate-600 text-sm">
                 <Mail className="w-4 h-4 text-[#f37022] shrink-0" />
-                sports.mewat@gov.in
+                khelomewat@gmail.com
               </li>
             </ul>
           </div>
