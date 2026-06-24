@@ -355,7 +355,7 @@ export default function Register() {
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="text-slate-700 text-xs font-semibold mb-1 block">Student Name *</label>
+                <label className="text-slate-700 text-xs font-semibold mb-1 block">Player Name *</label>
                 <input
                   type="text"
                   value={form.studentName}
