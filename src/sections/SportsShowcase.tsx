@@ -53,21 +53,7 @@ const sports = [
       ]
     }
   },
-  {
-    name: 'Wrestling',
-    description: 'A legendary arena testing technical takedowns, heavy pinning combinations, and pure combative tactical leverage on professional mat surfaces.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1781318974/wrestling1_zlcwme.jpg',
-    players: 'Individual Weight Classes',
-    details: {
-      format: 'Direct Knockout Pools',
-      categories: ['57kg Class', '65kg Class', '74kg Class', '86kg Class', '97kg Class', 'Above 97kg Heavyweight'],
-      rules: [
-        'Tournament runs strictly on direct knockout elimination brackets.',
-        'Athletes must clear official medical and weight compliance checks on scheduled match days.',
-        'Mat-referee and jury decisions are final and absolute.'
-      ]
-    }
-  },
+  
   {
     name: 'Kabaddi',
     description: 'Rooted in heritage, driven by raw power. A premier mat-surface competitive framework evaluating agility and breath management.',

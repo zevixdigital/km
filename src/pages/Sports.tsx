@@ -59,23 +59,7 @@ const sports = [
       ]
     }
   },
-  {
-    name: 'Wrestling',
-    tagline: 'Ultimate Strength & Leverage',
-    description: 'A legendary arena testing technical takedowns, heavy pinning combinations, and pure combative tactical leverage on professional mat surfaces.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1781318974/wrestling1_zlcwme.jpg',
-    teamSize: 'Individual Weight Classes',
-    tournaments: 'Direct Knockout Pools',
-    registrationOpen: true,
-    details: {
-      categories: ['57kg', '65kg', '74kg', '86kg', '97kg', 'Above 97kg'],
-      rules: [
-        'Tournament runs strictly on direct knockout elimination brackets.',
-        'Athletes must clear official medical and weight compliance checks on scheduled match days.',
-        'Mat-referee and jury decisions are final and absolute.'
-      ]
-    }
-  },
+  
   {
     name: 'Kabaddi',
     tagline: 'Strength Meets Tradition',
