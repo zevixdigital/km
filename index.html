@@ -1,15 +1,93 @@
 <!doctype html>
-<html lang="en">
+<html lang="en-IN">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Khelo Mewat - Government Sports Portal</title>
-    <meta name="description" content="Khelo Mewat - Official Government Sports Portal for Mewat Region. Register for tournaments, view schedules, and be part of the sporting movement." />
+    <meta name="theme-color" content="#0B2545" />
+    
+    <!-- Core Search Engine Optimization (SEO) -->
+    <title>Khelo Mewat 2.0 | Official Sports Registration & Government Portal</title>
+    <meta name="description" content="Official Sports Portal for the Mewat region. Register online for Cricket, Football, Kabaddi, and Athletics tournaments. Check cash rewards, schedules, and eligibility guidelines." />
+    <meta name="keywords" content="Khelo Mewat 2.0, Mewat sports tournament, Nuh sports registration, Haryana sports trials, Kabaddi tournament Mewat, sports authority Mewat development agency" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <link rel="canonical" href="https://khelomewat.in/" />
+
+    <!-- Geographic & Regional Metadata Targeting (Crucial for Local Haryana Rank) -->
+    <meta name="geo.region" content="IN-HR" />
+    <meta name="geo.placename" content="Mewat, Nuh, Haryana" />
+    <meta name="geo.position" content="28.1158;77.0055" />
+    <meta name="ICBM" content="28.1158, 77.0055" />
+
+    <!-- Open Graph Data Metrics (Social Media Embedding Integration) -->
+    <meta property="og:locale" content="en_IN" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Khelo Mewat 2.0 | Official Government Sports Portal" />
+    <meta property="og:description" content="Nurturing athletic talent across Mewat. Register for multi-sport disciplines, view match frameworks, and win up to ₹1,50,000 cash prizes." />
+    <meta property="og:url" content="https://khelomewat.in/" />
+    <meta property="og:site_name" content="Khelo Mewat Portal" />
+    <meta property="og:image" content="https://khelomewat.in/assets/khelo-mewat-banner.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+
+    <!-- Twitter Card Framework -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Khelo Mewat 2.0 | Youth Sports Initiative" />
+    <meta name="twitter:description" content="Register online for district level sports selections, track event fixtures, and view regulatory rulebooks for Mewat youth." />
+    <meta name="twitter:image" content="https://khelomewat.in/assets/khelo-mewat-banner.jpg" />
+
+    <!-- Asset Optimizations Hints (Core Web Vitals Boost) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Icons Profile Packs -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- ================================================================= -->
+    <!-- ── ADVANCED JSON-LD STRUCTURED SCHEMA GRAPHS ─────────────────── -->
+    <!-- ================================================================= -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SportsOrganization",
+            "@id": "https://khelomewat.in/#organization",
+            "name": "Khelo Mewat Sports Authority",
+            "url": "https://khelomewat.in/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://khelomewat.in/assets/logo.png"
+            },
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Sports Authority Office, Mewat Development Agency Nuh (MDA)",
+              "addressLocality": "Nuh",
+              "addressRegion": "Haryana",
+              "addressCountry": "IN"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://khelomewat.in/#website",
+            "url": "https://khelomewat.in/",
+            "name": "Khelo Mewat 2.0",
+            "description": "Official sports registration and management portal for the youth of Mewat region, Haryana.",
+            "publisher": {
+              "@id": "https://khelomewat.in/#organization"
+            }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
+    <!-- Accessibility Screen Reader Hook -->
+    <a href="#root" class="sr-only focus:not-sr-only bg-blue-600 text-white p-3 absolute z-50 rounded-b-xl">
+      Skip to content
+    </a>
+
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
