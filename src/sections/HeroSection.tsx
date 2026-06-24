@@ -115,9 +115,13 @@ export default function HeroSection() {
             </span>
           </div>
 
-          <h1 className="hero-title text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 leading-tight mb-4 sm:mb-6">
-            Empowering the Future of Sports in Mewat
-          </h1>
+          <p className="text-green-600 font-bold uppercase tracking-widest text-sm sm:text-base mb-3">
+  Khelo India • Khelo Haryana • Khelo Mewat
+</p>
+
+<h1 className="hero-title text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold text-slate-900 leading-tight mb-4 sm:mb-6">
+  Empowering the Future of Sports in Mewat
+</h1>
 
           <p className="hero-subtitle text-slate-700 text-sm sm:text-base lg:text-lg leading-relaxed mb-6 sm:mb-8 max-w-xl">
             Register your school for district-level championships, track events, and join the movement building the next generation of athletes.
