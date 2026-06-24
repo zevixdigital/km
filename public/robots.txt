@@ -1,0 +1,17 @@
+# Global User-Agent Configuration for Search Engines
+User-agent: *
+
+# Crawling permissions for general landing layouts
+Allow: /
+Allow: /about
+Allow: /sports
+Allow: /register
+Allow: /contact
+
+# STRICT DISALLOW RULES: Prevent indexing of authentication entry paths
+Disallow: /admin
+Disallow: /admin/
+Disallow: /admin/dashboard
+
+# Reference map link to search engine sitemaps index
+Sitemap: https://khelomewat.in/sitemap.xml

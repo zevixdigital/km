@@ -55,7 +55,7 @@ export default function Navbar() {
     className="h-12 w-auto"
   />
   <h1 className="text-xl font-bold text-slate-900">
-    Khelo Mewat <span className="text-[#f37022]">2.0</span>
+    <span className="text-[#f37022]">2.0</span>
   </h1>
 </Link>
 
