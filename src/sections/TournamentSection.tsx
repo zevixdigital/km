@@ -109,14 +109,14 @@ export default function TournamentSection() {
           </div>
           <div className="flex flex-wrap gap-3">
             <a 
-              href="https://drive.google.com/file/d/1-bGXqtQPvixKyRYFqovw6ptiY5u4-tVY/view?usp=sharing" 
+              href="https://drive.google.com/file/d/1YWs3ybRv2o5gh_-5u9PauHpEtJqhyP1J/view?usp=sharing" 
               download
               className="inline-flex items-center gap-1.5 bg-slate-50 hover:bg-orange-50/50 border border-slate-200 hover:border-[#f37022] text-slate-700 hover:text-[#f37022] px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition-all"
             >
               <Download className="w-3.5 h-3.5" /> Participant Entry Form
             </a>
             <a 
-              href="https://drive.google.com/file/d/1d7RT6YhCm0iaBf7yJS91M_WOJN0KQkWE/view?usp=sharing" 
+              href="https://drive.google.com/file/d/1ouCUiypAvPzE0-_ldnJypOsOaMest2ZG/view?usp=sharing" 
               download
               className="inline-flex items-center gap-1.5 bg-slate-50 hover:bg-orange-50/50 border border-slate-200 hover:border-[#f37022] text-slate-700 hover:text-[#f37022] px-4 py-2 rounded-lg text-xs font-semibold shadow-sm transition-all"
             >
