@@ -54,7 +54,7 @@ interface Tournament {
 }
 
 const sportsList = [
-  'all', 'cricket', 'volleyball', 'wrestling', 'athletics',
+  'all', 'cricket', 'volleyball', 'athletics',
   'kabaddi', 'football', 'kho-kho', 'boxing', 'judo', 'badminton', 'weightlifting'
 ];
 
@@ -72,7 +72,6 @@ const venueList = [
 const sportImageMap: Record<string, string> = {
   'cricket': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157479/cricket1_d9qbc6.jpg',
   'volleyball': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157492/volleyball1_sbabh6.jpg',
-  'wrestling': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1781318974/wrestling1_zlcwme.jpg', 
   'athletics': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157493/runner1_uwe5nf.jpg',
   'kabaddi': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157494/Kabaddi_iaynpu.jpg',
   'football': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157482/Football_zqgruj.png',
