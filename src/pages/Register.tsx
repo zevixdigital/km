@@ -12,8 +12,8 @@ import {
 const MarqueeElement = 'marquee' as any;
 
 const sports = [
-  'Cricket', 'Volleyball', 'Wrestling', 'Athletics', 
-  'Kabaddi', 'Football', 'Kho-Kho', 'Boxing', 'Judo', 'Badminton', 'Weightlifting', 'Tug of War'
+  'Cricket', 'Volleyball', 'Athletics', 
+  'Kabaddi', 'Football', 'Kho-Kho', 'Boxing', 'Judo', 'Badminton', 'Weightlifting'
 ];
 
 // Comprehensive Official Dataset for Nuh District Blocks and Villages
