@@ -59,13 +59,15 @@ const sportsList = [
 ];
 
 const venueList = [
-  'Rajiv Gandhi Khel Stadium Jhamuwash',
-  'Vyamshala Indri',
-  'Shahpur Nangli Khel Stadium Nuh',
-  'Rajiv Gandhi Khel Stadium Nagina',
-  'Rajiv Gandhi Khel Stadium Pingwan',
-  'Rajiv Gandhi Khel Stadium Siroli',
-  'Rajiv Gandhi Khel Stadium Kameda'
+  "Rajiv Gandhi Khel Stadium Jhamuwash",
+  "Vyamshala Indri",
+  "Shahpur Nangli Khel Stadium Nuh",
+  "Rajiv Gandhi Khel Stadium Nagina",
+  "Rajiv Gandhi Khel Stadium Pingwan",
+  "Rajiv Gandhi Khel Stadium Siroli",
+  "Rajiv Gandhi Khel Stadium Kameda",
+  "Modis Public Sr Sec School Hathin",
+  "Govt Model Sanskriti Sr Sec School Booraka Hathin"
 ];
 
 // Production Safe Cloudinary Image Pipeline
@@ -74,7 +76,7 @@ const sportImageMap: Record<string, string> = {
   'volleyball': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157492/volleyball1_sbabh6.jpg',
   'athletics': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157493/runner1_uwe5nf.jpg',
   'kabaddi': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157494/Kabaddi_iaynpu.jpg',
-  'football': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157482/Football_zqgruj.png',
+  'football': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782374249/WhatsApp_Image_2026-06-24_at_8.39.24_PM_ws2dmb.jpg',
   'kho-kho': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157497/KhoKho_nity9q.png',
   'boxing': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157491/Boxing_wdnwak.jpg',
   'judo': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157480/Judo_cvquo0.jpg',
