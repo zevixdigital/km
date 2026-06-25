@@ -972,7 +972,7 @@ export default function AdminDashboard() {
                       className="flex items-center gap-1.5 bg-[#f37022]/10 border border-[#f37022]/30 text-[#f37022] px-3 py-1.5 rounded-lg text-xs font-inter hover:bg-[#f37022]/20 transition-colors"
                     >
                       <FileText className="w-3.5 h-3.5" />
-                      Sarpanch Performa
+                      School Management
                     </a>
                   )}
                   {viewRegistration.govIdUrl && (
