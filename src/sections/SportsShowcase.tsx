@@ -26,7 +26,7 @@ const sports = [
   {
     name: 'Football',
     description: 'The ultimate exhibition of strategic teamwork, spatial dominance, and athletic endurance on standard dimensions.',
-    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157482/Football_zqgruj.png',
+    image: 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782374249/WhatsApp_Image_2026-06-24_at_8.39.24_PM_ws2dmb.jpg',
     players: '11 Active Players (Squad Size: 16)',
     details: {
       format: 'Full-Scale Tournament Format',
