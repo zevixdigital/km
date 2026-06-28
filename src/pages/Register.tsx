@@ -649,7 +649,7 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Section 4: School & Sport Details */}
+          {/* Section 4:  & Sport Details */}
           <div>
             <h3 className="text-slate-900 font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
               <School className="w-4 h-4 text-[#f37022]" />
@@ -718,7 +718,7 @@ export default function Register() {
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-colors hover:border-slate-300">
                 <label className="flex flex-col items-center gap-2 cursor-pointer">
                   <FileText className="w-6 h-6 text-[#f37022]" />
-                  <span className="text-slate-800 text-xs font-semibold text-center">School Management *</span>
+                  <span className="text-slate-800 text-xs font-semibold text-center">School Management * <br /> Sarpanch Performa</span>
                   <p className="text-[10px] text-slate-400 text-center">PDF, JPG, JPEG (Max 300KB)</p>
                   <input
                     type="file"
