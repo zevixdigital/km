@@ -175,7 +175,7 @@ export default function HeroSection() {
                 download
                 className="inline-flex items-center gap-1.5 bg-white hover:bg-orange-50/50 border border-slate-200 hover:border-[#f37022] text-slate-700 hover:text-[#f37022] px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all"
               >
-                <Download className="w-3.5 h-3.5" /> Sarpanch Performa
+                <Download className="w-3.5 h-3.5" /> Sarpanch Performa / School Management
               </a>
             </div>
           </div>

@@ -718,7 +718,7 @@ export default function Register() {
               <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-colors hover:border-slate-300">
                 <label className="flex flex-col items-center gap-2 cursor-pointer">
                   <FileText className="w-6 h-6 text-[#f37022]" />
-                  <span className="text-slate-800 text-xs font-semibold text-center">School Management * <br /> Sarpanch Performa</span>
+                  <span className="text-slate-800 text-xs font-semibold text-center">School Management * <br /> Sarpanch Performa *</span>
                   <p className="text-[10px] text-slate-400 text-center">PDF, JPG, JPEG (Max 300KB)</p>
                   <input
                     type="file"
