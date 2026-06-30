@@ -28,7 +28,7 @@ interface Registration {
   pincode: string;
   address: string;
   sport: string;
-  subSport?: string; // Enhanced dynamic safety mapping tracking field integration
+  subSport?: string; 
   entryFormUrl: string;       
   sarpanchPerformaUrl: string; 
   govIdUrl: string;            
@@ -47,7 +47,7 @@ interface Tournament {
   id: string;
   name: string;
   sport: string;
-  startDate: string; // Dynamic field preserve
+  startDate: string; 
   lastDate: string; 
   location: string;
   status: string;
@@ -71,7 +71,6 @@ const venueList = [
   "Govt Model Sanskriti Sr Sec School Booraka Hathin"
 ];
 
-// Production Safe Cloudinary Image Pipeline
 const sportImageMap: Record<string, string> = {
   'cricket': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157479/cricket1_d9qbc6.jpg',
   'volleyball': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157492/volleyball1_sbabh6.jpg',
@@ -91,7 +90,6 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const { user, isAdmin, loading: authLoading, logout } = useAuthContext();
   
-  // Registration States
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [filtered, setFiltered] = useState<Registration[]>([]);
   const [settings, setSettings] = useState({ startDate: '', lastDate: '', formEnabled: true });
@@ -102,15 +100,12 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   
-  // Settings Inputs States
   const [startDateInput, setStartDateInput] = useState('');
   const [lastDateInput, setLastDateInput] = useState('');
   const [viewRegistration, setViewRegistration] = useState<Registration | null>(null);
 
-  // Lazy Loading Controls State
   const [visibleRecords, setVisibleRecords] = useState(20);
   
-  // Tournament Input States with Start Date Included
   const [tournamentName, setTournamentName] = useState("");
   const [tournamentSport, setTournamentSport] = useState("");
   const [tournamentStartDate, setTournamentStartDate] = useState("");
@@ -121,10 +116,10 @@ export default function AdminDashboard() {
 
   const dashboardRef = useRef<HTMLDivElement>(null);
 
-  // Excel Engine Export Data Pipeline
+  // Fail-Proof Binary Blob Excel Export Pipeline
   const exportToExcel = (dataList: Registration[]) => {
     if (dataList.length === 0) {
-      toast.error("No dataset available to generate sheet matching this filter group.");
+      toast.error("No dataset available to generate sheet.");
       return;
     }
 
@@ -132,122 +127,109 @@ export default function AdminDashboard() {
       "Registration ID", "Student Name", "Father Name", "Date of Birth", 
       "Gender", "Email Address", "Mobile Phone", "School Name", 
       "Block/Tehsil", "Village/Area", "Pincode", "Street Address", 
-      "Sport Category", "Event Category / Weight Division", "Submission Date", "Application Status"
+      "Sport Category", "Event / Weight Division", "Submission Date", "Application Status"
     ];
 
     const rows = dataList.map(r => [
       `"${r.id}"`,
-      `"${r.studentName.replace(/"/g, '""')}"`,
-      `"${r.fatherName.replace(/"/g, '""')}"`,
-      `"${r.dateOfBirth}"`,
-      `"${r.gender}"`,
-      `"${r.email}"`,
-      `"${r.phone}"`,
-      `"${r.schoolName.replace(/"/g, '""')}"`,
-      `"${r.block.replace(/"/g, '""')}"`,
-      `"${r.village.replace(/"/g, '""')}"`,
-      `"${r.pincode}"`,
-      `"${r.address.replace(/"/g, '""')}"`,
-      `"${r.sport.toUpperCase()}"`,
+      `"${(r.studentName || '').replace(/"/g, '""')}"`,
+      `"${(r.fatherName || '').replace(/"/g, '""')}"`,
+      `"${r.dateOfBirth || ''}"`,
+      `"${r.gender || ''}"`,
+      `"${r.email || ''}"`,
+      `"${r.phone || ''}"`,
+      `"${(r.schoolName || '').replace(/"/g, '""')}"`,
+      `"${(r.block || '').replace(/"/g, '""')}"`,
+      `"${(r.village || '').replace(/"/g, '""')}"`,
+      `"${r.pincode || ''}"`,
+      `"${(r.address || '').replace(/"/g, '""')}"`,
+      `"${(r.sport || '').toUpperCase()}"`,
       `"${r.subSport || 'N/A'}"`,
       `"${new Date(r.submittedAt).toLocaleDateString('en-IN')}"`,
-      `"${r.status.toUpperCase()}"`
+      `"${(r.status || '').toUpperCase()}"`
     ]);
 
-    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" 
-      + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const blobUrl = URL.createObjectURL(blob);
     
-    const encodedUri = encodeURI(csvContent);
     const downloadAnchor = document.createElement("a");
-    downloadAnchor.setAttribute("href", encodedUri);
+    downloadAnchor.setAttribute("href", blobUrl);
     downloadAnchor.setAttribute("download", `Sports_Registrations_Report_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     document.body.removeChild(downloadAnchor);
-    toast.success(`Excel compatible ledger summary report generated for ${dataList.length} students successfully!`);
+    URL.revokeObjectURL(blobUrl);
+    toast.success(`Excel ledger created successfully for ${dataList.length} students!`);
   };
 
-  // Corporate Styled Dynamic Receipt/PDF Print Layout Pipeline Engine
+  // Direct Execution Print Document Engine 
   const exportIndividualPDF = (reg: Registration) => {
     const windowContext = window.open('', '_blank');
     if (!windowContext) {
-      toast.error("Popup window display blocked by client side browser settings! Please grant permission.");
+      toast.error("Popup window display blocked by browser settings!");
       return;
     }
 
     windowContext.document.write(`
       <html>
         <head>
-          <title>Registration_Report_${reg.studentName.replace(/\s+/g, '_')}</title>
+          <title>Registration_${reg.studentName.replace(/\s+/g, '_')}</title>
           <style>
-            body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif; color: #0F172A; background-color: #FFFFFF; padding: 45px; margin: 0; line-height: 1.5; }
-            .header-banner { border-bottom: 3px solid #F37022; padding-bottom: 24px; margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-start; }
-            .company-title { font-size: 26px; font-weight: 800; color: #0A1628; margin: 0; letter-spacing: -0.025em; text-transform: uppercase; }
-            .subtitle { margin: 6px 0 0 0; font-size: 13px; color: #4B5563; font-weight: 500; }
-            .badge { display: inline-block; padding: 6px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 9999px; letter-spacing: 0.05em; }
-            .approved { background-color: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
-            .pending { background-color: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
-            .rejected { background-color: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
-            .section-heading { font-size: 15px; font-weight: 700; color: #F37022; text-transform: uppercase; letter-spacing: 0.05em; margin: 28px 0 14px 0; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px; }
-            .info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-            .info-card { background-color: #F8FAFC; border: 1px solid #F1F5F9; padding: 14px 18px; border-radius: 8px; }
-            .info-card.span-2 { grid-column: span 2; }
-            .data-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748B; letter-spacing: 0.05em; margin-bottom: 4px; }
-            .data-value { font-size: 14px; font-weight: 600; color: #1E293B; }
-            .sport-highlight { font-size: 16px; color: #F37022; font-weight: 700; }
-            .footer-signature-block { text-align: center; font-size: 11px; color: #94A3B8; border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 60px; font-weight: 500; }
-            @media print {
-              body { padding: 20px; font-size: 12px; }
-              .info-card { background-color: #F8FAFC !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-            }
+            body { font-family: Arial, sans-serif; color: #0F172A; padding: 40px; line-height: 1.5; }
+            .header { border-bottom: 3px solid #F37022; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+            .title { font-size: 24px; font-weight: bold; color: #0A1628; margin: 0; text-transform: uppercase; }
+            .badge { padding: 6px 14px; font-size: 12px; font-weight: bold; text-transform: uppercase; border-radius: 20px; border: 1px solid #CBD5E1; }
+            .approved { background-color: #DCFCE7; color: #166534; border-color: #BBF7D0; }
+            .pending { background-color: #FEF3C7; color: #92400E; border-color: #FDE68A; }
+            .rejected { background-color: #FEE2E2; color: #991B1B; border-color: #FCA5A5; }
+            .section { font-size: 14px; font-weight: bold; color: #F37022; text-transform: uppercase; margin: 25px 0 10px 0; border-bottom: 1px solid #E2E8F0; padding-bottom: 5px; }
+            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+            .card { background-color: #F8FAFC; border: 1px solid #F1F5F9; padding: 12px; border-radius: 6px; }
+            .full { grid-column: span 2; }
+            .label { font-size: 10px; font-weight: bold; color: #64748B; text-transform: uppercase; margin-bottom: 2px; }
+            .value { font-size: 13px; font-weight: 600; }
           </style>
         </head>
         <body>
-          <div class="header-banner">
+          <div class="header">
             <div>
-              <h1 class="company-title">Athlete Enrolment Profile Report</h1>
-              <p class="subtitle">System Database Record Reference ID Check Log • Generated: ${new Date().toLocaleString('en-IN')}</p>
+              <h1 class="title">Student Registration Report</h1>
+              <p style="margin:4px 0 0 0; font-size:12px; color:#64748B;">ID: ${reg.id}</p>
             </div>
             <span class="badge ${reg.status}">${reg.status}</span>
           </div>
-
-          <div class="section-heading">Personal Dossier Information</div>
-          <div class="info-grid">
-            <div class="info-card"><div class="data-label">Player Name</div><div class="data-value">${reg.studentName}</div></div>
-            <div class="info-card"><div class="data-label">Father's Identification Name</div><div class="data-value">${reg.fatherName}</div></div>
-            <div class="info-card"><div class="data-label">Date of Birth</div><div class="data-value">${reg.dateOfBirth}</div></div>
-            <div class="info-card"><div class="data-label">Gender Orientation</div><div class="data-value" style="text-transform: capitalize;">${reg.gender}</div></div>
-            <div class="info-card"><div class="data-label">Verified Email Address</div><div class="data-value">${reg.email}</div></div>
-            <div class="info-card"><div class="data-label">Mobile Communication Contact</div><div class="data-value">+91 ${reg.phone}</div></div>
+          <div class="section">Personal Details</div>
+          <div class="grid">
+            <div class="card"><div class="label">Player Name</div><div class="value">${reg.studentName}</div></div>
+            <div class="card"><div class="label">Father's Name</div><div class="value">${reg.fatherName}</div></div>
+            <div class="card"><div class="label">Date of Birth</div><div class="value">${reg.dateOfBirth}</div></div>
+            <div class="card"><div class="label">Gender</div><div class="value" style="text-transform:capitalize;">${reg.gender}</div></div>
+            <div class="card"><div class="label">Email Address</div><div class="value">${reg.email}</div></div>
+            <div class="card"><div class="label">Mobile Number</div><div class="value">${reg.phone}</div></div>
           </div>
-
-          <div class="section-heading">Academic Location & Structural Mapping</div>
-          <div class="info-grid">
-            <div class="info-card span-2"><div class="data-label">Allocated Institute / School Name</div><div class="data-value">${reg.schoolName}</div></div>
-            <div class="info-card"><div class="data-label">Tehsil Zone / Block</div><div class="data-value">${reg.block}</div></div>
-            <div class="info-card"><div class="data-label">Village Location Area</div><div class="data-value">${reg.village}</div></div>
-            <div class="info-card"><div class="data-label">District Jurisdiction</div><div class="data-value">${reg.district}</div></div>
-            <div class="info-card"><div class="data-label">Postal Pincode Code</div><div class="data-value">${reg.pincode}</div></div>
-            <div class="info-card span-2"><div class="data-label">Full Residential Mailing Address</div><div class="data-value">${reg.address}</div></div>
+          <div class="section">Address & School Details</div>
+          <div class="grid">
+            <div class="card full"><div class="label">School Name</div><div class="value">${reg.schoolName}</div></div>
+            <div class="card"><div class="label">Block / Tehsil</div><div class="value">${reg.block}</div></div>
+            <div class="card"><div class="label">Village / Area</div><div class="value">${reg.village}</div></div>
+            <div class="card"><div class="label">District & State</div><div class="value">${reg.district}, ${reg.state}</div></div>
+            <div class="card"><div class="label">Pincode</div><div class="value">${reg.pincode}</div></div>
+            <div class="card full"><div class="label">Full Street Address</div><div class="value">${reg.address}</div></div>
           </div>
-
-          <div class="section-heading">Competitive Sports Categorization Data</div>
-          <div class="info-grid">
-            <div class="info-card"><div class="data-label">Selected Main Sport Discipline</div><div class="data-value sport-highlight" style="text-transform: uppercase;">${reg.sport}</div></div>
-            <div class="info-card"><div class="data-label">Dynamic Event Event / Weight Division Variant</div><div class="data-value font-semibold text-slate-800">${reg.subSport || 'N/A'}</div></div>
+          <div class="section">Sports Discipline</div>
+          <div class="grid">
+            <div class="card"><div class="label">Selected Sport</div><div class="value" style="text-transform:uppercase; color:#F37022;">${reg.sport}</div></div>
+            <div class="card"><div class="label">Event / Weight Division</div><div class="value">${reg.subSport || 'N/A'}</div></div>
           </div>
-
-          <div class="footer-signature-block">
-            This digital printout profile documentation remains a verified structural summary payload breakdown generated automatically via system records backend under token indexing target reference key string: ${reg.id}
-          </div>
-
+          <p style="text-align:center; font-size:11px; color:#94A3B8; margin-top:50px; border-top:1px solid #E2E8F0; padding-top:15px;">
+            Official System Generated Document Record Payload
+          </p>
           <script>
-            window.onload = function() {
-              setTimeout(() => {
-                window.print();
-                window.close();
-              }, 350);
-            }
+            setTimeout(() => {
+              window.print();
+              window.close();
+            }, 500);
           </script>
         </body>
       </html>
@@ -255,7 +237,6 @@ export default function AdminDashboard() {
     windowContext.document.close();
   };
 
-  // Auto matching Cloudinary URLs case-insensitively
   useEffect(() => {
     const activeSportKey = tournamentSport?.toLowerCase();
     if (activeSportKey && sportImageMap[activeSportKey]) {
@@ -265,14 +246,12 @@ export default function AdminDashboard() {
     }
   }, [tournamentSport]);
 
-  // Auth check
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
       navigate('/admin');
     }
   }, [user, isAdmin, authLoading, navigate]);
 
-  // Fetch registrations
   useEffect(() => {
     const regRef = ref(db, 'registrations');
     const unsub = onValue(regRef, (snapshot) => {
@@ -291,7 +270,6 @@ export default function AdminDashboard() {
     return unsub;
   }, []);
 
-  // Fetch settings
   useEffect(() => {
     const settingsRef = ref(db, 'settings');
     const unsub = onValue(settingsRef, (snapshot) => {
@@ -305,7 +283,6 @@ export default function AdminDashboard() {
     return unsub;
   }, []);
 
-  // Fetch Tournaments
   useEffect(() => {
     const tournamentRef = ref(db, "tournaments");
     const unsub = onValue(tournamentRef, (snapshot) => {
@@ -319,7 +296,6 @@ export default function AdminDashboard() {
     return unsub;
   }, []);
 
-  // Filter registrations & Reset Lazy Loading Count
   useEffect(() => {
     let result = [...registrations];
 
@@ -351,20 +327,16 @@ export default function AdminDashboard() {
     setVisibleRecords(20); 
   }, [registrations, sportFilter, statusFilter, searchQuery, selectedDate]);
 
-  // Animation
   useEffect(() => {
     if (!dashboardRef.current) return;
-
     const ctx = gsap.context(() => {
       gsap.from('.stat-card', {
         y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
       });
     }, dashboardRef.current);
-
     return () => ctx.revert();
   }, []);
 
-  // Action Handlers
   const updateSettingsDates = async () => {
     try {
       await update(ref(db, 'settings'), { 
@@ -405,7 +377,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Tournament Action Handlers with dual start/end validation
   const addTournament = async () => {
     if (!tournamentName.trim() || !tournamentSport || !tournamentStartDate || !tournamentLastDate || !tournamentLocation) {
       toast.error("Please fill all required tournament fields");
@@ -596,7 +567,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Enhanced Professional Export Controls Row */}
-              <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap gap-3 items-center justify-between">
+              <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3 items-center justify-between">
                 <p className="text-xs text-slate-500 font-inter">
                   Generate professional spreadsheet logs based on your live dashboard search query filters.
                 </p>
@@ -642,11 +613,10 @@ export default function AdminDashboard() {
                             <span className="text-[#f37022] font-inter text-xs font-semibold capitalize block">
                               {reg.sport}
                             </span>
-                            {reg.subSport && (
-                              <span className="text-[10px] text-slate-400 font-inter block truncate max-w-[150px]">
-                                {reg.subSport}
-                              </span>
-                            )}
+                            {/* Subcategory display mapping with fixed fallback design logic */}
+                            <span className="text-[10px] text-slate-400 font-inter block truncate max-w-[180px]">
+                              {reg.subSport || 'N/A'}
+                            </span>
                           </td>
                           <td className="px-4 py-3 text-slate-500 font-inter text-xs">
                             {new Date(reg.submittedAt).toLocaleDateString('en-IN')}
@@ -1106,12 +1076,11 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {viewRegistration.subSport && (
-                  <div>
-                    <label className="text-slate-500 text-xs font-inter">Event / Weight Division Category</label>
-                    <p className="text-slate-800 font-inter text-sm font-medium">{viewRegistration.subSport}</p>
-                  </div>
-                )}
+                {/* Subcategory mapping explicitly loaded to prevent layout hiding anomalies */}
+                <div>
+                  <label className="text-slate-500 text-xs font-inter">Event / Weight Division Category</label>
+                  <p className="text-slate-800 font-inter text-sm font-medium">{viewRegistration.subSport || 'N/A'}</p>
+                </div>
 
                 <div>
                   <label className="text-slate-500 text-xs font-inter">Submitted On</label>
@@ -1156,7 +1125,6 @@ export default function AdminDashboard() {
                   )}
                 </div>
 
-                {/* Professional Modal Action Block Integration */}
                 <div className="pt-4 border-t border-slate-100">
                   <button
                     type="button"
