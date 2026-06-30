@@ -5,7 +5,7 @@ import { toast } from 'sonner';
 import gsap from 'gsap';
 import {
   User, Mail, School, MapPin,
-  Upload, CheckCircle, FileText, Loader2, Search, ChevronDown, CreditCard
+  Upload, CheckCircle, FileText, Loader2, Search, ChevronDown, CreditCard, PartyPopper
 } from 'lucide-react';
 
 // Bypassing strict TypeScript JSX compiler for legacy marquee element safely
@@ -107,6 +107,8 @@ const blockVillageData: Record<string, string[]> = {
 export default function Register() {
   const formRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false); // Handles dynamic toggle workflow routing
+  const [generatedId, setGeneratedId] = useState(''); // Stores assigned token identifier reference securely
 
   // Administrative Settings State Integration
   const [settings, setSettings] = useState({ startDate: '', lastDate: '', formEnabled: true });
@@ -142,7 +144,7 @@ export default function Register() {
     pincode: '',             
     address: '',
     sport: '',
-    subSport: '', // Added state field to log dynamic categories safely
+    subSport: '', 
   });
 
   // Updated Document Storage States
@@ -199,7 +201,7 @@ export default function Register() {
       gsap.from(formRef.current, { y: 20, opacity: 0, duration: 0.5, ease: 'power2.out' });
     }, formRef.current);
     return () => ctx.revert();
-  }, []);
+  }, [isSubmitted]); // Triggers entry scaling smooth layout when switching views
 
   useEffect(() => {
     const closeDropdowns = () => {
@@ -262,13 +264,11 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Prevent submission if form is disabled globally
     if (!settings.formEnabled) {
       toast.error('Submission Blocked: The registration window is closed or paused by the administration.');
       return;
     }
 
-    // 2. Granular Field-by-Field Smart Validation
     if (!form.studentName.trim()) { toast.error('Please enter Student Name'); return; }
     if (!form.fatherName.trim()) { toast.error("Please enter Father's Name"); return; }
     if (!form.dateOfBirth) { toast.error('Please select Date of Birth'); return; }
@@ -282,14 +282,12 @@ export default function Register() {
     if (!form.address.trim()) { toast.error('Please enter Full Street Address'); return; }
     if (!form.sport) { toast.error('Please select a Sport'); return; }
     
-    // Dynamic Sub-Category Options Validation Engine Integration
     const conditionalOptions = getSubSportsOptions(form.sport, form.gender);
     if (conditionalOptions.length > 0 && !form.subSport) {
       toast.error('Please select your specific Event or Weight Division category');
       return;
     }
 
-    // Document Upload Verifications
     if (!urls.entryFormUrl) { toast.error('Validation failure: Please upload the Entry Form (under 300KB)'); return; }
     if (!urls.sarpanchPerformaUrl) { toast.error('Validation failure: Please upload the Sarpanch Performa (under 300KB)'); return; }
     if (!urls.govIdUrl) { toast.error('Validation failure: Please upload your Government ID (under 300KB)'); return; }
@@ -297,9 +295,11 @@ export default function Register() {
     setLoading(true);
     try {
       const registrationRef = push(ref(db, 'registrations'));
+      const trackingKey = registrationRef.key || `REG-${Date.now()}`;
+      setGeneratedId(trackingKey);
       
       const schemaPayload = {
-        id: registrationRef.key,
+        id: trackingKey,
         studentName: form.studentName,
         fatherName: form.fatherName,
         dateOfBirth: form.dateOfBirth,
@@ -314,7 +314,7 @@ export default function Register() {
         pincode: form.pincode,
         address: form.address,
         sport: form.sport,
-        subSport: form.subSport || 'N/A', // Safely logging data directly to database layer infrastructure
+        subSport: form.subSport || 'N/A', 
         entryFormUrl: urls.entryFormUrl,
         sarpanchPerformaUrl: urls.sarpanchPerformaUrl,
         govIdUrl: urls.govIdUrl,
@@ -323,24 +323,28 @@ export default function Register() {
       };
 
       await set(registrationRef, schemaPayload);
-
       toast.success('Registration data submitted successfully into database infrastructure!');
-      
-      // Clear data fields
-      setForm({
-        studentName: '', fatherName: '', dateOfBirth: '', gender: '',
-        email: '', phone: '', schoolName: '', state: 'Haryana', district: 'Nuh (Mewat)',
-        block: '', village: '', pincode: '', address: '', sport: '', subSport: '',
-      });
-      setUrls({ entryFormUrl: '', sarpanchPerformaUrl: '', govIdUrl: '' });
-      setManualBlock(false);
-      setManualVillage(false);
+      setIsSubmitted(true); // Toggle visibility state to success panel block
     } catch (err: any) {
       console.error("Firebase database layer runtime mismatch:", err);
       toast.error(`Database layer rejection: ${err.message || 'Fatal execution payload mismatch'}`);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Reset function to clear and reload form layout structure manually
+  const resetRegistrationForm = () => {
+    setForm({
+      studentName: '', fatherName: '', dateOfBirth: '', gender: '',
+      email: '', phone: '', schoolName: '', state: 'Haryana', district: 'Nuh (Mewat)',
+      block: '', village: '', pincode: '', address: '', sport: '', subSport: '',
+    });
+    setUrls({ entryFormUrl: '', sarpanchPerformaUrl: '', govIdUrl: '' });
+    setManualBlock(false);
+    setManualVillage(false);
+    setGeneratedId('');
+    setIsSubmitted(false);
   };
 
   const filteredBlocks = Object.keys(blockVillageData).filter(b => b.toLowerCase().includes(blockSearch.toLowerCase()));
@@ -371,168 +375,171 @@ export default function Register() {
           </MarqueeElement>
         </div>
 
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">
-            Student Registration Form
-          </h1>
-          <p className="text-slate-600 text-sm">
-            Please fill out the form carefully with valid information.
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-8 shadow-sm">
-          
-          {/* Section 1: Personal Details */}
-          <div>
-            <h3 className="text-slate-900 font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
-              <User className="w-4 h-4 text-[#f37022]" />
-              Personal Details
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-slate-700 text-xs font-semibold mb-1 block">Player Name *</label>
-                <input
-                  type="text"
-                  value={form.studentName}
-                  onChange={(e) => setForm({ ...form, studentName: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
-                  placeholder="Enter full name"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-slate-700 text-xs font-semibold mb-1 block">Father's Name *</label>
-                <input
-                  type="text"
-                  value={form.fatherName}
-                  onChange={(e) => setForm({ ...form, fatherName: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
-                  placeholder="Enter father's name"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-slate-700 text-xs font-semibold mb-1 block">Date of Birth *</label>
-                <input
-                  type="date"
-                  value={form.dateOfBirth}
-                  onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-slate-700 text-xs font-semibold mb-1 block">Gender *</label>
-                <select
-                  value={form.gender}
-                  onChange={(e) => setForm({ ...form, gender: e.target.value, subSport: '' })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
-                  required
-                >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
+        {/* Dynamic Conditional Rendering Sequence */}
+        {!isSubmitted ? (
+          <>
+            <div className="text-center mb-8">
+              <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">
+                Student Registration Form
+              </h1>
+              <p className="text-slate-600 text-sm">
+                Please fill out the form carefully with valid information.
+              </p>
             </div>
-          </div>
 
-          {/* Section 2: Contact Details */}
-          <div>
-            <h3 className="text-slate-900 font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
-              <Mail className="w-4 h-4 text-[#f37022]" />
-              Contact Details
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="text-slate-700 text-xs font-semibold mb-1 block">Email Address *</label>
-                <input
-                  type="email"
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
-                  placeholder="name@example.com"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-slate-700 text-xs font-semibold mb-1 block">Mobile Number *</label>
-                <input
-                  type="tel"
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
-                  placeholder="10-digit phone number"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-
-          {/* Section 3: Address Details */}
-          <div>
-            <h3 className="text-slate-900 font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
-              <MapPin className="w-4 h-4 text-[#f37022]" />
-              Address Details
-            </h3>
-            <div className="space-y-4">
+            <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-8 shadow-sm">
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-slate-400 text-xs font-semibold mb-1 block">State</label>
-                  <input
-                    type="text"
-                    value={form.state}
-                    disabled
-                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-500 text-sm font-medium cursor-not-allowed"
-                  />
-                </div>
-
-                <div>
-                  <label className="text-slate-400 text-xs font-semibold mb-1 block">District</label>
-                  <input
-                    type="text"
-                    value={form.district}
-                    disabled
-                    className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-500 text-sm font-medium cursor-not-allowed"
-                  />
+              {/* Section 1: Personal Details */}
+              <div>
+                <h3 className="text-slate-900 font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
+                  <User className="w-4 h-4 text-[#f37022]" />
+                  Personal Details
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-slate-700 text-xs font-semibold mb-1 block">Player Name *</label>
+                    <input
+                      type="text"
+                      value={form.studentName}
+                      onChange={(e) => setForm({ ...form, studentName: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                      placeholder="Enter full name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-slate-700 text-xs font-semibold mb-1 block">Father's Name *</label>
+                    <input
+                      type="text"
+                      value={form.fatherName}
+                      onChange={(e) => setForm({ ...form, fatherName: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                      placeholder="Enter father's name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-slate-700 text-xs font-semibold mb-1 block">Date of Birth *</label>
+                    <input
+                      type="date"
+                      value={form.dateOfBirth}
+                      onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-slate-700 text-xs font-semibold mb-1 block">Gender *</label>
+                    <select
+                      value={form.gender}
+                      onChange={(e) => setForm({ ...form, gender: e.target.value, subSport: '' })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                      required
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {/* Searchable Block Picker Dropdown Engine */}
-                <div className="relative" onClick={(e) => e.stopPropagation()}>
-                  <label className="text-slate-700 text-xs font-semibold mb-1 block">Block / Tehsil *</label>
-                  {manualBlock ? (
-                    <div className="relative">
+              {/* Section 2: Contact Details */}
+              <div>
+                <h3 className="text-slate-900 font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
+                  <Mail className="w-4 h-4 text-[#f37022]" />
+                  Contact Details
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-slate-700 text-xs font-semibold mb-1 block">Email Address *</label>
+                    <input
+                      type="email"
+                      value={form.email}
+                      onChange={(e) => setForm({ ...form, email: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                      placeholder="name@example.com"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="text-slate-700 text-xs font-semibold mb-1 block">Mobile Number *</label>
+                    <input
+                      type="tel"
+                      value={form.phone}
+                      onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                      placeholder="10-digit phone number"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Section 3: Address Details */}
+              <div>
+                <h3 className="text-slate-900 font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
+                  <MapPin className="w-4 h-4 text-[#f37022]" />
+                  Address Details
+                </h3>
+                <div className="space-y-4">
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-slate-400 text-xs font-semibold mb-1 block">State</label>
                       <input
                         type="text"
-                        value={form.block}
-                        onChange={(e) => setForm({ ...form, block: e.target.value, village: '' })}
-                        placeholder="Type Block Name Manually"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
-                        required
+                        value={form.state}
+                        disabled
+                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-500 text-sm font-medium cursor-not-allowed"
                       />
-                      <button
-                        type="button"
-                        onClick={() => { setManualBlock(false); setManualVillage(false); setForm(prev => ({ ...prev, block: '', village: '' })); }}
-                        className="absolute right-3 top-2 text-xs text-[#f37022] hover:underline font-semibold"
-                      >
-                        Reset List
-                      </button>
                     </div>
-                  ) : (
-                    <>
-                      <div 
-                        onClick={() => { setBlockDropdownOpen(!blockDropdownOpen); setVillageDropdownOpen(false); }}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm flex items-center justify-between cursor-pointer select-none"
-                      >
-                        <span className={form.block ? 'text-slate-900' : 'text-slate-400'}>
-                          {form.block || 'Search or Select Block'}
-                        </span>
-                        <ChevronDown className="w-4 h-4 text-slate-400" />
-                      </div>
+
+                    <div>
+                      <label className="text-slate-400 text-xs font-semibold mb-1 block">District</label>
+                      <input
+                        type="text"
+                        value={form.district}
+                        disabled
+                        className="w-full bg-slate-100 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-500 text-sm font-medium cursor-not-allowed"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {/* Searchable Block Picker Dropdown Engine */}
+                    <div className="relative" onClick={(e) => e.stopPropagation()}>
+                      <label className="text-slate-700 text-xs font-semibold mb-1 block">Block / Tehsil *</label>
+                      {manualBlock ? (
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={form.block}
+                            onChange={(e) => setForm({ ...form, block: e.target.value, village: '' })}
+                            placeholder="Type Block Name Manually"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => { setManualBlock(false); setManualVillage(false); setForm(prev => ({ ...prev, block: '', village: '' })); }}
+                            className="absolute right-3 top-2 text-xs text-[#f37022] hover:underline font-semibold"
+                          >
+                            Reset List
+                          </button>
+                        </div>
+                      ) : (
+                        <>
+                          <div 
+                            onClick={() => { setBlockDropdownOpen(!blockDropdownOpen); setVillageDropdownOpen(false); }}
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm flex items-center justify-between cursor-pointer select-none"
+                          >
+                            <span className={form.block ? 'text-slate-900' : 'text-slate-400'}>
+                              {form.block || 'Search or Select Block'}
+                            </span>
+                            <ChevronDown className="w-4 h-4 text-slate-400" />
+                          </div>
 
                       {blockDropdownOpen && (
                         <div className="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
@@ -560,94 +567,94 @@ export default function Register() {
                               {b}
                             </div>
                           ))}
-                          <div 
-                            onClick={() => { 
-                              setManualBlock(true); 
-                              setManualVillage(true); 
-                              setBlockDropdownOpen(false); 
-                              setForm(prev => ({ ...prev, block: '', village: '' })); 
-                            }}
-                            className="px-3.5 py-2 text-sm text-[#f37022] font-bold border-t border-slate-100 hover:bg-orange-50 cursor-pointer"
-                          >
-                            Can't find? Type manually
-                          </div>
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
-
-                {/* Searchable Village Picker Dropdown Engine */}
-                <div className="relative" onClick={(e) => e.stopPropagation()}>
-                  <label className="text-slate-700 text-xs font-semibold mb-1 block">Village / Area *</label>
-                  {manualVillage || manualBlock ? (
-                    <div className="relative">
-                      <input
-                        type="text"
-                        value={form.village}
-                        onChange={(e) => setForm({ ...form, village: e.target.value })}
-                        placeholder="Type Village Name Manually"
-                        className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
-                        required
-                      />
-                      {!manualBlock && (
-                        <button
-                          type="button"
-                          onClick={() => { setManualVillage(false); setForm(prev => ({ ...prev, village: '' })); }}
-                          className="absolute right-3 top-2 text-xs text-[#f37022] hover:underline font-semibold"
-                        >
-                          Reset List
-                        </button>
+                              <div 
+                                onClick={() => { 
+                                  setManualBlock(true); 
+                                  setManualVillage(true); 
+                                  setBlockDropdownOpen(false); 
+                                  setForm(prev => ({ ...prev, block: '', village: '' })); 
+                                }}
+                                className="px-3.5 py-2 text-sm text-[#f37022] font-bold border-t border-slate-100 hover:bg-orange-50 cursor-pointer"
+                              >
+                                Can't find? Type manually
+                              </div>
+                            </div>
+                          )}
+                        </>
                       )}
                     </div>
-                  ) : (
-                    <>
-                      <div 
-                        onClick={() => { 
-                          if(!form.block) {
-                            toast.error("Please choose a Block first.");
-                            return;
-                          }
-                          setVillageDropdownOpen(!villageDropdownOpen); 
-                          setBlockDropdownOpen(false);
-                        }}
-                        className={`w-full border rounded-lg px-3.5 py-2 text-sm flex items-center justify-between cursor-pointer select-none ${
-                          form.block ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
-                        }`}
-                      >
-                        <span className={form.village ? 'text-slate-900' : 'text-slate-400'}>
-                          {form.village || (form.block ? 'Search or Select Village' : 'Choose Block First')}
-                        </span>
-                        <ChevronDown className="w-4 h-4 text-slate-400" />
-                      </div>
 
-                      {villageDropdownOpen && form.block && (
-                        <div className="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
-                          <div className="p-2 border-b border-slate-100 bg-slate-50 sticky top-0 flex items-center gap-2">
-                            <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                            <input 
-                              type="text"
-                              value={villageSearch}
-                              onChange={(e) => setVillageSearch(e.target.value)}
-                              placeholder="Search village..."
-                              className="w-full bg-transparent text-xs text-slate-800 outline-none"
-                            />
-                          </div>
-                          {filteredVillages.map(v => (
-                            <div 
-                              key={v}
-                              onClick={() => { setForm(prev => ({ ...prev, village: v })); setVillageDropdownOpen(false); setVillageSearch(''); }}
-                              className="px-3.5 py-2 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer"
+                    {/* Searchable Village Picker Dropdown Engine */}
+                    <div className="relative" onClick={(e) => e.stopPropagation()}>
+                      <label className="text-slate-700 text-xs font-semibold mb-1 block">Village / Area *</label>
+                      {manualVillage || manualBlock ? (
+                        <div className="relative">
+                          <input
+                            type="text"
+                            value={form.village}
+                            onChange={(e) => setForm({ ...form, village: e.target.value })}
+                            placeholder="Type Village Name Manually"
+                            className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                            required
+                          />
+                          {!manualBlock && (
+                            <button
+                              type="button"
+                              onClick={() => { setManualVillage(false); setForm(prev => ({ ...prev, village: '' })); }}
+                              className="absolute right-3 top-2 text-xs text-[#f37022] hover:underline font-semibold"
                             >
-                              {v}
-                            </div>
-                          ))}
+                              Reset List
+                            </button>
+                          )}
+                        </div>
+                      ) : (
+                        <>
                           <div 
-                            onClick={() => { setManualVillage(true); setVillageDropdownOpen(false); setForm(prev => ({ ...prev, village: '' })); }}
-                            className="px-3.5 py-2 text-sm text-[#f37022] font-bold border-t border-slate-100 hover:bg-orange-50 cursor-pointer"
+                            onClick={() => { 
+                              if(!form.block) {
+                                toast.error("Please choose a Block first.");
+                                return;
+                              }
+                              setVillageDropdownOpen(!villageDropdownOpen); 
+                              setBlockDropdownOpen(false);
+                            }}
+                            className={`w-full border rounded-lg px-3.5 py-2 text-sm flex items-center justify-between cursor-pointer select-none ${
+                              form.block ? 'bg-slate-50 border-slate-200 text-slate-900' : 'bg-slate-100 border-slate-200 text-slate-400 cursor-not-allowed'
+                            }`}
                           >
-                            Can't find? Type manually
+                            <span className={form.village ? 'text-slate-900' : 'text-slate-400'}>
+                              {form.village || (form.block ? 'Search or Select Village' : 'Choose Block First')}
+                            </span>
+                            <ChevronDown className="w-4 h-4 text-slate-400" />
                           </div>
+
+                          {villageDropdownOpen && form.block && (
+                            <div className="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-52 overflow-y-auto">
+                              <div className="p-2 border-b border-slate-100 bg-slate-50 sticky top-0 flex items-center gap-2">
+                                <Search className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                                <input 
+                                  type="text"
+                                  value={villageSearch}
+                                  onChange={(e) => setVillageSearch(e.target.value)}
+                                  placeholder="Search village..."
+                                  className="w-full bg-transparent text-xs text-slate-800 outline-none"
+                                />
+                              </div>
+                              {filteredVillages.map(v => (
+                                <div 
+                                  key={v}
+                                  onClick={() => { setForm(prev => ({ ...prev, village: v })); setVillageDropdownOpen(false); setVillageSearch(''); }}
+                                  className="px-3.5 py-2 text-sm text-slate-700 hover:bg-slate-50 cursor-pointer"
+                                >
+                                  {v}
+                                </div>
+                              ))}
+                              <div 
+                                onClick={() => { setManualVillage(true); setVillageDropdownOpen(false); setForm(prev => ({ ...prev, village: '' })); }}
+                                className="px-3.5 py-2 text-sm text-[#f37022] font-bold border-t border-slate-100 hover:bg-orange-50 cursor-pointer"
+                              >
+                                Can't find? Type manually
+                              </div>
                         </div>
                       )}
                     </>
@@ -707,7 +714,7 @@ export default function Register() {
                 <select
                   value={form.sport}
                   onChange={(e) => setForm({ ...form, sport: e.target.value, subSport: '' })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:outline-none"
                   required
                 >
                   <option value="">Choose a sport</option>
@@ -842,7 +849,58 @@ export default function Register() {
             )}
           </button>
         </form>
+      </>
+    ) : (
+      /* Asymmetric Submission Success Interface Component View */
+      <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-lg space-y-6 animate-fadeIn">
+        <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto border border-green-200">
+          <PartyPopper className="w-8 h-8 text-green-600" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Registration Submitted Successfully!</h2>
+          <p className="text-slate-500 text-sm max-w-md mx-auto">
+            Your enrolment details have been securely logged into the database engine index system for administrative verification.
+          </p>
+        </div>
+        
+        <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 max-w-md mx-auto text-left space-y-2.5">
+          <div className="text-xs text-slate-400 font-mono tracking-wider uppercase border-b border-slate-200 pb-1.5">
+            Registration Receipt Metadata
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-500">Player Name:</span>
+            <span className="font-semibold text-slate-800">{form.studentName || 'Verified Athlete'}</span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-500">Tracking Reference UID:</span>
+            <span className="font-mono text-xs font-bold text-[#f37022] bg-orange-50 px-2 py-0.5 rounded border border-orange-100">
+              {generatedId}
+            </span>
+          </div>
+          <div className="flex justify-between text-sm">
+            <span className="text-slate-500">Sport Discipline:</span>
+            <span className="font-semibold text-slate-800 capitalize">{form.sport}</span>
+          </div>
+          {form.subSport && (
+            <div className="flex justify-between text-sm">
+              <span className="text-slate-500">Category / Event Division:</span>
+              <span className="font-semibold text-slate-700">{form.subSport}</span>
+            </div>
+          )}
+        </div>
+
+        <div className="pt-2">
+          <button
+            type="button"
+            onClick={resetRegistrationForm}
+            className="bg-[#f37022] hover:bg-[#e26212] text-white font-bold text-sm px-6 py-2.5 rounded-lg transition-colors shadow-sm"
+          >
+            Submit Another Registration
+          </button>
+        </div>
       </div>
-    </main>
-  );
+    )}
+  </div>
+</main>
+);
 }
