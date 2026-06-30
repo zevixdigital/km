@@ -136,12 +136,13 @@ export default function Register() {
     phone: '',
     schoolName: '',
     state: 'Haryana',       
-    district: 'Nuh (Mewat)', 
+    district: 'Nuh (Mewat)',  
     block: '',
     village: '',             
     pincode: '',             
     address: '',
     sport: '',
+    subSport: '', // Added state field to log dynamic categories safely
   });
 
   // Updated Document Storage States
@@ -154,6 +155,32 @@ export default function Register() {
   const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/de3vcuioj/upload";
   const UPLOAD_PRESET = "PDF_Hai";
   const MAX_FILE_SIZE = 300 * 1024; // 300KB Strict Size Limit
+
+  // Helper Utility function to map strict conditional sub-sports categories mapping dynamically
+  const getSubSportsOptions = (sport: string, gender: string): string[] => {
+    switch (sport.toLowerCase()) {
+      case 'athletics':
+        return ['100m Sprint', '200m Sprint', '400m Sprint', '4 × 100m Relay Track', 'Long Jump Event', 'Shot Put Showcase'];
+      case 'boxing':
+        return ['30–35 kg Divisions', '40–45 kg Divisions', '45–50 kg Divisions', '50–55 kg Divisions', '55–60 kg Divisions', '60–65 kg Divisions', 'Above 65 kg Heavyweight'];
+      case 'judo':
+        if (gender === 'male') {
+          return ['35kg', '40kg', '45kg', '50kg', '55kg', '60kg', '66kg', 'Above 66kg'];
+        } else if (gender === 'female') {
+          return ['27kg', '32kg', '36kg', '40kg', '44kg', '48kg', '52kg', 'Above 52kg'];
+        }
+        return [];
+      case 'weightlifting':
+        if (gender === 'male') {
+          return ['55kg', '60kg', '65kg', '70kg', '75kg', '85kg', '95kg', '110kg', 'Above 110kg'];
+        } else if (gender === 'female') {
+          return ['49kg', '53kg', '57kg', '61kg', '69kg', '77kg', '86kg', 'Above 86kg'];
+        }
+        return [];
+      default:
+        return [];
+    }
+  };
 
   // Fetch Settings Object for Realtime Marquee Synchronization
   useEffect(() => {
@@ -255,6 +282,13 @@ export default function Register() {
     if (!form.address.trim()) { toast.error('Please enter Full Street Address'); return; }
     if (!form.sport) { toast.error('Please select a Sport'); return; }
     
+    // Dynamic Sub-Category Options Validation Engine Integration
+    const conditionalOptions = getSubSportsOptions(form.sport, form.gender);
+    if (conditionalOptions.length > 0 && !form.subSport) {
+      toast.error('Please select your specific Event or Weight Division category');
+      return;
+    }
+
     // Document Upload Verifications
     if (!urls.entryFormUrl) { toast.error('Validation failure: Please upload the Entry Form (under 300KB)'); return; }
     if (!urls.sarpanchPerformaUrl) { toast.error('Validation failure: Please upload the Sarpanch Performa (under 300KB)'); return; }
@@ -280,6 +314,7 @@ export default function Register() {
         pincode: form.pincode,
         address: form.address,
         sport: form.sport,
+        subSport: form.subSport || 'N/A', // Safely logging data directly to database layer infrastructure
         entryFormUrl: urls.entryFormUrl,
         sarpanchPerformaUrl: urls.sarpanchPerformaUrl,
         govIdUrl: urls.govIdUrl,
@@ -295,7 +330,7 @@ export default function Register() {
       setForm({
         studentName: '', fatherName: '', dateOfBirth: '', gender: '',
         email: '', phone: '', schoolName: '', state: 'Haryana', district: 'Nuh (Mewat)',
-        block: '', village: '', pincode: '', address: '', sport: '',
+        block: '', village: '', pincode: '', address: '', sport: '', subSport: '',
       });
       setUrls({ entryFormUrl: '', sarpanchPerformaUrl: '', govIdUrl: '' });
       setManualBlock(false);
@@ -390,7 +425,7 @@ export default function Register() {
                 <label className="text-slate-700 text-xs font-semibold mb-1 block">Gender *</label>
                 <select
                   value={form.gender}
-                  onChange={(e) => setForm({ ...form, gender: e.target.value })}
+                  onChange={(e) => setForm({ ...form, gender: e.target.value, subSport: '' })}
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
                   required
                 >
@@ -649,7 +684,7 @@ export default function Register() {
             </div>
           </div>
 
-          {/* Section 4:  & Sport Details */}
+          {/* Section 4: School & Sport Details */}
           <div>
             <h3 className="text-slate-900 font-bold text-base mb-4 flex items-center gap-2 border-b border-slate-100 pb-2">
               <School className="w-4 h-4 text-[#f37022]" />
@@ -671,7 +706,7 @@ export default function Register() {
                 <label className="text-slate-700 text-xs font-semibold mb-1 block">Select Sport *</label>
                 <select
                   value={form.sport}
-                  onChange={(e) => setForm({ ...form, sport: e.target.value })}
+                  onChange={(e) => setForm({ ...form, sport: e.target.value, subSport: '' })}
                   className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
                   required
                 >
@@ -681,6 +716,30 @@ export default function Register() {
                   ))}
                 </select>
               </div>
+
+              {/* Dynamic Sub-Category Input UI Component Block Injection */}
+              {['athletics', 'boxing', 'judo', 'weightlifting'].includes(form.sport.toLowerCase()) && (
+                <div className="sm:col-span-2">
+                  <label className="text-slate-700 text-xs font-semibold mb-1 block">Select Event / Weight Division *</label>
+                  {((form.sport === 'judo' || form.sport === 'weightlifting') && !form.gender) ? (
+                    <div className="w-full bg-orange-50 text-orange-700 border border-orange-200 rounded-lg px-3.5 py-2 text-xs font-medium">
+                      ⚠️ Please select your Gender under "Personal Details" to unlock corresponding divisions.
+                    </div>
+                  ) : (
+                    <select
+                      value={form.subSport}
+                      onChange={(e) => setForm({ ...form, subSport: e.target.value })}
+                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
+                      required
+                    >
+                      <option value="">Select Category/Division</option>
+                      {getSubSportsOptions(form.sport, form.gender).map((option) => (
+                        <option key={option} value={option}>{option}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
