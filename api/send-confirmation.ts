@@ -1,10 +1,9 @@
 import { Resend } from 'resend';
 
-// Resend dashboard se free key lekar yahan daalein ya Vercel Environment Variables me set karein
-const resend = new Resend(process.env.RESEND_API_KEY || 're_your_free_api_key_here');
+// 1. Resend dashboard se mili hui asli key (jo re_ se shuru hoti hai) yahan daalein
+const resend = new Resend('re_2Gab3kqx_6Uv55S7hPN9EDXYBP8Hxiv3o');
 
 export default async function handler(req: any, res: any) {
-  // Sirf POST requests allow karne ke liye
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -16,9 +15,10 @@ export default async function handler(req: any, res: any) {
       return res.status(400).json({ error: 'Email is required' });
     }
 
+    // 2. Sahi method emails.send hai na ki apiKeys.remove
     const { data, error } = await resend.emails.send({
-      from: 'Khelo Mewat <onboarding@resend.dev>', 
-      to: [email],
+      from: 'Khelo Mewat <onboarding@resend.dev>', // Jab tak domain verify na ho, ise onboarding@resend.dev hi rehne dein
+      to: [email], // Testing ke waqt yahan wahi email daalna jisse Resend account banaya hai
       subject: '🏆 Registration Confirmed - Khelo Mewat 2.0',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden;">
@@ -27,18 +27,13 @@ export default async function handler(req: any, res: any) {
           </div>
           <div style="padding: 24px; background-color: #FFFFFF;">
             <p style="font-size: 16px; color: #0F172A; margin-top: 0;">Dear <strong>${studentName}</strong>,</p>
-            <p style="font-size: 14px; color: #475569; line-height: 1.5;">Your registration application for the upcoming tournament has been securely logged into our system infrastructure.</p>
+            <p style="font-size: 14px; color: #475569; line-height: 1.5;">Your registration application for the upcoming tournament has been securely logged.</p>
             
             <div style="background-color: #F8FAFC; border: 1px solid #E2E8F0; padding: 16px; border-radius: 8px; margin: 20px 0;">
-              <h3 style="margin-top: 0; color: #F37022; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em;">Your Enrolment Metrics</h3>
               <p style="margin: 6px 0; font-size: 13px;"><strong>Tracking UID:</strong> <span style="font-family: monospace; color: #F37022; font-weight: bold;">${id}</span></p>
-              <p style="margin: 6px 0; font-size: 13px;"><strong>Selected Sport:</strong> ${sport.toUpperCase()}</p>
-              <p style="margin: 6px 0; font-size: 13px;"><strong>Event / Division:</strong> ${subSport}</p>
+              <p style="margin: 6px 0; font-size: 13px;"><strong>Sport Discipline:</strong> ${sport.toUpperCase()}</p>
+              <p style="margin: 6px 0; font-size: 13px;"><strong>Division Category:</strong> ${subSport}</p>
             </div>
-            <p style="font-size: 12px; color: #64748B;">Aap is Tracking UID ka use karke website par apna status live verify kar sakte hain.</p>
-          </div>
-          <div style="background-color: #F8FAFC; padding: 12px; text-align: center; border-top: 1px solid #E2E8F0; font-size: 10px; color: #94A3B8;">
-            Official Automated Gateway Dispatch • khelomewat.in
           </div>
         </div>
       `,
