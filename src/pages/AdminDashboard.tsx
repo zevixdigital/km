@@ -116,12 +116,19 @@ export default function AdminDashboard() {
 
   const dashboardRef = useRef<HTMLDivElement>(null);
 
-  // Fail-Proof Binary Blob Excel Export Pipeline
+  // Corporate Styled Structurally Formatted Excel/CSV Ledger Export Pipeline Engine
   const exportToExcel = (dataList: Registration[]) => {
     if (dataList.length === 0) {
       toast.error("No dataset available to generate sheet.");
       return;
     }
+
+    const reportTitleMetadata = [
+      ["KHELO MEWAT OFFICIAL TOURNAMENT REGISTRATION LEDGER MASTER SUMMARY REPORT"],
+      ["Generated Datetime:", new Date().toLocaleString('en-IN'), "Total Matching Records Row:", dataList.length],
+      ["Portal Verified Context Authority:", "khelomewat.in"],
+      [] // Blank Spacer Element Block Row Strategy
+    ];
 
     const headers = [
       "Registration ID", "Student Name", "Father Name", "Date of Birth", 
@@ -130,7 +137,7 @@ export default function AdminDashboard() {
       "Sport Category", "Event / Weight Division", "Submission Date", "Application Status"
     ];
 
-    const rows = dataList.map(r => [
+    const dataRows = dataList.map(r => [
       `"${r.id}"`,
       `"${(r.studentName || '').replace(/"/g, '""')}"`,
       `"${(r.fatherName || '').replace(/"/g, '""')}"`,
@@ -149,87 +156,312 @@ export default function AdminDashboard() {
       `"${(r.status || '').toUpperCase()}"`
     ]);
 
-    const csvContent = "\uFEFF" + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const blobUrl = URL.createObjectURL(blob);
+    const finalCsvStringArray = [
+      ...reportTitleMetadata.map(row => row.join(",")),
+      headers.join(","),
+      ...dataRows.map(row => row.join(","))
+    ].join("\n");
+
+    const csvBlobObject = new Blob(["\uFEFF" + finalCsvStringArray], { type: 'text/csv;charset=utf-8;' });
+    const dynamicBlobUrlReference = URL.createObjectURL(csvBlobObject);
     
     const downloadAnchor = document.createElement("a");
-    downloadAnchor.setAttribute("href", blobUrl);
-    downloadAnchor.setAttribute("download", `Sports_Registrations_Report_${new Date().toISOString().slice(0, 10)}.csv`);
+    downloadAnchor.setAttribute("href", dynamicBlobUrlReference);
+    downloadAnchor.setAttribute("download", `KheloMewat_Master_Ledger_${new Date().toISOString().slice(0, 10)}.csv`);
     document.body.appendChild(downloadAnchor);
     downloadAnchor.click();
     document.body.removeChild(downloadAnchor);
-    URL.revokeObjectURL(blobUrl);
-    toast.success(`Excel ledger created successfully for ${dataList.length} students!`);
+    URL.revokeObjectURL(dynamicBlobUrlReference);
+    
+    toast.success(`Professional Excel formatted log successfully created for ${dataList.length} athletes!`);
   };
 
-  // Direct Execution Print Document Engine 
+  // High-End Anti-Forgery Single Page Printing System Layout Injection Engine
   const exportIndividualPDF = (reg: Registration) => {
     const windowContext = window.open('', '_blank');
     if (!windowContext) {
-      toast.error("Popup window display blocked by browser settings!");
+      toast.error("Popup window display blocked by browser security controls!");
       return;
     }
 
     windowContext.document.write(`
       <html>
         <head>
-          <title>Registration_${reg.studentName.replace(/\s+/g, '_')}</title>
+          <title>Enrolment_Receipt_${reg.studentName.replace(/\s+/g, '_')}</title>
           <style>
-            body { font-family: Arial, sans-serif; color: #0F172A; padding: 40px; line-height: 1.5; }
-            .header { border-bottom: 3px solid #F37022; padding-bottom: 20px; margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
-            .title { font-size: 24px; font-weight: bold; color: #0A1628; margin: 0; text-transform: uppercase; }
-            .badge { padding: 6px 14px; font-size: 12px; font-weight: bold; text-transform: uppercase; border-radius: 20px; border: 1px solid #CBD5E1; }
-            .approved { background-color: #DCFCE7; color: #166534; border-color: #BBF7D0; }
-            .pending { background-color: #FEF3C7; color: #92400E; border-color: #FDE68A; }
-            .rejected { background-color: #FEE2E2; color: #991B1B; border-color: #FCA5A5; }
-            .section { font-size: 14px; font-weight: bold; color: #F37022; text-transform: uppercase; margin: 25px 0 10px 0; border-bottom: 1px solid #E2E8F0; padding-bottom: 5px; }
-            .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-            .card { background-color: #F8FAFC; border: 1px solid #F1F5F9; padding: 12px; border-radius: 6px; }
-            .full { grid-column: span 2; }
-            .label { font-size: 10px; font-weight: bold; color: #64748B; text-transform: uppercase; margin-bottom: 2px; }
-            .value { font-size: 13px; font-weight: 600; }
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+            
+            @page {
+              size: A4 portrait;
+              margin: 12mm;
+            }
+            
+            body { 
+              font-family: 'Inter', sans-serif; 
+              color: #0F172A; 
+              background-color: #FFFFFF; 
+              padding: 0; 
+              margin: 0; 
+              line-height: 1.4;
+              font-size: 11px;
+              position: relative;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            
+            /* High Defense Anti-Forgery Diagonal Continuous Background Pattern Watermark */
+            .watermark-overlay {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              z-index: 0;
+              pointer-events: none;
+              display: flex;
+              flex-wrap: wrap;
+              justify-content: center;
+              align-items: center;
+              opacity: 0.04;
+              transform: rotate(-32deg) scale(1.1);
+            }
+            
+            .watermark-text {
+              font-size: 42px;
+              font-weight: 800;
+              color: #0A1628;
+              letter-spacing: 0.1em;
+              margin: 80px;
+              white-space: nowrap;
+            }
+            
+            .container-wrapper {
+              position: relative;
+              z-index: 10;
+              border: 1px solid #E2E8F0;
+              padding: 24px;
+              border-radius: 12px;
+              max-height: 275mm; /* Hard bounding window metric mapping parameter safeguard */
+              box-sizing: border-box;
+            }
+            
+            .header-layout-table { 
+              width: 100%; 
+              border-collapse: collapse; 
+              border-bottom: 2px solid #F37022; 
+              padding-bottom: 14px; 
+              margin-bottom: 20px; 
+            }
+            
+            .brand-logo-img {
+              height: 52px;
+              width: auto;
+              object-fit: contain;
+            }
+            
+            .title-header-block {
+              text-align: right;
+            }
+            
+            .main-app-title { 
+              font-size: 20px; 
+              font-weight: 800; 
+              color: #0A1628; 
+              margin: 0; 
+              letter-spacing: -0.02em; 
+              text-transform: uppercase; 
+            }
+            
+            .system-token-id { 
+              margin: 4px 0 0 0; 
+              font-size: 10px; 
+              font-family: monospace; 
+              color: #64748B; 
+              font-weight: 600;
+            }
+            
+            .status-badge-capsule { 
+              display: inline-block;
+              padding: 4px 12px; 
+              font-size: 10px; 
+              font-weight: 700; 
+              text-transform: uppercase; 
+              border-radius: 6px; 
+              border: 1px solid #CBD5E1; 
+              margin-top: 6px;
+            }
+            
+            .approved { background-color: #DCFCE7 !important; color: #166534 !important; border-color: #BBF7D0; }
+            .pending { background-color: #FEF3C7 !important; color: #92400E !important; border-color: #FDE68A; }
+            .rejected { background-color: #FEE2E2 !important; color: #991B1B !important; border-color: #FCA5A5; }
+            
+            .section-row-header { 
+              font-size: 11px; 
+              font-weight: 800; 
+              color: #F37022; 
+              text-transform: uppercase; 
+              letter-spacing: 0.05em; 
+              margin: 16px 0 8px 0; 
+              border-bottom: 1px solid #E2E8F0; 
+              padding-bottom: 4px; 
+            }
+            
+            .data-grid-layout { 
+              display: grid; 
+              grid-template-columns: repeat(3, minmax(0, 1fr)); 
+              gap: 10px; 
+            }
+            
+            .card-info-box { 
+              background-color: #F8FAFC !important; 
+              border: 1px solid #F1F5F9; 
+              padding: 8px 12px; 
+              border-radius: 6px; 
+            }
+            
+            .col-span-2 { grid-column: span 2; }
+            .col-span-3 { grid-column: span 3; }
+            
+            .meta-label-tag { 
+              font-size: 9px; 
+              font-weight: 700; 
+              color: #64748B; 
+              text-transform: uppercase; 
+              letter-spacing: 0.02em;
+              margin-bottom: 2px; 
+            }
+            
+            .meta-value-text { 
+              font-size: 12px; 
+              font-weight: 600; 
+              color: #1E293B;
+            }
+            
+            .special-sport-value {
+              color: #F37022;
+              font-weight: 700;
+            }
+            
+            /* Official Dynamic Forgery Shield Seal Graphic Design Placement */
+            .official-anti-fake-seal-footer {
+              margin-top: 25px;
+              padding-top: 14px;
+              border-top: 1px dashed #E2E8F0;
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+            }
+            
+            .security-verification-seal-badge {
+              border: 2px dashed #F37022;
+              padding: 8px 14px;
+              border-radius: 8px;
+              background-color: #FFF7ED !important;
+              max-width: 320px;
+            }
+            
+            .seal-bold-claims-text {
+              font-size: 10px;
+              font-weight: 800;
+              color: #0A1628;
+              margin: 0;
+              text-transform: uppercase;
+              letter-spacing: 0.02em;
+            }
+            
+            .seal-subtext-domain {
+              font-size: 9px;
+              color: #64748B;
+              margin: 2px 0 0 0;
+              font-family: monospace;
+            }
+            
+            .footer-disclaimer-note {
+              text-align: right;
+              font-size: 9px;
+              color: #94A3B8;
+              font-weight: 500;
+            }
+            
+            @media print {
+              html, body {
+                height: 99%;
+                overflow: hidden;
+              }
+              .container-wrapper {
+                border: none;
+                padding: 0;
+              }
+            }
           </style>
         </head>
         <body>
-          <div class="header">
-            <div>
-              <h1 class="title">Student Registration Report</h1>
-              <p style="margin:4px 0 0 0; font-size:12px; color:#64748B;">ID: ${reg.id}</p>
+          
+          <!-- Continuous Grid Array Background Watermark Infrastructure -->
+          <div class="watermark-overlay">
+            <div class="watermark-text">KHELO MEWAT</div>
+            <div class="watermark-text">khelomewat.in</div>
+            <div class="watermark-text">KHELO MEWAT</div>
+            <div class="watermark-text">khelomewat.in</div>
+          </div>
+
+          <div class="container-wrapper">
+            <table class="header-layout-table">
+              <tr>
+                <td>
+                  <!-- Fallback gracefully loops standard route path mapping parameters safely -->
+                  <img src="/images/logop.png" onerror="this.src='https://placehold.co/200x60?text=KHELO+MEWAT'" class="brand-logo-img" alt="Official Logo" />
+                </td>
+                <td class="title-header-block">
+                  <h1 class="main-app-title">Athlete Enrolment Card</h1>
+                  <p class="system-token-id">UID: ${reg.id}</p>
+                  <span class="status-badge-capsule ${reg.status}">${reg.status}</span>
+                </td>
+              </tr>
+            </table>
+
+            <div class="section-row-header">Personal Bio Details</div>
+            <div class="data-grid-layout">
+              <div class="card-info-box"><div class="meta-label-tag">Player Name</div><div class="meta-value-text">${reg.studentName}</div></div>
+              <div class="card-info-box"><div class="meta-label-tag">Father's Name</div><div class="meta-value-text">${reg.fatherName}</div></div>
+              <div class="card-info-box"><div class="meta-label-tag">Date of Birth</div><div class="meta-value-text">${reg.dateOfBirth}</div></div>
+              <div class="card-info-box"><div class="meta-label-tag">Gender Identity</div><div class="meta-value-text" style="text-transform:capitalize;">${reg.gender}</div></div>
+              <div class="card-info-box"><div class="meta-label-tag">Mobile Communication</div><div class="meta-value-text">+91 ${reg.phone}</div></div>
+              <div class="card-info-box"><div class="meta-label-tag">Registered Email</div><div class="meta-value-text" style="font-size:11px;">${reg.email}</div></div>
             </div>
-            <span class="badge ${reg.status}">${reg.status}</span>
+
+            <div class="section-row-header">Academic Institutional & Demographics Map</div>
+            <div class="data-grid-layout">
+              <div class="card-info-box col-span-3"><div class="meta-label-tag">Allocated School Name</div><div class="meta-value-text">${reg.schoolName}</div></div>
+              <div class="card-info-box"><div class="meta-label-tag">Block / Tehsil</div><div class="meta-value-text">${reg.block}</div></div>
+              <div class="card-info-box"><div class="meta-label-tag">Village / Area Location</div><div class="meta-value-text">${reg.village}</div></div>
+              <div class="card-info-box"><div class="meta-label-tag">Pincode</div><div class="meta-value-text">${reg.pincode}</div></div>
+              <div class="card-info-box col-span-3"><div class="meta-label-tag">Full Structural Street Address</div><div class="meta-value-text">${reg.address}, ${reg.district}, ${reg.state}</div></div>
+            </div>
+
+            <div class="section-row-header">Sports Competitive Profiling</div>
+            <div class="data-grid-layout">
+              <div class="card-info-box col-span-2"><div class="meta-label-tag">Main Sports Category Discipline</div><div class="meta-value-text special-sport-value" style="text-transform:uppercase;">${reg.sport}</div></div>
+              <div class="card-info-box"><div class="meta-label-tag">Dynamic Event / Weight Division</div><div class="meta-value-text">${reg.subSport || 'N/A'}</div></div>
+            </div>
+
+            <!-- Absolute Official Anti-Fraud Seal Verification Segment Block -->
+            <div class="official-anti-fake-seal-footer">
+              <div class="security-verification-seal-badge">
+                <p class="seal-bold-claims-text">🛡️ SECURE VERIFIED PROFILE SYSTEM SEAL</p>
+                <p class="seal-subtext-domain">Digital Gateway Authority Check • khelomewat.in</p>
+              </div>
+              <div class="footer-disclaimer-note">
+                <p style="margin:0; font-weight:700; color:#475569;">Logged System Reference Payload</p>
+                <p style="margin:2px 0 0 0; font-family:monospace; font-size:8px;">TS: ${new Date(reg.submittedAt).toLocaleString('en-IN')}</p>
+              </div>
+            </div>
           </div>
-          <div class="section">Personal Details</div>
-          <div class="grid">
-            <div class="card"><div class="label">Player Name</div><div class="value">${reg.studentName}</div></div>
-            <div class="card"><div class="label">Father's Name</div><div class="value">${reg.fatherName}</div></div>
-            <div class="card"><div class="label">Date of Birth</div><div class="value">${reg.dateOfBirth}</div></div>
-            <div class="card"><div class="label">Gender</div><div class="value" style="text-transform:capitalize;">${reg.gender}</div></div>
-            <div class="card"><div class="label">Email Address</div><div class="value">${reg.email}</div></div>
-            <div class="card"><div class="label">Mobile Number</div><div class="value">${reg.phone}</div></div>
-          </div>
-          <div class="section">Address & School Details</div>
-          <div class="grid">
-            <div class="card full"><div class="label">School Name</div><div class="value">${reg.schoolName}</div></div>
-            <div class="card"><div class="label">Block / Tehsil</div><div class="value">${reg.block}</div></div>
-            <div class="card"><div class="label">Village / Area</div><div class="value">${reg.village}</div></div>
-            <div class="card"><div class="label">District & State</div><div class="value">${reg.district}, ${reg.state}</div></div>
-            <div class="card"><div class="label">Pincode</div><div class="value">${reg.pincode}</div></div>
-            <div class="card full"><div class="label">Full Street Address</div><div class="value">${reg.address}</div></div>
-          </div>
-          <div class="section">Sports Discipline</div>
-          <div class="grid">
-            <div class="card"><div class="label">Selected Sport</div><div class="value" style="text-transform:uppercase; color:#F37022;">${reg.sport}</div></div>
-            <div class="card"><div class="label">Event / Weight Division</div><div class="value">${reg.subSport || 'N/A'}</div></div>
-          </div>
-          <p style="text-align:center; font-size:11px; color:#94A3B8; margin-top:50px; border-top:1px solid #E2E8F0; padding-top:15px;">
-            Official System Generated Document Record Payload
-          </p>
+
           <script>
-            setTimeout(() => {
-              window.print();
-              window.close();
-            }, 500);
+            // Execution sequence handles DOM mapping parameters perfectly
+            window.print();
+            setTimeout(() => { window.close(); }, 600);
           </script>
         </body>
       </html>
@@ -613,7 +845,6 @@ export default function AdminDashboard() {
                             <span className="text-[#f37022] font-inter text-xs font-semibold capitalize block">
                               {reg.sport}
                             </span>
-                            {/* Subcategory display mapping with fixed fallback design logic */}
                             <span className="text-[10px] text-slate-400 font-inter block truncate max-w-[180px]">
                               {reg.subSport || 'N/A'}
                             </span>
@@ -1076,7 +1307,6 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
-                {/* Subcategory mapping explicitly loaded to prevent layout hiding anomalies */}
                 <div>
                   <label className="text-slate-500 text-xs font-inter">Event / Weight Division Category</label>
                   <p className="text-slate-800 font-inter text-sm font-medium">{viewRegistration.subSport || 'N/A'}</p>
