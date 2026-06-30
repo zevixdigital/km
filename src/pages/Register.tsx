@@ -296,11 +296,13 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // 1. Prevent submission if form is disabled globally
     if (!settings.formEnabled) {
       toast.error('Submission Blocked: The registration window is closed or paused by the administration.');
       return;
     }
 
+    // 2. Granular Field-by-Field Smart Validation
     if (!form.studentName.trim()) { toast.error('Please enter Student Name'); return; }
     if (!form.fatherName.trim()) { toast.error("Please enter Father's Name"); return; }
     if (!form.dateOfBirth) { toast.error('Please select Date of Birth'); return; }
@@ -383,24 +385,8 @@ export default function Register() {
   const filteredVillages = currentVillagesList.filter(v => v.toLowerCase().includes(villageSearch.toLowerCase()));
 
   return (
-    <main className="min-h-screen bg-[#F7F2E9] pt-24 pb-16 font-sans relative">
-      
-      {/* Top Professional Sticky Navigation Actions Bar */}
-      <div className="absolute top-6 left-0 right-0 max-w-[800px] mx-auto px-4 sm:px-6 w-full flex justify-between items-center z-30">
-        <div className="text-slate-800 font-bold tracking-tight text-sm uppercase select-none">
-          🏆 KHELO MEWAT 2.0
-        </div>
-        <button
-          type="button"
-          onClick={() => { setTrackingModalOpen(true); setTrackingLookupRecord(null); setTrackingSearchInput(''); }}
-          className="flex items-center gap-1.5 bg-[#0A1628] hover:bg-[#1E293B] text-white text-xs font-bold px-4 py-2 rounded-xl transition-all shadow-sm border border-slate-700"
-        >
-          <ShieldCheck className="w-4 h-4 text-[#f37022]" />
-          Verify Enrolment Status
-        </button>
-      </div>
-
-      <div ref={formRef} className="max-w-[800px] mx-auto px-4 sm:px-6 w-full mt-6">
+    <main className="min-h-screen bg-[#F7F2E9] pt-24 pb-16 font-sans">
+      <div ref={formRef} className="max-w-[800px] mx-auto px-4 sm:px-6 w-full">
         
         {/* Dynamic Professional Marquee Notification Banner */}
         <div className={`w-full text-white text-xs font-inter py-3 px-4 mb-8 rounded-xl shadow-sm overflow-hidden whitespace-nowrap relative flex items-center border ${
@@ -425,13 +411,24 @@ export default function Register() {
         {/* Dynamic Conditional Rendering Sequence */}
         {!isSubmitted ? (
           <>
-            <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-2">
-                Student Registration Form
-              </h1>
-              <p className="text-slate-600 text-sm">
-                Please fill out the form carefully with valid information.
-              </p>
+            {/* Form Heading & Verification Button Inline Row Layout (No More Overlapping!) */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 border-b border-slate-200/60 pb-5">
+              <div className="text-center sm:text-left">
+                <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-1">
+                  Student Registration Form
+                </h1>
+                <p className="text-slate-600 text-sm">
+                  Please fill out the form carefully with valid information.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setTrackingModalOpen(true); setTrackingLookupRecord(null); setTrackingSearchInput(''); }}
+                className="flex items-center gap-1.5 bg-[#0A1628] hover:bg-[#1E293B] text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all shadow-sm border border-slate-700 shrink-0 select-none hover:scale-[1.02]"
+              >
+                <ShieldCheck className="w-4 h-4 text-[#f37022]" />
+                Verify Enrolment Status
+              </button>
             </div>
 
             <form onSubmit={handleSubmit} className="bg-white border border-slate-200 rounded-xl p-6 sm:p-8 space-y-8 shadow-sm">
@@ -718,7 +715,7 @@ export default function Register() {
                         className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
                         placeholder="Enter 6-digit pincode"
                         required
-                      />
+                  />
                     </div>
                   </div>
 
@@ -821,209 +818,208 @@ export default function Register() {
                         <span className="text-[#f37022] text-xs font-bold mt-1">Upload File</span>
                       )}
                     </label>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-colors hover:border-slate-300">
+                    <label className="flex flex-col items-center gap-2 cursor-pointer">
+                      <FileText className="w-6 h-6 text-[#f37022]" />
+                      <span className="text-slate-800 text-xs font-semibold text-center">School Management * <br /> Sarpanch Performa *</span>
+                      <p className="text-[10px] text-slate-400 text-center">PDF, JPG, JPEG (Max 300KB)</p>
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg"
+                        onChange={(e) => handleFileChange('sarpanchPerforma', e.target.files?.[0] || null)}
+                        className="hidden"
+                      />
+                      {uploadProgress.sarpanchPerforma ? (
+                        <Loader2 className="w-4 h-4 text-[#f37022] animate-spin mt-1" />
+                      ) : urls.sarpanchPerformaUrl ? (
+                        <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
+                      ) : (
+                        <span className="text-[#f37022] text-xs font-bold mt-1">Upload File</span>
+                      )}
+                    </label>
+                  </div>
+
+                  <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-colors hover:border-slate-300">
+                    <label className="flex flex-col items-center gap-2 cursor-pointer">
+                      <CreditCard className="w-6 h-6 text-[#f37022]" />
+                      <span className="text-slate-800 text-xs font-semibold text-center">Government ID *</span>
+                      <p className="text-[10px] text-slate-400 text-center">Aadhar, Voter or PAN Card</p>
+                      <input
+                        type="file"
+                        accept=".pdf,.jpg,.jpeg,.png"
+                        onChange={(e) => handleFileChange('govId', e.target.files?.[0] || null)}
+                        className="hidden"
+                      />
+                      {uploadProgress.govId ? (
+                        <Loader2 className="w-4 h-4 text-[#f37022] animate-spin mt-1" />
+                      ) : urls.govIdUrl ? (
+                        <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
+                      ) : (
+                        <span className="text-[#f37022] text-xs font-bold mt-1">Upload ID</span>
+                      )}
+                    </label>
+                  </div>
+
+                </div>
               </div>
 
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-colors hover:border-slate-300">
-                <label className="flex flex-col items-center gap-2 cursor-pointer">
-                  <FileText className="w-6 h-6 text-[#f37022]" />
-                  <span className="text-slate-800 text-xs font-semibold text-center">School Management * <br /> Sarpanch Performa *</span>
-                  <p className="text-[10px] text-slate-400 text-center">PDF, JPG, JPEG (Max 300KB)</p>
-                  <input
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg"
-                    onChange={(e) => handleFileChange('sarpanchPerforma', e.target.files?.[0] || null)}
-                    className="hidden"
-                  />
-                  {uploadProgress.sarpanchPerforma ? (
-                    <Loader2 className="w-4 h-4 text-[#f37022] animate-spin mt-1" />
-                  ) : urls.sarpanchPerformaUrl ? (
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
-                  ) : (
-                    <span className="text-[#f37022] text-xs font-bold mt-1">Upload File</span>
-                  )}
-                </label>
-              </div>
-
-              <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 transition-colors hover:border-slate-300">
-                <label className="flex flex-col items-center gap-2 cursor-pointer">
-                  <CreditCard className="w-6 h-6 text-[#f37022]" />
-                  <span className="text-slate-800 text-xs font-semibold text-center">Government ID *</span>
-                  <p className="text-[10px] text-slate-400 text-center">Aadhar, Voter or PAN Card</p>
-                  <input
-                    type="file"
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    onChange={(e) => handleFileChange('govId', e.target.files?.[0] || null)}
-                    className="hidden"
-                  />
-                  {uploadProgress.govId ? (
-                    <Loader2 className="w-4 h-4 text-[#f37022] animate-spin mt-1" />
-                  ) : urls.govIdUrl ? (
-                    <CheckCircle className="w-4 h-4 text-green-500 mt-1" />
-                  ) : (
-                    <span className="text-[#f37022] text-xs font-bold mt-1">Upload ID</span>
-                  )}
-                </label>
-              </div>
-
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading || !settings.formEnabled}
-            className={`w-full text-white py-3 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 mt-4 ${
-              settings.formEnabled 
-                ? 'bg-[#f37022] hover:bg-[#e26212] disabled:opacity-50' 
-                : 'bg-slate-400 cursor-not-allowed'
-            }`}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Submitting Registration...
-              </>
-            ) : !settings.formEnabled ? (
-              'Form Submission Paused'
-            ) : (
-              'Submit Registration'
-            )}
-          </button>
-        </form>
-      </>
-    ) : (
-      <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-lg space-y-6 animate-fadeIn">
-        <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto border border-green-200">
-          <PartyPopper className="w-8 h-8 text-green-600" />
-        </div>
-        <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Registration Submitted Successfully!</h2>
-          <p className="text-slate-500 text-sm max-w-md mx-auto">
-            Your enrolment details have been securely logged into the database engine index system for administrative verification.
-          </p>
-        </div>
-        
-        <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 max-w-md mx-auto text-left space-y-2.5">
-          <div className="text-xs text-slate-400 font-mono tracking-wider uppercase border-b border-slate-200 pb-1.5">
-            Registration Receipt Metadata
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Player Name:</span>
-            <span className="font-semibold text-slate-800">{form.studentName || 'Verified Athlete'}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Tracking Reference UID:</span>
-            <span className="font-mono text-xs font-bold text-[#f37022] bg-orange-50 px-2 py-0.5 rounded border border-orange-100">
-              {generatedId}
-            </span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-slate-500">Sport Discipline:</span>
-            <span className="font-semibold text-slate-800 capitalize">{form.sport}</span>
-          </div>
-          {form.subSport && (
-            <div className="flex justify-between text-sm">
-              <span className="text-slate-500">Category / Event Division:</span>
-              <span className="font-semibold text-slate-700">{form.subSport}</span>
-            </div>
-          )}
-        </div>
-
-        <div className="pt-2">
-          <button
-            type="button"
-            onClick={resetRegistrationForm}
-            className="bg-[#f37022] hover:bg-[#e26212] text-white font-bold text-sm px-6 py-2.5 rounded-lg transition-colors shadow-sm"
-          >
-            Submit Another Registration
-          </button>
-        </div>
-      </div>
-    )}
-  </div>
-
-  {/* Realtime Anti-Forgery Status Tracking Verification Modal Drawer Layer */}
-  {trackingModalOpen && (
-    <div className="fixed inset-0 z-50 bg-[#0A1628]/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full shadow-2xl overflow-hidden p-6 relative animate-scaleIn">
-        
-        <div className="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
-          <div className="flex items-center gap-2">
-            <SearchCode className="w-5 h-5 text-[#f37022]" />
-            <h3 className="text-lg font-bold text-slate-900 tracking-tight">Verify Registration</h3>
-          </div>
-          <button
-            type="button"
-            onClick={() => setTrackingModalOpen(false)}
-            className="text-slate-400 hover:text-slate-600 transition-colors"
-          >
-            <XCircle className="w-5 h-5" />
-          </button>
-        </div>
-
-        <form onSubmit={executeStatusVerificationLookup} className="space-y-4">
-          <div>
-            <label className="text-slate-700 text-xs font-semibold mb-1 block">Enter Reference UID Token *</label>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder="Paste your unique ID here (e.g. -OwOu...)"
-                value={trackingSearchInput}
-                onChange={(e) => setTrackingSearchInput(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-10 py-2.5 text-sm text-slate-900 font-mono focus:border-[#f37022] focus:bg-white focus:outline-none"
-                required
-              />
               <button
                 type="submit"
-                disabled={trackingQueryRunning}
-                className="absolute right-2 top-1.5 p-1.5 bg-[#f37022] text-white rounded-lg hover:bg-[#e26212] transition-colors disabled:opacity-50"
+                disabled={loading || !settings.formEnabled}
+                className={`w-full text-white py-3 rounded-lg font-bold text-sm transition-colors flex items-center justify-center gap-2 mt-4 ${
+                  settings.formEnabled 
+                    ? 'bg-[#f37022] hover:bg-[#e26212] disabled:opacity-50' 
+                    : 'bg-slate-400 cursor-not-allowed'
+                }`}
               >
-                {trackingQueryRunning ? (
-                  <Loader2 className="w-4 h-4 animate-spin" />
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Submitting Registration...
+                  </>
+                ) : !settings.formEnabled ? (
+                  'Form Submission Paused'
                 ) : (
-                  <Search className="w-4 h-4" />
+                  'Submit Registration'
                 )}
+              </button>
+            </form>
+          </>
+        ) : (
+          <div className="bg-white border border-slate-200 rounded-2xl p-8 text-center shadow-lg space-y-6 animate-fadeIn">
+            <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto border border-green-200">
+              <PartyPopper className="w-8 h-8 text-green-600" />
+            </div>
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Registration Submitted Successfully!</h2>
+              <p className="text-slate-500 text-sm max-w-md mx-auto">
+                Your enrolment details have been securely logged into the database engine index system for administrative verification.
+              </p>
+            </div>
+            
+            <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 max-w-md mx-auto text-left space-y-2.5">
+              <div className="text-xs text-slate-400 font-mono tracking-wider uppercase border-b border-slate-200 pb-1.5">
+                Registration Receipt Metadata
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-500">Player Name:</span>
+                <span className="font-semibold text-slate-800">{form.studentName || 'Verified Athlete'}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-500">Tracking Reference UID:</span>
+                <span className="font-mono text-xs font-bold text-[#f37022] bg-orange-50 px-2 py-0.5 rounded border border-orange-100">
+                  {generatedId}
+                </span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-slate-500">Sport Discipline:</span>
+                <span className="font-semibold text-slate-800 capitalize">{form.sport}</span>
+              </div>
+              {form.subSport && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-500">Category / Event Division:</span>
+                  <span className="font-semibold text-slate-700">{form.subSport}</span>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={resetRegistrationForm}
+                className="bg-[#f37022] hover:bg-[#e26212] text-white font-bold text-sm px-6 py-2.5 rounded-lg transition-colors shadow-sm"
+              >
+                Submit Another Registration
               </button>
             </div>
           </div>
-        </form>
-
-        {/* Verification Result Feedback Cards Layout Panel */}
-        {trackingLookupRecord && trackingLookupRecord !== "not_found" && (
-          <div className="mt-5 border border-slate-100 bg-slate-50/80 rounded-xl p-4 space-y-3 animate-fadeIn">
-            <div className="flex items-center justify-between border-b border-slate-200 pb-2">
-              <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Live Status Result</span>
-              <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border ${
-                trackingLookupRecord.status === 'approved' ? 'bg-green-100 text-green-700 border-green-200' :
-                trackingLookupRecord.status === 'rejected' ? 'bg-red-100 text-red-700 border-red-200' :
-                'bg-amber-100 text-amber-700 border-amber-200'
-              }`}>
-                {trackingLookupRecord.status}
-              </span>
-            </div>
-            
-            <div className="space-y-2 text-sm text-slate-700">
-              <div className="flex justify-between"><span className="text-slate-400 text-xs">Athlete Name:</span><span className="font-semibold text-slate-900">{trackingLookupRecord.studentName}</span></div>
-              <div className="flex justify-between"><span className="text-slate-400 text-xs">School Context:</span><span className="font-medium text-slate-800 text-right max-w-[200px] truncate">{trackingLookupRecord.schoolName}</span></div>
-              <div className="flex justify-between"><span className="text-slate-400 text-xs">Discipline Sport:</span><span className="font-bold text-[#f37022] uppercase">{trackingLookupRecord.sport}</span></div>
-              <div className="flex justify-between"><span className="text-slate-400 text-xs">Division Category:</span><span className="font-semibold text-slate-800">{trackingLookupRecord.subSport || 'N/A'}</span></div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-200 text-[10px] text-center text-slate-400 font-medium">
-              Verified Authority Gateway Signature Record • khelomewat.in
-            </div>
-          </div>
         )}
-
-        {/* 404 Missing Payload Handle View */}
-        {trackingLookupRecord === "not_found" && (
-          <div className="mt-5 bg-red-50 border border-red-100 rounded-xl p-4 text-center text-red-700 text-xs font-semibold animate-fadeIn">
-            ⚠️ Invalid Reference Token: No matches discovered. Please confirm and retry your transaction tracking token.
-          </div>
-        )}
-
       </div>
-    </div>
-  )}
-</main>
-);
+
+      {/* Realtime Anti-Forgery Status Tracking Verification Modal Drawer Layer */}
+      {trackingModalOpen && (
+        <div className="fixed inset-0 z-50 bg-[#0A1628]/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-md w-full shadow-2xl overflow-hidden p-6 relative animate-scaleIn">
+            
+            <div className="flex items-center justify-between mb-5 border-b border-slate-100 pb-3">
+              <div className="flex items-center gap-2">
+                <SearchCode className="w-5 h-5 text-[#f37022]" />
+                <h3 className="text-lg font-bold text-slate-900 tracking-tight">Verify Registration</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTrackingModalOpen(false)}
+                className="text-slate-400 hover:text-slate-600 transition-colors"
+              >
+                <XCircle className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={executeStatusVerificationLookup} className="space-y-4">
+              <div>
+                <label className="text-slate-700 text-xs font-semibold mb-1 block">Enter Reference UID Token *</label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Paste your unique ID here (e.g. -OwOu...)"
+                    value={trackingSearchInput}
+                    onChange={(e) => setTrackingSearchInput(e.target.value)}
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-4 pr-10 py-2.5 text-sm text-slate-900 font-mono focus:border-[#f37022] focus:bg-white focus:outline-none"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    disabled={trackingQueryRunning}
+                    className="absolute right-2 top-1.5 p-1.5 bg-[#f37022] text-white rounded-lg hover:bg-[#e26212] transition-colors disabled:opacity-50"
+                  >
+                    {trackingQueryRunning ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Search className="w-4 h-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            {/* Verification Result Feedback Cards Layout Panel */}
+            {trackingLookupRecord && trackingLookupRecord !== "not_found" && (
+              <div className="mt-5 border border-slate-100 bg-slate-50/80 rounded-xl p-4 space-y-3 animate-fadeIn">
+                <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Live Status Result</span>
+                  <span className={`px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border ${
+                    trackingLookupRecord.status === 'approved' ? 'bg-green-100 text-green-700 border-green-200' :
+                    trackingLookupRecord.status === 'rejected' ? 'bg-red-100 text-red-700 border-red-200' :
+                    'bg-amber-100 text-amber-700 border-amber-200'
+                  }`}>
+                    {trackingLookupRecord.status}
+                  </span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-500">Player Name:</span>
+                  <span className="font-semibold text-slate-800">{trackingLookupRecord.studentName}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-500">Sport Category:</span>
+                  <span className="font-semibold text-slate-800 capitalize">{trackingLookupRecord.sport}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-slate-500">Division/Event:</span>
+                  <span className="font-semibold text-slate-700">{trackingLookupRecord.subSport || 'N/A'}</span>
+                </div>
+              </div>
+            )}
+
+            {trackingLookupRecord === "not_found" && (
+              <div className="mt-4 p-3 bg-red-50 text-red-700 border border-red-100 rounded-xl text-xs text-center font-medium">
+                ❌ ID galat hai ya data exist nahi karta. Kripya reference check karein.
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </main>
+  );
 }
