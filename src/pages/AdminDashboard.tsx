@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Users, Calendar, Settings, LogOut, Search,
   Filter, FileText, Trash2, CheckCircle, XCircle,
   PauseCircle, PlayCircle, AlertCircle, Loader2,
-  TrendingUp, UserCheck, Clock, BarChart3, Eye, CreditCard
+  TrendingUp, UserCheck, Clock, BarChart3, Eye, CreditCard, Download
 } from 'lucide-react';
 
 interface Registration {
@@ -28,6 +28,7 @@ interface Registration {
   pincode: string;
   address: string;
   sport: string;
+  subSport?: string; // Enhanced dynamic safety mapping tracking field integration
   entryFormUrl: string;       
   sarpanchPerformaUrl: string; 
   govIdUrl: string;            
@@ -119,6 +120,140 @@ export default function AdminDashboard() {
   const [tournaments, setTournaments] = useState<Tournament[]>([]);
 
   const dashboardRef = useRef<HTMLDivElement>(null);
+
+  // Excel Engine Export Data Pipeline
+  const exportToExcel = (dataList: Registration[]) => {
+    if (dataList.length === 0) {
+      toast.error("No dataset available to generate sheet matching this filter group.");
+      return;
+    }
+
+    const headers = [
+      "Registration ID", "Student Name", "Father Name", "Date of Birth", 
+      "Gender", "Email Address", "Mobile Phone", "School Name", 
+      "Block/Tehsil", "Village/Area", "Pincode", "Street Address", 
+      "Sport Category", "Event Category / Weight Division", "Submission Date", "Application Status"
+    ];
+
+    const rows = dataList.map(r => [
+      `"${r.id}"`,
+      `"${r.studentName.replace(/"/g, '""')}"`,
+      `"${r.fatherName.replace(/"/g, '""')}"`,
+      `"${r.dateOfBirth}"`,
+      `"${r.gender}"`,
+      `"${r.email}"`,
+      `"${r.phone}"`,
+      `"${r.schoolName.replace(/"/g, '""')}"`,
+      `"${r.block.replace(/"/g, '""')}"`,
+      `"${r.village.replace(/"/g, '""')}"`,
+      `"${r.pincode}"`,
+      `"${r.address.replace(/"/g, '""')}"`,
+      `"${r.sport.toUpperCase()}"`,
+      `"${r.subSport || 'N/A'}"`,
+      `"${new Date(r.submittedAt).toLocaleDateString('en-IN')}"`,
+      `"${r.status.toUpperCase()}"`
+    ]);
+
+    const csvContent = "data:text/csv;charset=utf-8,\uFEFF" 
+      + [headers.join(","), ...rows.map(e => e.join(","))].join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.setAttribute("href", encodedUri);
+    downloadAnchor.setAttribute("download", `Sports_Registrations_Report_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    toast.success(`Excel compatible ledger summary report generated for ${dataList.length} students successfully!`);
+  };
+
+  // Corporate Styled Dynamic Receipt/PDF Print Layout Pipeline Engine
+  const exportIndividualPDF = (reg: Registration) => {
+    const windowContext = window.open('', '_blank');
+    if (!windowContext) {
+      toast.error("Popup window display blocked by client side browser settings! Please grant permission.");
+      return;
+    }
+
+    windowContext.document.write(`
+      <html>
+        <head>
+          <title>Registration_Report_${reg.studentName.replace(/\s+/g, '_')}</title>
+          <style>
+            body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, Arial, sans-serif; color: #0F172A; background-color: #FFFFFF; padding: 45px; margin: 0; line-height: 1.5; }
+            .header-banner { border-bottom: 3px solid #F37022; padding-bottom: 24px; margin-bottom: 32px; display: flex; justify-content: space-between; align-items: flex-start; }
+            .company-title { font-size: 26px; font-weight: 800; color: #0A1628; margin: 0; letter-spacing: -0.025em; text-transform: uppercase; }
+            .subtitle { margin: 6px 0 0 0; font-size: 13px; color: #4B5563; font-weight: 500; }
+            .badge { display: inline-block; padding: 6px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; border-radius: 9999px; letter-spacing: 0.05em; }
+            .approved { background-color: #DCFCE7; color: #166534; border: 1px solid #BBF7D0; }
+            .pending { background-color: #FEF3C7; color: #92400E; border: 1px solid #FDE68A; }
+            .rejected { background-color: #FEE2E2; color: #991B1B; border: 1px solid #FCA5A5; }
+            .section-heading { font-size: 15px; font-weight: 700; color: #F37022; text-transform: uppercase; letter-spacing: 0.05em; margin: 28px 0 14px 0; border-bottom: 1px solid #E2E8F0; padding-bottom: 6px; }
+            .info-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+            .info-card { background-color: #F8FAFC; border: 1px solid #F1F5F9; padding: 14px 18px; border-radius: 8px; }
+            .info-card.span-2 { grid-column: span 2; }
+            .data-label { font-size: 10px; font-weight: 700; text-transform: uppercase; color: #64748B; letter-spacing: 0.05em; margin-bottom: 4px; }
+            .data-value { font-size: 14px; font-weight: 600; color: #1E293B; }
+            .sport-highlight { font-size: 16px; color: #F37022; font-weight: 700; }
+            .footer-signature-block { text-align: center; font-size: 11px; color: #94A3B8; border-top: 1px solid #E2E8F0; padding-top: 24px; margin-top: 60px; font-weight: 500; }
+            @media print {
+              body { padding: 20px; font-size: 12px; }
+              .info-card { background-color: #F8FAFC !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            }
+          </style>
+        </head>
+        <body>
+          <div class="header-banner">
+            <div>
+              <h1 class="company-title">Athlete Enrolment Profile Report</h1>
+              <p class="subtitle">System Database Record Reference ID Check Log • Generated: ${new Date().toLocaleString('en-IN')}</p>
+            </div>
+            <span class="badge ${reg.status}">${reg.status}</span>
+          </div>
+
+          <div class="section-heading">Personal Dossier Information</div>
+          <div class="info-grid">
+            <div class="info-card"><div class="data-label">Player Name</div><div class="data-value">${reg.studentName}</div></div>
+            <div class="info-card"><div class="data-label">Father's Identification Name</div><div class="data-value">${reg.fatherName}</div></div>
+            <div class="info-card"><div class="data-label">Date of Birth</div><div class="data-value">${reg.dateOfBirth}</div></div>
+            <div class="info-card"><div class="data-label">Gender Orientation</div><div class="data-value" style="text-transform: capitalize;">${reg.gender}</div></div>
+            <div class="info-card"><div class="data-label">Verified Email Address</div><div class="data-value">${reg.email}</div></div>
+            <div class="info-card"><div class="data-label">Mobile Communication Contact</div><div class="data-value">+91 ${reg.phone}</div></div>
+          </div>
+
+          <div class="section-heading">Academic Location & Structural Mapping</div>
+          <div class="info-grid">
+            <div class="info-card span-2"><div class="data-label">Allocated Institute / School Name</div><div class="data-value">${reg.schoolName}</div></div>
+            <div class="info-card"><div class="data-label">Tehsil Zone / Block</div><div class="data-value">${reg.block}</div></div>
+            <div class="info-card"><div class="data-label">Village Location Area</div><div class="data-value">${reg.village}</div></div>
+            <div class="info-card"><div class="data-label">District Jurisdiction</div><div class="data-value">${reg.district}</div></div>
+            <div class="info-card"><div class="data-label">Postal Pincode Code</div><div class="data-value">${reg.pincode}</div></div>
+            <div class="info-card span-2"><div class="data-label">Full Residential Mailing Address</div><div class="data-value">${reg.address}</div></div>
+          </div>
+
+          <div class="section-heading">Competitive Sports Categorization Data</div>
+          <div class="info-grid">
+            <div class="info-card"><div class="data-label">Selected Main Sport Discipline</div><div class="data-value sport-highlight" style="text-transform: uppercase;">${reg.sport}</div></div>
+            <div class="info-card"><div class="data-label">Dynamic Event Event / Weight Division Variant</div><div class="data-value font-semibold text-slate-800">${reg.subSport || 'N/A'}</div></div>
+          </div>
+
+          <div class="footer-signature-block">
+            This digital printout profile documentation remains a verified structural summary payload breakdown generated automatically via system records backend under token indexing target reference key string: ${reg.id}
+          </div>
+
+          <script>
+            window.onload = function() {
+              setTimeout(() => {
+                window.print();
+                window.close();
+              }, 350);
+            }
+          </script>
+        </body>
+      </html>
+    `);
+    windowContext.document.close();
+  };
 
   // Auto matching Cloudinary URLs case-insensitively
   useEffect(() => {
@@ -347,7 +482,7 @@ export default function AdminDashboard() {
           </div>
           <button
             onClick={logout}
-            className="flex items-center gap-2 text-slate-600 hover:text-red-500 transition-colors text-sm font-inter"
+            className="flex items-center gap-2 text-slate-600 hover:text-red-500 transition-colors text-sm font-inter w-fit"
           >
             <LogOut className="w-4 h-4" />
             Logout
@@ -376,7 +511,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-none">
           {[
             { id: 'registrations', label: 'Registrations', icon: LayoutDashboard },
             { id: 'tournaments', label: 'Tournament Management', icon: Calendar },
@@ -401,7 +536,7 @@ export default function AdminDashboard() {
         {/* Registrations Core Tab */}
         {activeTab === 'registrations' && (
           <div className="space-y-6">
-            <div className="bg-white border border-slate-200 rounded-xl p-4 lg:p-6">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 lg:p-6 shadow-sm">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
                   <label className="text-slate-500 text-xs font-inter mb-1.5 block">Search</label>
@@ -459,14 +594,29 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </div>
+
+              {/* Enhanced Professional Export Controls Row */}
+              <div className="mt-4 pt-4 border-t border-slate-100 flex flex-wrap gap-3 items-center justify-between">
+                <p className="text-xs text-slate-500 font-inter">
+                  Generate professional spreadsheet logs based on your live dashboard search query filters.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => exportToExcel(filtered)}
+                  className="flex items-center gap-2 bg-[#0A1628] hover:bg-[#1E293B] text-white px-4 py-2 rounded-lg font-inter text-xs font-bold shadow-sm transition-all w-full sm:w-auto justify-center"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#f37022]" />
+                  Download Excel List ({filtered.length} Records)
+                </button>
+              </div>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-slate-200">
-                      {['Student', 'School', 'Sport', 'Date', 'Status', 'Actions'].map((h) => (
+                    <tr className="border-b border-slate-200 bg-slate-50/50">
+                      {['Student Details', 'School Name', 'Category Discipline', 'Date Logged', 'Status state', 'Action Control'].map((h) => (
                         <th key={h} className="text-left px-4 py-3 text-[#f37022] font-inter text-xs font-semibold uppercase tracking-wider">
                           {h}
                         </th>
@@ -482,16 +632,21 @@ export default function AdminDashboard() {
                       </tr>
                     ) : (
                       displayedRegistrations.map((reg) => (
-                        <tr key={reg.id} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                        <tr key={reg.id} className="border-b border-slate-200 hover:bg-slate-50/80 transition-colors">
                           <td className="px-4 py-3">
                             <div className="text-slate-900 font-inter text-sm font-medium">{reg.studentName}</div>
                             <div className="text-slate-500 text-xs font-inter">{reg.email}</div>
                           </td>
                           <td className="px-4 py-3 text-slate-600 font-inter text-sm">{reg.schoolName}</td>
                           <td className="px-4 py-3">
-                            <span className="text-[#f37022] font-inter text-xs font-semibold capitalize">
+                            <span className="text-[#f37022] font-inter text-xs font-semibold capitalize block">
                               {reg.sport}
                             </span>
+                            {reg.subSport && (
+                              <span className="text-[10px] text-slate-400 font-inter block truncate max-w-[150px]">
+                                {reg.subSport}
+                              </span>
+                            )}
                           </td>
                           <td className="px-4 py-3 text-slate-500 font-inter text-xs">
                             {new Date(reg.submittedAt).toLocaleDateString('en-IN')}
@@ -516,6 +671,13 @@ export default function AdminDashboard() {
                                 title="View Details"
                               >
                                 <Eye className="w-3.5 h-3.5 text-[#f37022]" />
+                              </button>
+                              <button
+                                onClick={() => exportIndividualPDF(reg)}
+                                className="p-1.5 bg-slate-100 rounded-md hover:bg-blue-500/20 transition-colors"
+                                title="Download PDF Report"
+                              >
+                                <FileText className="w-3.5 h-3.5 text-blue-600" />
                               </button>
                               {reg.status === 'pending' && (
                                 <>
@@ -552,8 +714,8 @@ export default function AdminDashboard() {
               </div>
 
               {/* Lazy Loading Action Bar */}
-              <div className="px-4 py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="text-slate-500 text-xs font-inter order-2 sm:order-1">
+              <div className="px-4 py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/30">
+                <div className="text-slate-500 text-xs font-inter order-2 sm:order-1 text-center sm:text-left">
                   Showing {displayedRegistrations.length} of {filtered.length} matching registrations (Total: {registrations.length})
                 </div>
                 {filtered.length > visibleRecords && (
@@ -604,7 +766,6 @@ export default function AdminDashboard() {
                   </select>
                 </div>
 
-                {/* Added Tournament Start Date Form Field Input */}
                 <div>
                   <label className="text-slate-600 text-xs font-inter mb-1 block">Tournament Start Date *</label>
                   <input
@@ -853,16 +1014,16 @@ export default function AdminDashboard() {
 
       {/* Detailed Modal */}
       {viewRegistration && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-xl w-full my-8 shadow-2xl transition-all">
             <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
                 <h3 className="text-xl font-playfair font-bold text-[#f37022]">
                   Registration Details
                 </h3>
                 <button
                   onClick={() => setViewRegistration(null)}
-                  className="text-slate-400 hover:text-slate-700"
+                  className="text-slate-400 hover:text-slate-700 transition-colors"
                 >
                   <XCircle className="w-5 h-5" />
                 </button>
@@ -872,11 +1033,11 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-slate-500 text-xs font-inter">Student Name</label>
-                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.studentName}</p>
+                    <p className="text-slate-900 font-inter text-sm font-medium">{viewRegistration.studentName}</p>
                   </div>
                   <div>
                     <label className="text-slate-500 text-xs font-inter">Father&apos;s Name</label>
-                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.fatherName}</p>
+                    <p className="text-slate-900 font-inter text-sm font-medium">{viewRegistration.fatherName}</p>
                   </div>
                 </div>
 
@@ -894,7 +1055,7 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-slate-500 text-xs font-inter">Email</label>
-                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.email}</p>
+                    <p className="text-slate-900 font-inter text-sm break-all">{viewRegistration.email}</p>
                   </div>
                   <div>
                     <label className="text-slate-500 text-xs font-inter">Phone</label>
@@ -945,6 +1106,13 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
+                {viewRegistration.subSport && (
+                  <div>
+                    <label className="text-slate-500 text-xs font-inter">Event / Weight Division Category</label>
+                    <p className="text-slate-800 font-inter text-sm font-medium">{viewRegistration.subSport}</p>
+                  </div>
+                )}
+
                 <div>
                   <label className="text-slate-500 text-xs font-inter">Submitted On</label>
                   <p className="text-slate-900 font-inter text-sm">
@@ -952,7 +1120,7 @@ export default function AdminDashboard() {
                   </p>
                 </div>
 
-                <div className="flex flex-wrap gap-3 pt-2">
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
                   {viewRegistration.entryFormUrl && (
                     <a
                       href={viewRegistration.entryFormUrl}
@@ -972,7 +1140,7 @@ export default function AdminDashboard() {
                       className="flex items-center gap-1.5 bg-[#f37022]/10 border border-[#f37022]/30 text-[#f37022] px-3 py-1.5 rounded-lg text-xs font-inter hover:bg-[#f37022]/20 transition-colors"
                     >
                       <FileText className="w-3.5 h-3.5" />
-                      School Management <br /> Sarpanch Performa
+                      Sarpanch Performa
                     </a>
                   )}
                   {viewRegistration.govIdUrl && (
@@ -986,6 +1154,18 @@ export default function AdminDashboard() {
                       Government ID
                     </a>
                   )}
+                </div>
+
+                {/* Professional Modal Action Block Integration */}
+                <div className="pt-4 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => exportIndividualPDF(viewRegistration)}
+                    className="w-full flex items-center justify-center gap-2 bg-[#f37022] text-[#0A1628] font-bold py-2.5 rounded-xl font-inter text-xs shadow-sm hover:scale-[1.01] transition-transform"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Print / Download Professional PDF Report
+                  </button>
                 </div>
               </div>
             </div>
