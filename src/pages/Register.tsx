@@ -110,7 +110,7 @@ export default function Register() {
   const [isSubmitted, setIsSubmitted] = useState(false); 
   const [generatedId, setGeneratedId] = useState(''); 
 
-  // Realtime Active Status Lookup State Matrices
+  // Live Realtime Verification State Arrays
   const [trackingModalOpen, setTrackingModalOpen] = useState(false);
   const [trackingSearchInput, setTrackingSearchInput] = useState('');
   const [trackingLookupRecord, setTrackingLookupRecord] = useState<any | null>(null);
@@ -162,7 +162,7 @@ export default function Register() {
 
   const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/de3vcuioj/upload";
   const UPLOAD_PRESET = "PDF_Hai";
-  const MAX_FILE_SIZE = 300 * 1024; // 300KB Strict Size Limit
+  const MAX_FILE_SIZE = 300 * 1024; 
 
   // Helper Utility function to map strict conditional sub-sports categories mapping dynamically
   const getSubSportsOptions = (sport: string, gender: string): string[] => {
@@ -244,7 +244,6 @@ export default function Register() {
     return () => window.removeEventListener('click', closeDropdowns);
   }, []);
 
-  // Timezone Safe Indian Format Utility
   const formatIndianDate = (dateStr: string) => {
     if (!dateStr) return "N/A";
     const parts = dateStr.split("-");
@@ -255,7 +254,6 @@ export default function Register() {
     return isNaN(parsedDate.getTime()) ? dateStr : parsedDate.toLocaleDateString("en-IN");
   };
 
-  // Native File Upload Handler with Cloudinary Integration & Sizing Filters
   const handleFileChange = async (field: 'entryForm' | 'sarpanchPerforma' | 'govId', file: File | null) => {
     if (!file) return;
 
@@ -296,13 +294,11 @@ export default function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 1. Prevent submission if form is disabled globally
     if (!settings.formEnabled) {
       toast.error('Submission Blocked: The registration window is closed or paused by the administration.');
       return;
     }
 
-    // 2. Granular Field-by-Field Smart Validation
     if (!form.studentName.trim()) { toast.error('Please enter Student Name'); return; }
     if (!form.fatherName.trim()) { toast.error("Please enter Father's Name"); return; }
     if (!form.dateOfBirth) { toast.error('Please select Date of Birth'); return; }
@@ -358,6 +354,24 @@ export default function Register() {
 
       await set(registrationRef, schemaPayload);
       toast.success('Registration data submitted successfully into database infrastructure!');
+
+      // Isolated Non-Blocking Background Email Dispatch Engine
+      try {
+        fetch('/api/send-confirmation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: form.email,
+            studentName: form.studentName,
+            id: trackingKey,
+            sport: form.sport,
+            subSport: form.subSport || 'N/A'
+          })
+        });
+      } catch (emailErr) {
+        console.error("Background email execution failed silently:", emailErr);
+      }
+
       setIsSubmitted(true); 
     } catch (err: any) {
       console.error("Firebase database layer runtime mismatch:", err);
@@ -411,7 +425,7 @@ export default function Register() {
         {/* Dynamic Conditional Rendering Sequence */}
         {!isSubmitted ? (
           <>
-            {/* Form Heading & Verification Button Inline Row Layout (No More Overlapping!) */}
+            {/* Form Heading & Verification Button Inline Row Layout */}
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-8 border-b border-slate-200/60 pb-5">
               <div className="text-center sm:text-left">
                 <h1 className="text-3xl font-bold text-slate-900 tracking-tight mb-1">
@@ -715,7 +729,7 @@ export default function Register() {
                         className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-slate-900 text-sm focus:border-[#f37022] focus:bg-white focus:outline-none"
                         placeholder="Enter 6-digit pincode"
                         required
-                  />
+                      />
                     </div>
                   </div>
 
@@ -897,6 +911,7 @@ export default function Register() {
               <p className="text-slate-500 text-sm max-w-md mx-auto">
                 Your enrolment details have been securely logged into the database engine index system for administrative verification.
               </p>
+              <p className="text-green-600 text-xs font-medium">📧 Confirmation receipt pipeline dispatched.</p>
             </div>
             
             <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 max-w-md mx-auto text-left space-y-2.5">
@@ -984,7 +999,6 @@ export default function Register() {
               </div>
             </form>
 
-            {/* Verification Result Feedback Cards Layout Panel */}
             {trackingLookupRecord && trackingLookupRecord !== "not_found" && (
               <div className="mt-5 border border-slate-100 bg-slate-50/80 rounded-xl p-4 space-y-3 animate-fadeIn">
                 <div className="flex items-center justify-between border-b border-slate-200 pb-2">
