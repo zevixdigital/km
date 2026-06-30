@@ -116,7 +116,7 @@ export default function AdminDashboard() {
 
   const dashboardRef = useRef<HTMLDivElement>(null);
 
-  // Corporate Styled Structurally Formatted Excel/CSV Ledger Export Pipeline Engine
+  // Corporate Formatted Excel Export Engine Pipeline
   const exportToExcel = (dataList: Registration[]) => {
     if (dataList.length === 0) {
       toast.error("No dataset available to generate sheet.");
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
       ["KHELO MEWAT OFFICIAL TOURNAMENT REGISTRATION LEDGER MASTER SUMMARY REPORT"],
       ["Generated Datetime:", new Date().toLocaleString('en-IN'), "Total Matching Records Row:", dataList.length],
       ["Portal Verified Context Authority:", "khelomewat.in"],
-      [] // Blank Spacer Element Block Row Strategy
+      [] 
     ];
 
     const headers = [
@@ -176,7 +176,7 @@ export default function AdminDashboard() {
     toast.success(`Professional Excel formatted log successfully created for ${dataList.length} athletes!`);
   };
 
-  // High-End Anti-Forgery Single Page Printing System Layout Injection Engine
+  // High-End Anti-Forgery Single Page Printing System Layout Injection Engine (Beautiful & Bulletproof)
   const exportIndividualPDF = (reg: Registration) => {
     const windowContext = window.open('', '_blank');
     if (!windowContext) {
@@ -193,7 +193,7 @@ export default function AdminDashboard() {
             
             @page {
               size: A4 portrait;
-              margin: 12mm;
+              margin: 10mm;
             }
             
             body { 
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
               print-color-adjust: exact;
             }
             
-            /* High Defense Anti-Forgery Diagonal Continuous Background Pattern Watermark */
+            /* Anti-Forgery Hologram Fluid Background Grid */
             .watermark-overlay {
               position: fixed;
               top: 0;
@@ -218,77 +218,76 @@ export default function AdminDashboard() {
               height: 100%;
               z-index: 0;
               pointer-events: none;
-              display: flex;
-              flex-wrap: wrap;
-              justify-content: center;
-              align-items: center;
-              opacity: 0.04;
-              transform: rotate(-32deg) scale(1.1);
+              opacity: 0.035;
+              transform: rotate(-25deg) scale(1.2);
+              display: block;
             }
             
-            .watermark-text {
-              font-size: 42px;
+            .watermark-row {
+              white-space: nowrap;
+              font-size: 34px;
               font-weight: 800;
               color: #0A1628;
-              letter-spacing: 0.1em;
-              margin: 80px;
-              white-space: nowrap;
+              letter-spacing: 0.15em;
+              margin-bottom: 90px;
             }
             
             .container-wrapper {
               position: relative;
               z-index: 10;
-              border: 1px solid #E2E8F0;
+              border: 2px solid #0A1628;
               padding: 24px;
               border-radius: 12px;
-              max-height: 275mm; /* Hard bounding window metric mapping parameter safeguard */
               box-sizing: border-box;
+              background: transparent;
             }
             
-            .header-layout-table { 
+            .header-table { 
               width: 100%; 
               border-collapse: collapse; 
-              border-bottom: 2px solid #F37022; 
-              padding-bottom: 14px; 
+              border-bottom: 3px solid #F37022; 
               margin-bottom: 20px; 
             }
             
             .brand-logo-img {
-              height: 52px;
+              height: 65px;
               width: auto;
               object-fit: contain;
+              display: block;
+              margin-bottom: 12px;
             }
             
-            .title-header-block {
+            .title-block {
               text-align: right;
+              vertical-align: top;
             }
             
             .main-app-title { 
-              font-size: 20px; 
+              font-size: 22px; 
               font-weight: 800; 
               color: #0A1628; 
               margin: 0; 
-              letter-spacing: -0.02em; 
               text-transform: uppercase; 
+              letter-spacing: -0.01em;
             }
             
             .system-token-id { 
               margin: 4px 0 0 0; 
-              font-size: 10px; 
+              font-size: 11px; 
               font-family: monospace; 
-              color: #64748B; 
-              font-weight: 600;
+              color: #475569; 
+              font-weight: bold;
             }
             
             .status-badge-capsule { 
               display: inline-block;
-              padding: 4px 12px; 
+              padding: 5px 14px; 
               font-size: 10px; 
               font-weight: 700; 
               text-transform: uppercase; 
               border-radius: 6px; 
               border: 1px solid #CBD5E1; 
-              margin-top: 6px;
+              margin-top: 8px;
             }
             
             .approved { background-color: #DCFCE7 !important; color: #166534 !important; border-color: #BBF7D0; }
@@ -298,89 +297,94 @@ export default function AdminDashboard() {
             .section-row-header { 
               font-size: 11px; 
               font-weight: 800; 
-              color: #F37022; 
+              color: #FFFFFF; 
+              background-color: #0A1628 !important;
               text-transform: uppercase; 
               letter-spacing: 0.05em; 
-              margin: 16px 0 8px 0; 
-              border-bottom: 1px solid #E2E8F0; 
-              padding-bottom: 4px; 
+              margin: 18px 0 10px 0; 
+              padding: 6px 10px;
+              border-radius: 4px;
             }
             
-            .data-grid-layout { 
-              display: grid; 
-              grid-template-columns: repeat(3, minmax(0, 1fr)); 
-              gap: 10px; 
+            /* Preserved Table Grid to prevent browser collapse anomaly */
+            .data-table-layout {
+              width: 100%;
+              border-collapse: separate;
+              border-spacing: 8px;
+              margin-top: -8px;
             }
             
             .card-info-box { 
               background-color: #F8FAFC !important; 
-              border: 1px solid #F1F5F9; 
-              padding: 8px 12px; 
+              border: 1px solid #E2E8F0; 
+              padding: 10px 14px; 
               border-radius: 6px; 
+              vertical-align: top;
             }
-            
-            .col-span-2 { grid-column: span 2; }
-            .col-span-3 { grid-column: span 3; }
             
             .meta-label-tag { 
               font-size: 9px; 
               font-weight: 700; 
               color: #64748B; 
               text-transform: uppercase; 
-              letter-spacing: 0.02em;
-              margin-bottom: 2px; 
+              letter-spacing: 0.03em;
+              margin-bottom: 4px; 
             }
             
             .meta-value-text { 
-              font-size: 12px; 
+              font-size: 13px; 
               font-weight: 600; 
-              color: #1E293B;
+              color: #0F172A;
             }
             
             .special-sport-value {
               color: #F37022;
-              font-weight: 700;
+              font-weight: 800;
+              font-size: 14px;
             }
             
-            /* Official Dynamic Forgery Shield Seal Graphic Design Placement */
             .official-anti-fake-seal-footer {
-              margin-top: 25px;
-              padding-top: 14px;
-              border-top: 1px dashed #E2E8F0;
-              display: flex;
-              justify-content: space-between;
-              align-items: center;
+              margin-top: 35px;
+              padding-top: 15px;
+              border-top: 2px dashed #E2E8F0;
+            }
+            
+            .seal-table {
+              width: 100%;
+              border-collapse: collapse;
             }
             
             .security-verification-seal-badge {
               border: 2px dashed #F37022;
-              padding: 8px 14px;
+              padding: 10px 16px;
               border-radius: 8px;
               background-color: #FFF7ED !important;
-              max-width: 320px;
+              display: inline-block;
             }
             
             .seal-bold-claims-text {
-              font-size: 10px;
+              font-size: 11px;
               font-weight: 800;
               color: #0A1628;
               margin: 0;
               text-transform: uppercase;
-              letter-spacing: 0.02em;
+              letter-spacing: 0.03em;
             }
             
             .seal-subtext-domain {
               font-size: 9px;
-              color: #64748B;
-              margin: 2px 0 0 0;
+              color: #EA580C;
+              margin: 3px 0 0 0;
+              font-weight: bold;
               font-family: monospace;
             }
             
             .footer-disclaimer-note {
               text-align: right;
-              font-size: 9px;
-              color: #94A3B8;
+              font-size: 10px;
+              color: #64748B;
               font-weight: 500;
+              vertical-align: middle;
             }
             
             @media print {
@@ -389,30 +393,28 @@ export default function AdminDashboard() {
                 overflow: hidden;
               }
               .container-wrapper {
-                border: none;
-                padding: 0;
+                border: 2px solid #0A1628;
               }
             }
           </style>
         </head>
         <body>
           
-          <!-- Continuous Grid Array Background Watermark Infrastructure -->
           <div class="watermark-overlay">
-            <div class="watermark-text">KHELO MEWAT</div>
-            <div class="watermark-text">khelomewat.in</div>
-            <div class="watermark-text">KHELO MEWAT</div>
-            <div class="watermark-text">khelomewat.in</div>
+            <div class="watermark-row">KHELO MEWAT • KHELOMEWAT.IN • KHELO MEWAT • KHELOMEWAT.IN</div>
+            <div class="watermark-row">KHELOMEWAT.IN • KHELO MEWAT • KHELOMEWAT.IN • KHELO MEWAT</div>
+            <div class="watermark-row">KHELO MEWAT • KHELOMEWAT.IN • KHELO MEWAT • KHELOMEWAT.IN</div>
+            <div class="watermark-row">KHELOMEWAT.IN • KHELO MEWAT • KHELOMEWAT.IN • KHELO MEWAT</div>
+            <div class="watermark-row">KHELO MEWAT • KHELOMEWAT.IN • KHELO MEWAT • KHELOMEWAT.IN</div>
           </div>
 
           <div class="container-wrapper">
-            <table class="header-layout-table">
+            <table class="header-table">
               <tr>
-                <td>
-                  <!-- Fallback gracefully loops standard route path mapping parameters safely -->
-                  <img src="/images/logop.png" onerror="this.src='https://placehold.co/200x60?text=KHELO+MEWAT'" class="brand-logo-img" alt="Official Logo" />
+                <td style="width: 50%;">
+                  <img src="/images/logop.png" onerror="this.src='https://placehold.co/220x70?text=KHELO+MEWAT'" class="brand-logo-img" alt="Official Logo" />
                 </td>
-                <td class="title-header-block">
+                <td class="title-block">
                   <h1 class="main-app-title">Athlete Enrolment Card</h1>
                   <p class="system-token-id">UID: ${reg.id}</p>
                   <span class="status-badge-capsule ${reg.status}">${reg.status}</span>
@@ -421,47 +423,63 @@ export default function AdminDashboard() {
             </table>
 
             <div class="section-row-header">Personal Bio Details</div>
-            <div class="data-grid-layout">
-              <div class="card-info-box"><div class="meta-label-tag">Player Name</div><div class="meta-value-text">${reg.studentName}</div></div>
-              <div class="card-info-box"><div class="meta-label-tag">Father's Name</div><div class="meta-value-text">${reg.fatherName}</div></div>
-              <div class="card-info-box"><div class="meta-label-tag">Date of Birth</div><div class="meta-value-text">${reg.dateOfBirth}</div></div>
-              <div class="card-info-box"><div class="meta-label-tag">Gender Identity</div><div class="meta-value-text" style="text-transform:capitalize;">${reg.gender}</div></div>
-              <div class="card-info-box"><div class="meta-label-tag">Mobile Communication</div><div class="meta-value-text">+91 ${reg.phone}</div></div>
-              <div class="card-info-box"><div class="meta-label-tag">Registered Email</div><div class="meta-value-text" style="font-size:11px;">${reg.email}</div></div>
-            </div>
+            <table class="data-table-layout">
+              <tr>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Player Name</div><div class="meta-value-text">${reg.studentName}</div></td>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Father's Name</div><div class="meta-value-text">${reg.fatherName}</div></td>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Date of Birth</div><div class="meta-value-text">${reg.dateOfBirth}</div></td>
+              </tr>
+              <tr>
+                <td class="card-info-box"><div class="meta-label-tag">Gender Identity</div><div class="meta-value-text" style="text-transform:capitalize;">${reg.gender}</div></td>
+                <td class="card-info-box"><div class="meta-label-tag">Mobile Communication</div><div class="meta-value-text">+91 ${reg.phone}</div></td>
+                <td class="card-info-box"><div class="meta-label-tag">Registered Email</div><div class="meta-value-text">${reg.email}</div></td>
+              </tr>
+            </table>
 
             <div class="section-row-header">Academic Institutional & Demographics Map</div>
-            <div class="data-grid-layout">
-              <div class="card-info-box col-span-3"><div class="meta-label-tag">Allocated School Name</div><div class="meta-value-text">${reg.schoolName}</div></div>
-              <div class="card-info-box"><div class="meta-label-tag">Block / Tehsil</div><div class="meta-value-text">${reg.block}</div></div>
-              <div class="card-info-box"><div class="meta-label-tag">Village / Area Location</div><div class="meta-value-text">${reg.village}</div></div>
-              <div class="card-info-box"><div class="meta-label-tag">Pincode</div><div class="meta-value-text">${reg.pincode}</div></div>
-              <div class="card-info-box col-span-3"><div class="meta-label-tag">Full Structural Street Address</div><div class="meta-value-text">${reg.address}, ${reg.district}, ${reg.state}</div></div>
-            </div>
+            <table class="data-table-layout">
+              <tr>
+                <td class="card-info-box" colspan="3"><div class="meta-label-tag">Allocated School Name</div><div class="meta-value-text">${reg.schoolName}</div></td>
+              </tr>
+              <tr>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Block / Tehsil</div><div class="meta-value-text">${reg.block}</div></td>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Village / Area Location</div><div class="meta-value-text">${reg.village}</div></td>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Postal Pincode</div><div class="meta-value-text">${reg.pincode}</div></td>
+              </tr>
+              <tr>
+                <td class="card-info-box" colspan="3"><div class="meta-label-tag">Full Structural Street Address</div><div class="meta-value-text">${reg.address}, ${reg.district}, ${reg.state}</div></td>
+              </tr>
+            </table>
 
             <div class="section-row-header">Sports Competitive Profiling</div>
-            <div class="data-grid-layout">
-              <div class="card-info-box col-span-2"><div class="meta-label-tag">Main Sports Category Discipline</div><div class="meta-value-text special-sport-value" style="text-transform:uppercase;">${reg.sport}</div></div>
-              <div class="card-info-box"><div class="meta-label-tag">Dynamic Event / Weight Division</div><div class="meta-value-text">${reg.subSport || 'N/A'}</div></div>
-            </div>
+            <table class="data-table-layout">
+              <tr>
+                <td class="card-info-box" style="width: 50%;"><div class="meta-label-tag">Main Sports Category Discipline</div><div class="meta-value-text special-sport-value" style="text-transform:uppercase;">${reg.sport}</div></td>
+                <td class="card-info-box" style="width: 50%;"><div class="meta-label-tag">Dynamic Event / Weight Division</div><div class="meta-value-text font-semibold text-slate-800">${reg.subSport || 'N/A'}</div></td>
+              </tr>
+            </table>
 
-            <!-- Absolute Official Anti-Fraud Seal Verification Segment Block -->
             <div class="official-anti-fake-seal-footer">
-              <div class="security-verification-seal-badge">
-                <p class="seal-bold-claims-text">🛡️ SECURE VERIFIED PROFILE SYSTEM SEAL</p>
-                <p class="seal-subtext-domain">Digital Gateway Authority Check • khelomewat.in</p>
-              </div>
-              <div class="footer-disclaimer-note">
-                <p style="margin:0; font-weight:700; color:#475569;">Logged System Reference Payload</p>
-                <p style="margin:2px 0 0 0; font-family:monospace; font-size:8px;">TS: ${new Date(reg.submittedAt).toLocaleString('en-IN')}</p>
-              </div>
+              <table class="seal-table">
+                <tr>
+                  <td style="width: 60%;">
+                    <div class="security-verification-seal-badge">
+                      <p class="seal-bold-claims-text">🛡️ SECURE VERIFIED PROFILE SYSTEM SEAL</p>
+                      <p class="seal-subtext-domain">Official Digital Registration Seal • khelomewat.in</p>
+                    </div>
+                  </td>
+                  <td class="footer-disclaimer-note">
+                    <p style="margin:0; font-weight:700; color:#0A1628;">System Timestamp Payload</p>
+                    <p style="margin:2px 0 0 0; font-family:monospace; font-size:9px; color:#F37022; font-weight:bold;">${new Date(reg.submittedAt).toLocaleString('en-IN')}</p>
+                  </td>
+                </tr>
+              </table>
             </div>
           </div>
 
           <script>
-            // Execution sequence handles DOM mapping parameters perfectly
             window.print();
-            setTimeout(() => { window.close(); }, 600);
+            setTimeout(() => { window.close(); }, 700);
           </script>
         </body>
       </html>
@@ -798,7 +816,7 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Enhanced Professional Export Controls Row */}
+              {/* Export Button Layout Row Control */}
               <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3 items-center justify-between">
                 <p className="text-xs text-slate-500 font-inter">
                   Generate professional spreadsheet logs based on your live dashboard search query filters.
