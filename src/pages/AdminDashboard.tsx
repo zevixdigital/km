@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Users, Calendar, Settings, LogOut, Search,
   Filter, FileText, Trash2, CheckCircle, XCircle,
   PauseCircle, PlayCircle, AlertCircle, Loader2,
-  TrendingUp, UserCheck, Clock, BarChart3, Eye, CreditCard
+  TrendingUp, UserCheck, Clock, BarChart3, Eye, CreditCard, Download
 } from 'lucide-react';
 
 interface Registration {
@@ -28,6 +28,7 @@ interface Registration {
   pincode: string;
   address: string;
   sport: string;
+  subSport?: string; 
   entryFormUrl: string;       
   sarpanchPerformaUrl: string; 
   govIdUrl: string;            
@@ -46,7 +47,7 @@ interface Tournament {
   id: string;
   name: string;
   sport: string;
-  startDate: string; // Dynamic field preserve
+  startDate: string; 
   lastDate: string; 
   location: string;
   status: string;
@@ -70,7 +71,6 @@ const venueList = [
   "Govt Model Sanskriti Sr Sec School Booraka Hathin"
 ];
 
-// Production Safe Cloudinary Image Pipeline
 const sportImageMap: Record<string, string> = {
   'cricket': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157479/cricket1_d9qbc6.jpg',
   'volleyball': 'https://res.cloudinary.com/dadqwaqis/image/upload/f_auto,q_auto/v1782157492/volleyball1_sbabh6.jpg',
@@ -90,7 +90,6 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const { user, isAdmin, loading: authLoading, logout } = useAuthContext();
   
-  // Registration States
   const [registrations, setRegistrations] = useState<Registration[]>([]);
   const [filtered, setFiltered] = useState<Registration[]>([]);
   const [settings, setSettings] = useState({ startDate: '', lastDate: '', formEnabled: true });
@@ -101,15 +100,12 @@ export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
   
-  // Settings Inputs States
   const [startDateInput, setStartDateInput] = useState('');
   const [lastDateInput, setLastDateInput] = useState('');
   const [viewRegistration, setViewRegistration] = useState<Registration | null>(null);
 
-  // Lazy Loading Controls State
   const [visibleRecords, setVisibleRecords] = useState(20);
   
-  // Tournament Input States with Start Date Included
   const [tournamentName, setTournamentName] = useState("");
   const [tournamentSport, setTournamentSport] = useState("");
   const [tournamentStartDate, setTournamentStartDate] = useState("");
@@ -120,7 +116,377 @@ export default function AdminDashboard() {
 
   const dashboardRef = useRef<HTMLDivElement>(null);
 
-  // Auto matching Cloudinary URLs case-insensitively
+  // Corporate Formatted Excel Export Engine Pipeline
+  const exportToExcel = (dataList: Registration[]) => {
+    if (dataList.length === 0) {
+      toast.error("No dataset available to generate sheet.");
+      return;
+    }
+
+    const reportTitleMetadata = [
+      ["KHELO MEWAT OFFICIAL TOURNAMENT REGISTRATION LEDGER MASTER SUMMARY REPORT"],
+      ["Generated Datetime:", new Date().toLocaleString('en-IN'), "Total Matching Records Row:", dataList.length],
+      ["Portal Verified Context Authority:", "khelomewat.in"],
+      [] 
+    ];
+
+    const headers = [
+      "Registration ID", "Student Name", "Father Name", "Date of Birth", 
+      "Gender", "Email Address", "Mobile Phone", "School Name", 
+      "Block/Tehsil", "Village/Area", "Pincode", "Street Address", 
+      "Sport Category", "Event / Weight Division", "Submission Date", "Application Status"
+    ];
+
+    const dataRows = dataList.map(r => [
+      `"${r.id}"`,
+      `"${(r.studentName || '').replace(/"/g, '""')}"`,
+      `"${(r.fatherName || '').replace(/"/g, '""')}"`,
+      `"${r.dateOfBirth || ''}"`,
+      `"${r.gender || ''}"`,
+      `"${r.email || ''}"`,
+      `"${r.phone || ''}"`,
+      `"${(r.schoolName || '').replace(/"/g, '""')}"`,
+      `"${(r.block || '').replace(/"/g, '""')}"`,
+      `"${(r.village || '').replace(/"/g, '""')}"`,
+      `"${r.pincode || ''}"`,
+      `"${(r.address || '').replace(/"/g, '""')}"`,
+      `"${(r.sport || '').toUpperCase()}"`,
+      `"${r.subSport || 'N/A'}"`,
+      `"${new Date(r.submittedAt).toLocaleDateString('en-IN')}"`,
+      `"${(r.status || '').toUpperCase()}"`
+    ]);
+
+    const finalCsvStringArray = [
+      ...reportTitleMetadata.map(row => row.join(",")),
+      headers.join(","),
+      ...dataRows.map(row => row.join(","))
+    ].join("\n");
+
+    const csvBlobObject = new Blob(["\uFEFF" + finalCsvStringArray], { type: 'text/csv;charset=utf-8;' });
+    const dynamicBlobUrlReference = URL.createObjectURL(csvBlobObject);
+    
+    const downloadAnchor = document.createElement("a");
+    downloadAnchor.setAttribute("href", dynamicBlobUrlReference);
+    downloadAnchor.setAttribute("download", `KheloMewat_Master_Ledger_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    document.body.removeChild(downloadAnchor);
+    URL.revokeObjectURL(dynamicBlobUrlReference);
+    
+    toast.success(`Professional Excel formatted log successfully created for ${dataList.length} athletes!`);
+  };
+
+  // High-End Anti-Forgery Single Page Printing System Layout Injection Engine (Beautiful & Bulletproof)
+  const exportIndividualPDF = (reg: Registration) => {
+    const windowContext = window.open('', '_blank');
+    if (!windowContext) {
+      toast.error("Popup window display blocked by browser security controls!");
+      return;
+    }
+
+    windowContext.document.write(`
+      <html>
+        <head>
+          <title>Enrolment_Receipt_${reg.studentName.replace(/\s+/g, '_')}</title>
+          <style>
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+            
+            @page {
+              size: A4 portrait;
+              margin: 10mm;
+            }
+            
+            body { 
+              font-family: 'Inter', sans-serif; 
+              color: #0F172A; 
+              background-color: #FFFFFF; 
+              padding: 0; 
+              margin: 0; 
+              line-height: 1.4;
+              font-size: 11px;
+              position: relative;
+              -webkit-print-color-adjust: exact;
+              print-color-adjust: exact;
+            }
+            
+            /* Anti-Forgery Hologram Fluid Background Grid */
+            .watermark-overlay {
+              position: fixed;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              z-index: 0;
+              pointer-events: none;
+              opacity: 0.035;
+              transform: rotate(-25deg) scale(1.2);
+              display: block;
+            }
+            
+            .watermark-row {
+              white-space: nowrap;
+              font-size: 34px;
+              font-weight: 800;
+              color: #0A1628;
+              letter-spacing: 0.15em;
+              margin-bottom: 90px;
+            }
+            
+            .container-wrapper {
+              position: relative;
+              z-index: 10;
+              border: 2px solid #0A1628;
+              padding: 24px;
+              border-radius: 12px;
+              box-sizing: border-box;
+              background: transparent;
+            }
+            
+            .header-table { 
+              width: 100%; 
+              border-collapse: collapse; 
+              border-bottom: 3px solid #F37022; 
+              margin-bottom: 20px; 
+            }
+            
+            .brand-logo-img {
+              height: 65px;
+              width: auto;
+              object-fit: contain;
+              display: block;
+              margin-bottom: 12px;
+            }
+            
+            .title-block {
+              text-align: right;
+              vertical-align: top;
+            }
+            
+            .main-app-title { 
+              font-size: 22px; 
+              font-weight: 800; 
+              color: #0A1628; 
+              margin: 0; 
+              text-transform: uppercase; 
+              letter-spacing: -0.01em;
+            }
+            
+            .system-token-id { 
+              margin: 4px 0 0 0; 
+              font-size: 11px; 
+              font-family: monospace; 
+              color: #475569; 
+              font-weight: bold;
+            }
+            
+            .status-badge-capsule { 
+              display: inline-block;
+              padding: 5px 14px; 
+              font-size: 10px; 
+              font-weight: 700; 
+              text-transform: uppercase; 
+              border-radius: 6px; 
+              border: 1px solid #CBD5E1; 
+              margin-top: 8px;
+            }
+            
+            .approved { background-color: #DCFCE7 !important; color: #166534 !important; border-color: #BBF7D0; }
+            .pending { background-color: #FEF3C7 !important; color: #92400E !important; border-color: #FDE68A; }
+            .rejected { background-color: #FEE2E2 !important; color: #991B1B !important; border-color: #FCA5A5; }
+            
+            .section-row-header { 
+              font-size: 11px; 
+              font-weight: 800; 
+              color: #FFFFFF; 
+              background-color: #0A1628 !important;
+              text-transform: uppercase; 
+              letter-spacing: 0.05em; 
+              margin: 18px 0 10px 0; 
+              padding: 6px 10px;
+              border-radius: 4px;
+            }
+            
+            /* Preserved Table Grid to prevent browser collapse anomaly */
+            .data-table-layout {
+              width: 100%;
+              border-collapse: separate;
+              border-spacing: 8px;
+              margin-top: -8px;
+            }
+            
+            .card-info-box { 
+              background-color: #F8FAFC !important; 
+              border: 1px solid #E2E8F0; 
+              padding: 10px 14px; 
+              border-radius: 6px; 
+              vertical-align: top;
+            }
+            
+            .meta-label-tag { 
+              font-size: 9px; 
+              font-weight: 700; 
+              color: #64748B; 
+              text-transform: uppercase; 
+              letter-spacing: 0.03em;
+              margin-bottom: 4px; 
+            }
+            
+            .meta-value-text { 
+              font-size: 13px; 
+              font-weight: 600; 
+              color: #0F172A;
+            }
+            
+            .special-sport-value {
+              color: #F37022;
+              font-weight: 800;
+              font-size: 14px;
+            }
+            
+            .official-anti-fake-seal-footer {
+              margin-top: 35px;
+              padding-top: 15px;
+              border-top: 2px dashed #E2E8F0;
+            }
+            
+            .seal-table {
+              width: 100%;
+              border-collapse: collapse;
+            }
+            
+            .security-verification-seal-badge {
+              border: 2px dashed #F37022;
+              padding: 10px 16px;
+              border-radius: 8px;
+              background-color: #FFF7ED !important;
+              display: inline-block;
+            }
+            
+            .seal-bold-claims-text {
+              font-size: 11px;
+              font-weight: 800;
+              color: #0A1628;
+              margin: 0;
+              text-transform: uppercase;
+              letter-spacing: 0.03em;
+            }
+            
+            .seal-subtext-domain {
+              font-size: 9px;
+              color: #EA580C;
+              margin: 3px 0 0 0;
+              font-weight: bold;
+              font-family: monospace;
+            }
+            
+            .footer-disclaimer-note {
+              text-align: right;
+              font-size: 10px;
+              color: #64748B;
+              font-weight: 500;
+              vertical-align: middle;
+            }
+            
+            @media print {
+              html, body {
+                height: 99%;
+                overflow: hidden;
+              }
+              .container-wrapper {
+                border: 2px solid #0A1628;
+              }
+            }
+          </style>
+        </head>
+        <body>
+          
+          <div class="watermark-overlay">
+            <div class="watermark-row">KHELO MEWAT • KHELOMEWAT.IN • KHELO MEWAT • KHELOMEWAT.IN</div>
+            <div class="watermark-row">KHELOMEWAT.IN • KHELO MEWAT • KHELOMEWAT.IN • KHELO MEWAT</div>
+            <div class="watermark-row">KHELO MEWAT • KHELOMEWAT.IN • KHELO MEWAT • KHELOMEWAT.IN</div>
+            <div class="watermark-row">KHELOMEWAT.IN • KHELO MEWAT • KHELOMEWAT.IN • KHELO MEWAT</div>
+            <div class="watermark-row">KHELO MEWAT • KHELOMEWAT.IN • KHELO MEWAT • KHELOMEWAT.IN</div>
+          </div>
+
+          <div class="container-wrapper">
+            <table class="header-table">
+              <tr>
+                <td style="width: 50%;">
+                  <img src="/images/logop.png" onerror="this.src='https://placehold.co/220x70?text=KHELO+MEWAT'" class="brand-logo-img" alt="Official Logo" />
+                </td>
+                <td class="title-block">
+                  <h1 class="main-app-title">Athlete Enrolment Card</h1>
+                  <p class="system-token-id">UID: ${reg.id}</p>
+                  <span class="status-badge-capsule ${reg.status}">${reg.status}</span>
+                </td>
+              </tr>
+            </table>
+
+            <div class="section-row-header">Personal Bio Details</div>
+            <table class="data-table-layout">
+              <tr>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Player Name</div><div class="meta-value-text">${reg.studentName}</div></td>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Father's Name</div><div class="meta-value-text">${reg.fatherName}</div></td>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Date of Birth</div><div class="meta-value-text">${reg.dateOfBirth}</div></td>
+              </tr>
+              <tr>
+                <td class="card-info-box"><div class="meta-label-tag">Gender Identity</div><div class="meta-value-text" style="text-transform:capitalize;">${reg.gender}</div></td>
+                <td class="card-info-box"><div class="meta-label-tag">Mobile Communication</div><div class="meta-value-text">+91 ${reg.phone}</div></td>
+                <td class="card-info-box"><div class="meta-label-tag">Registered Email</div><div class="meta-value-text">${reg.email}</div></td>
+              </tr>
+            </table>
+
+            <div class="section-row-header">Academic Institutional & Demographics Map</div>
+            <table class="data-table-layout">
+              <tr>
+                <td class="card-info-box" colspan="3"><div class="meta-label-tag">Allocated School Name</div><div class="meta-value-text">${reg.schoolName}</div></td>
+              </tr>
+              <tr>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Block / Tehsil</div><div class="meta-value-text">${reg.block}</div></td>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Village / Area Location</div><div class="meta-value-text">${reg.village}</div></td>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Postal Pincode</div><div class="meta-value-text">${reg.pincode}</div></td>
+              </tr>
+              <tr>
+                <td class="card-info-box" colspan="3"><div class="meta-label-tag">Full Structural Street Address</div><div class="meta-value-text">${reg.address}, ${reg.district}, ${reg.state}</div></td>
+              </tr>
+            </table>
+
+            <div class="section-row-header">Sports Competitive Profiling</div>
+            <table class="data-table-layout">
+              <tr>
+                <td class="card-info-box" style="width: 50%;"><div class="meta-label-tag">Main Sports Category Discipline</div><div class="meta-value-text special-sport-value" style="text-transform:uppercase;">${reg.sport}</div></td>
+                <td class="card-info-box" style="width: 50%;"><div class="meta-label-tag">Dynamic Event / Weight Division</div><div class="meta-value-text font-semibold text-slate-800">${reg.subSport || 'N/A'}</div></td>
+              </tr>
+            </table>
+
+            <div class="official-anti-fake-seal-footer">
+              <table class="seal-table">
+                <tr>
+                  <td style="width: 60%;">
+                    <div class="security-verification-seal-badge">
+                      <p class="seal-bold-claims-text">🛡️ SECURE VERIFIED PROFILE SYSTEM SEAL</p>
+                      <p class="seal-subtext-domain">Official Digital Registration Seal • khelomewat.in</p>
+                    </div>
+                  </td>
+                  <td class="footer-disclaimer-note">
+                    <p style="margin:0; font-weight:700; color:#0A1628;">System Timestamp Payload</p>
+                    <p style="margin:2px 0 0 0; font-family:monospace; font-size:9px; color:#F37022; font-weight:bold;">${new Date(reg.submittedAt).toLocaleString('en-IN')}</p>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+
+          <script>
+            window.print();
+            setTimeout(() => { window.close(); }, 700);
+          </script>
+        </body>
+      </html>
+    `);
+    windowContext.document.close();
+  };
+
   useEffect(() => {
     const activeSportKey = tournamentSport?.toLowerCase();
     if (activeSportKey && sportImageMap[activeSportKey]) {
@@ -130,14 +496,12 @@ export default function AdminDashboard() {
     }
   }, [tournamentSport]);
 
-  // Auth check
   useEffect(() => {
     if (!authLoading && (!user || !isAdmin)) {
       navigate('/admin');
     }
   }, [user, isAdmin, authLoading, navigate]);
 
-  // Fetch registrations
   useEffect(() => {
     const regRef = ref(db, 'registrations');
     const unsub = onValue(regRef, (snapshot) => {
@@ -156,7 +520,6 @@ export default function AdminDashboard() {
     return unsub;
   }, []);
 
-  // Fetch settings
   useEffect(() => {
     const settingsRef = ref(db, 'settings');
     const unsub = onValue(settingsRef, (snapshot) => {
@@ -170,7 +533,6 @@ export default function AdminDashboard() {
     return unsub;
   }, []);
 
-  // Fetch Tournaments
   useEffect(() => {
     const tournamentRef = ref(db, "tournaments");
     const unsub = onValue(tournamentRef, (snapshot) => {
@@ -184,7 +546,6 @@ export default function AdminDashboard() {
     return unsub;
   }, []);
 
-  // Filter registrations & Reset Lazy Loading Count
   useEffect(() => {
     let result = [...registrations];
 
@@ -216,20 +577,16 @@ export default function AdminDashboard() {
     setVisibleRecords(20); 
   }, [registrations, sportFilter, statusFilter, searchQuery, selectedDate]);
 
-  // Animation
   useEffect(() => {
     if (!dashboardRef.current) return;
-
     const ctx = gsap.context(() => {
       gsap.from('.stat-card', {
         y: 30, opacity: 0, duration: 0.6, stagger: 0.1, ease: 'power3.out',
       });
     }, dashboardRef.current);
-
     return () => ctx.revert();
   }, []);
 
-  // Action Handlers
   const updateSettingsDates = async () => {
     try {
       await update(ref(db, 'settings'), { 
@@ -270,7 +627,6 @@ export default function AdminDashboard() {
     }
   };
 
-  // Tournament Action Handlers with dual start/end validation
   const addTournament = async () => {
     if (!tournamentName.trim() || !tournamentSport || !tournamentStartDate || !tournamentLastDate || !tournamentLocation) {
       toast.error("Please fill all required tournament fields");
@@ -347,7 +703,7 @@ export default function AdminDashboard() {
           </div>
           <button
             onClick={logout}
-            className="flex items-center gap-2 text-slate-600 hover:text-red-500 transition-colors text-sm font-inter"
+            className="flex items-center gap-2 text-slate-600 hover:text-red-500 transition-colors text-sm font-inter w-fit"
           >
             <LogOut className="w-4 h-4" />
             Logout
@@ -376,7 +732,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Navigation Tabs */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2 scrollbar-none">
           {[
             { id: 'registrations', label: 'Registrations', icon: LayoutDashboard },
             { id: 'tournaments', label: 'Tournament Management', icon: Calendar },
@@ -401,7 +757,7 @@ export default function AdminDashboard() {
         {/* Registrations Core Tab */}
         {activeTab === 'registrations' && (
           <div className="space-y-6">
-            <div className="bg-white border border-slate-200 rounded-xl p-4 lg:p-6">
+            <div className="bg-white border border-slate-200 rounded-xl p-4 lg:p-6 shadow-sm">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
                 <div>
                   <label className="text-slate-500 text-xs font-inter mb-1.5 block">Search</label>
@@ -459,14 +815,29 @@ export default function AdminDashboard() {
                   </button>
                 </div>
               </div>
+
+              {/* Export Button Layout Row Control */}
+              <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3 items-center justify-between">
+                <p className="text-xs text-slate-500 font-inter">
+                  Generate professional spreadsheet logs based on your live dashboard search query filters.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => exportToExcel(filtered)}
+                  className="flex items-center gap-2 bg-[#0A1628] hover:bg-[#1E293B] text-white px-4 py-2 rounded-lg font-inter text-xs font-bold shadow-sm transition-all w-full sm:w-auto justify-center"
+                >
+                  <Download className="w-3.5 h-3.5 text-[#f37022]" />
+                  Download Excel List ({filtered.length} Records)
+                </button>
+              </div>
             </div>
 
             <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
-                    <tr className="border-b border-slate-200">
-                      {['Student', 'School', 'Sport', 'Date', 'Status', 'Actions'].map((h) => (
+                    <tr className="border-b border-slate-200 bg-slate-50/50">
+                      {['Student Details', 'School Name', 'Category Discipline', 'Date Logged', 'Status state', 'Action Control'].map((h) => (
                         <th key={h} className="text-left px-4 py-3 text-[#f37022] font-inter text-xs font-semibold uppercase tracking-wider">
                           {h}
                         </th>
@@ -482,15 +853,18 @@ export default function AdminDashboard() {
                       </tr>
                     ) : (
                       displayedRegistrations.map((reg) => (
-                        <tr key={reg.id} className="border-b border-slate-200 hover:bg-slate-50 transition-colors">
+                        <tr key={reg.id} className="border-b border-slate-200 hover:bg-slate-50/80 transition-colors">
                           <td className="px-4 py-3">
                             <div className="text-slate-900 font-inter text-sm font-medium">{reg.studentName}</div>
                             <div className="text-slate-500 text-xs font-inter">{reg.email}</div>
                           </td>
                           <td className="px-4 py-3 text-slate-600 font-inter text-sm">{reg.schoolName}</td>
                           <td className="px-4 py-3">
-                            <span className="text-[#f37022] font-inter text-xs font-semibold capitalize">
+                            <span className="text-[#f37022] font-inter text-xs font-semibold capitalize block">
                               {reg.sport}
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-inter block truncate max-w-[180px]">
+                              {reg.subSport || 'N/A'}
                             </span>
                           </td>
                           <td className="px-4 py-3 text-slate-500 font-inter text-xs">
@@ -516,6 +890,13 @@ export default function AdminDashboard() {
                                 title="View Details"
                               >
                                 <Eye className="w-3.5 h-3.5 text-[#f37022]" />
+                              </button>
+                              <button
+                                onClick={() => exportIndividualPDF(reg)}
+                                className="p-1.5 bg-slate-100 rounded-md hover:bg-blue-500/20 transition-colors"
+                                title="Download PDF Report"
+                              >
+                                <FileText className="w-3.5 h-3.5 text-blue-600" />
                               </button>
                               {reg.status === 'pending' && (
                                 <>
@@ -552,8 +933,8 @@ export default function AdminDashboard() {
               </div>
 
               {/* Lazy Loading Action Bar */}
-              <div className="px-4 py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-                <div className="text-slate-500 text-xs font-inter order-2 sm:order-1">
+              <div className="px-4 py-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50/30">
+                <div className="text-slate-500 text-xs font-inter order-2 sm:order-1 text-center sm:text-left">
                   Showing {displayedRegistrations.length} of {filtered.length} matching registrations (Total: {registrations.length})
                 </div>
                 {filtered.length > visibleRecords && (
@@ -604,7 +985,6 @@ export default function AdminDashboard() {
                   </select>
                 </div>
 
-                {/* Added Tournament Start Date Form Field Input */}
                 <div>
                   <label className="text-slate-600 text-xs font-inter mb-1 block">Tournament Start Date *</label>
                   <input
@@ -853,16 +1233,16 @@ export default function AdminDashboard() {
 
       {/* Detailed Modal */}
       {viewRegistration && (
-        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-200 rounded-2xl max-w-xl w-full max-h-[90vh] overflow-y-auto shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white border border-slate-200 rounded-2xl max-w-xl w-full my-8 shadow-2xl transition-all">
             <div className="p-6">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center justify-between mb-6 border-b border-slate-100 pb-3">
                 <h3 className="text-xl font-playfair font-bold text-[#f37022]">
                   Registration Details
                 </h3>
                 <button
                   onClick={() => setViewRegistration(null)}
-                  className="text-slate-400 hover:text-slate-700"
+                  className="text-slate-400 hover:text-slate-700 transition-colors"
                 >
                   <XCircle className="w-5 h-5" />
                 </button>
@@ -872,11 +1252,11 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-slate-500 text-xs font-inter">Student Name</label>
-                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.studentName}</p>
+                    <p className="text-slate-900 font-inter text-sm font-medium">{viewRegistration.studentName}</p>
                   </div>
                   <div>
                     <label className="text-slate-500 text-xs font-inter">Father&apos;s Name</label>
-                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.fatherName}</p>
+                    <p className="text-slate-900 font-inter text-sm font-medium">{viewRegistration.fatherName}</p>
                   </div>
                 </div>
 
@@ -894,7 +1274,7 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-slate-500 text-xs font-inter">Email</label>
-                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.email}</p>
+                    <p className="text-slate-900 font-inter text-sm break-all">{viewRegistration.email}</p>
                   </div>
                   <div>
                     <label className="text-slate-500 text-xs font-inter">Phone</label>
@@ -946,13 +1326,18 @@ export default function AdminDashboard() {
                 </div>
 
                 <div>
+                  <label className="text-slate-500 text-xs font-inter">Event / Weight Division Category</label>
+                  <p className="text-slate-800 font-inter text-sm font-medium">{viewRegistration.subSport || 'N/A'}</p>
+                </div>
+
+                <div>
                   <label className="text-slate-500 text-xs font-inter">Submitted On</label>
                   <p className="text-slate-900 font-inter text-sm">
                     {new Date(viewRegistration.submittedAt).toLocaleString('en-IN')}
                   </p>
                 </div>
 
-                <div className="flex flex-wrap gap-3 pt-2">
+                <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
                   {viewRegistration.entryFormUrl && (
                     <a
                       href={viewRegistration.entryFormUrl}
@@ -972,7 +1357,7 @@ export default function AdminDashboard() {
                       className="flex items-center gap-1.5 bg-[#f37022]/10 border border-[#f37022]/30 text-[#f37022] px-3 py-1.5 rounded-lg text-xs font-inter hover:bg-[#f37022]/20 transition-colors"
                     >
                       <FileText className="w-3.5 h-3.5" />
-                      School Management <br /> Sarpanch Performa
+                      Sarpanch Performa
                     </a>
                   )}
                   {viewRegistration.govIdUrl && (
@@ -986,6 +1371,17 @@ export default function AdminDashboard() {
                       Government ID
                     </a>
                   )}
+                </div>
+
+                <div className="pt-4 border-t border-slate-100">
+                  <button
+                    type="button"
+                    onClick={() => exportIndividualPDF(viewRegistration)}
+                    className="w-full flex items-center justify-center gap-2 bg-[#f37022] text-[#0A1628] font-bold py-2.5 rounded-xl font-inter text-xs shadow-sm hover:scale-[1.01] transition-transform"
+                  >
+                    <FileText className="w-4 h-4" />
+                    Print / Download Professional PDF Report
+                  </button>
                 </div>
               </div>
             </div>
