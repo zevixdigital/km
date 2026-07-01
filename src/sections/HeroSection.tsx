@@ -111,7 +111,7 @@ export default function HeroSection() {
           <div className="flex items-center gap-2 mb-4 sm:mb-6 hero-stats">
             <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-[#f37022]" />
             <span className="text-[#f37022] font-inter text-xs sm:text-sm font-semibold tracking-wider uppercase">
-              Government of Mewat Sports Authority
+              Mewat Sports Authority
             </span>
           </div>
 
