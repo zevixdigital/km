@@ -85,7 +85,7 @@ export default function Footer() {
       <div className="border-t border-[#4A6B8A]/20 py-5">
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-3">
           <p className="text-[#4A6B8A] text-xs">
-             Mewat Sports Authority. All rights reserved.
+              All rights reserved.
           </p>
           <p className="text-[#4A6B8A] text-xs">
             &copy; {currentYear} Khelo Mewat. Designed for Excellence.
