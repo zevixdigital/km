@@ -103,7 +103,7 @@ export default function HeroSection() {
               {!settings.formEnabled ? (
                 "⚠️ ATTENTION APPLICANTS: The online registration portal is temporarily PAUSED by the administration. New form submissions are currently locked."
               ) : (
-                `📢 OFFICIAL NOTIFICATION: Online registration window is actively OPEN. Timeframe: From ${formatIndianDate(settings.startDate)} up to ${formatIndianDate(settings.lastDate)}. Please complete validations and upload verified document variants strictly below 300KB.`
+                `📢 OFFICIAL NOTIFICATION: Online registration window is actively OPEN. Timeframe: From ${formatIndianDate(settings.startDate)} up to ${formatIndianDate(settings.lastDate)}. And Offline: Available till 23/07/26 Please complete validations and upload verified document variants strictly below 300KB.`
               )}
             </MarqueeElement>
           </div>
