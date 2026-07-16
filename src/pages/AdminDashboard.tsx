@@ -627,6 +627,34 @@ export default function AdminDashboard() {
     }
   };
 
+  // NEW: Approve All Registrations Function
+  const approveAllRegistrations = async () => {
+    const pendingCount = filtered.filter(r => r.status === 'pending').length;
+    
+    if (filtered.length === 0) {
+      toast.error('No registrations available to approve');
+      return;
+    }
+
+    if (pendingCount === 0) {
+      toast.error('No pending registrations to approve');
+      return;
+    }
+    
+    if (!window.confirm(`Are you sure you want to approve all ${pendingCount} pending registrations?`)) return;
+    
+    try {
+      for (const reg of filtered) {
+        if (reg.status === 'pending') {
+          await update(ref(db, `registrations/${reg.id}`), { status: 'approved' });
+        }
+      }
+      toast.success(`✅ ${pendingCount} registrations approved successfully!`);
+    } catch {
+      toast.error('Failed to approve some registrations');
+    }
+  };
+
   const addTournament = async () => {
     if (!tournamentName.trim() || !tournamentSport || !tournamentStartDate || !tournamentLastDate || !tournamentLocation) {
       toast.error("Please fill all required tournament fields");
@@ -686,6 +714,7 @@ export default function AdminDashboard() {
 
   const sportCounts = getSportCounts();
   const displayedRegistrations = filtered.slice(0, visibleRecords);
+  const pendingCount = filtered.filter(r => r.status === 'pending').length;
 
   return (
     <main className="min-h-screen bg-[#F7F2E9] pt-20 pb-10" ref={dashboardRef}>
@@ -816,19 +845,29 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Export Button Layout Row Control */}
+              {/* Export Button Layout Row Control + APPROVE ALL BUTTON */}
               <div className="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3 items-center justify-between">
                 <p className="text-xs text-slate-500 font-inter">
                   Generate professional spreadsheet logs based on your live dashboard search query filters.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => exportToExcel(filtered)}
-                  className="flex items-center gap-2 bg-[#0A1628] hover:bg-[#1E293B] text-white px-4 py-2 rounded-lg font-inter text-xs font-bold shadow-sm transition-all w-full sm:w-auto justify-center"
-                >
-                  <Download className="w-3.5 h-3.5 text-[#f37022]" />
-                  Download Excel List ({filtered.length} Records)
-                </button>
+                <div className="flex gap-2 flex-wrap w-full sm:w-auto justify-end">
+                  {pendingCount > 0 && (
+                    <button
+                      onClick={approveAllRegistrations}
+                      className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-inter text-xs font-bold shadow-sm transition-all"
+                    >
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      Approve All ({pendingCount})
+                    </button>
+                  )}
+                  <button
+                    onClick={() => exportToExcel(filtered)}
+                    className="flex items-center gap-2 bg-[#0A1628] hover:bg-[#1E293B] text-white px-4 py-2 rounded-lg font-inter text-xs font-bold shadow-sm transition-all"
+                  >
+                    <Download className="w-3.5 h-3.5 text-[#f37022]" />
+                    Download Excel List ({filtered.length} Records)
+                  </button>
+                </div>
               </div>
             </div>
 
