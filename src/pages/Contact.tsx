@@ -71,8 +71,8 @@ export default function Contact() {
             <div className="lg:col-span-1 space-y-4">
               {[
                 { icon: MapPin, title: 'Office Address', content: 'Sports Authority Office, Near District Collectorate, Mewat, Haryana - 122107' },
-                { icon: Phone, title: 'Phone Numbers', content: '+91-8708180453\n+91-8708180453' },
-                { icon: Phone, title: 'Phone Numbers', content: '+91-9416736230\n+91-9416736230' },
+                { icon: Phone, title: 'Phone Numbers', content: '+91-8708180453\n+91-9416736230' },
+                { icon: Phone, title: 'Phone Numbers', content: '+91-9416736230\n+91-8708180453' },
                 { icon: Mail, title: 'Email Address', content: 'sports.mewat@gov.in\nadmin@khelomewat.gov.in' },
                 { icon: Clock, title: 'Office Hours', content: 'Monday - Saturday\n10:00 AM - 5:00 PM' },
               ].map((item) => (
