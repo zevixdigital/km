@@ -328,12 +328,24 @@ export default function Register() {
       const snapshot = await get(ref(db, 'registrations'));
       if (snapshot.exists()) {
         const registrationsData = snapshot.val();
-        const isDuplicate = Object.values(registrationsData).some(
-          (record: any) => record.phone === form.phone && record.dateOfBirth === form.dateOfBirth
-        );
+        let phoneExists = false;
+        let emailExists = false;
 
-        if (isDuplicate) {
-          toast.error('A registration with this Mobile Number and Date of Birth already exists.');
+        Object.values(registrationsData).forEach((record: any) => {
+          if (record.phone === form.phone) phoneExists = true;
+          if (record.email?.toLowerCase() === form.email.toLowerCase()) emailExists = true;
+        });
+
+        if (phoneExists && emailExists) {
+          toast.error('Both this Mobile Number and Email Address are already registered.');
+          setLoading(false);
+          return;
+        } else if (phoneExists) {
+          toast.error('This Mobile Number is already registered.');
+          setLoading(false);
+          return;
+        } else if (emailExists) {
+          toast.error('This Email Address is already registered.');
           setLoading(false);
           return;
         }
@@ -1053,4 +1065,3 @@ export default function Register() {
     </main>
   );
 }
-
