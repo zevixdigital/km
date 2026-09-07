@@ -324,6 +324,22 @@ export default function Register() {
 
     setLoading(true);
     try {
+      // --- NEW FEATURE: DUPLICATE CHECK ---
+      const snapshot = await get(ref(db, 'registrations'));
+      if (snapshot.exists()) {
+        const registrationsData = snapshot.val();
+        const isDuplicate = Object.values(registrationsData).some(
+          (record: any) => record.phone === form.phone && record.dateOfBirth === form.dateOfBirth
+        );
+
+        if (isDuplicate) {
+          toast.error('A registration with this Mobile Number and Date of Birth already exists.');
+          setLoading(false);
+          return;
+        }
+      }
+      // ------------------------------------
+
       const registrationRef = push(ref(db, 'registrations'));
       const trackingKey = registrationRef.key || `REG-${Date.now()}`;
       setGeneratedId(trackingKey);
@@ -1037,3 +1053,4 @@ export default function Register() {
     </main>
   );
 }
+
