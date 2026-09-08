@@ -86,6 +86,16 @@ const sportImageMap: Record<string, string> = {
 
 const statusList = ['all', 'pending', 'approved', 'rejected'];
 
+// Helper function to format YYYY-MM-DD into DD-MM-YYYY
+const formatDOB = (dateStr: string) => {
+  if (!dateStr) return '';
+  const parts = dateStr.split('-');
+  if (parts.length === 3 && parts[0].length === 4) {
+    return `${parts[2]}-${parts[1]}-${parts[0]}`;
+  }
+  return dateStr;
+};
+
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { user, isAdmin, loading: authLoading, logout } = useAuthContext();
@@ -141,7 +151,7 @@ export default function AdminDashboard() {
       `"${r.id}"`,
       `"${(r.studentName || '').replace(/"/g, '""')}"`,
       `"${(r.fatherName || '').replace(/"/g, '""')}"`,
-      `"${r.dateOfBirth || ''}"`,
+      `"${formatDOB(r.dateOfBirth)}"`,
       `"${r.gender || ''}"`,
       `"${r.email || ''}"`,
       `"${r.phone || ''}"`,
@@ -427,7 +437,7 @@ export default function AdminDashboard() {
               <tr>
                 <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Player Name</div><div class="meta-value-text">${reg.studentName}</div></td>
                 <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Father's Name</div><div class="meta-value-text">${reg.fatherName}</div></td>
-                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Date of Birth</div><div class="meta-value-text">${reg.dateOfBirth}</div></td>
+                <td class="card-info-box" style="width: 33.33%;"><div class="meta-label-tag">Date of Birth</div><div class="meta-value-text">${formatDOB(reg.dateOfBirth)}</div></td>
               </tr>
               <tr>
                 <td class="card-info-box"><div class="meta-label-tag">Gender Identity</div><div class="meta-value-text" style="text-transform:capitalize;">${reg.gender}</div></td>
@@ -1302,7 +1312,7 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="text-slate-500 text-xs font-inter">Date of Birth</label>
-                    <p className="text-slate-900 font-inter text-sm">{viewRegistration.dateOfBirth}</p>
+                    <p className="text-slate-900 font-inter text-sm">{formatDOB(viewRegistration.dateOfBirth)}</p>
                   </div>
                   <div>
                     <label className="text-slate-500 text-xs font-inter">Gender</label>
