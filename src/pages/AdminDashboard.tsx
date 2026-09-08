@@ -12,6 +12,7 @@ import {
   TrendingUp, UserCheck, Clock, BarChart3, Eye, CreditCard, Download
 } from 'lucide-react';
 
+// Updated final interface payload mapping
 interface Registration {
   id: string;
   studentName: string;
@@ -86,7 +87,7 @@ const sportImageMap: Record<string, string> = {
 
 const statusList = ['all', 'pending', 'approved', 'rejected'];
 
-// Helper function to format YYYY-MM-DD into DD-MM-YYYY
+// Helper function to format YYYY-MM-DD into DD-MM-YYYY strictly
 const formatDOB = (dateStr: string) => {
   if (!dateStr) return '';
   const parts = dateStr.split('-');
