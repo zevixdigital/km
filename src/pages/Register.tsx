@@ -324,34 +324,6 @@ export default function Register() {
 
     setLoading(true);
     try {
-      // --- NEW FEATURE: DUPLICATE CHECK ---
-      const snapshot = await get(ref(db, 'registrations'));
-      if (snapshot.exists()) {
-        const registrationsData = snapshot.val();
-        let phoneExists = false;
-        let emailExists = false;
-
-        Object.values(registrationsData).forEach((record: any) => {
-          if (record.phone === form.phone) phoneExists = true;
-          if (record.email?.toLowerCase() === form.email.toLowerCase()) emailExists = true;
-        });
-
-        if (phoneExists && emailExists) {
-          toast.error('Both this Mobile Number and Email Address are already registered.');
-          setLoading(false);
-          return;
-        } else if (phoneExists) {
-          toast.error('This Mobile Number is already registered.');
-          setLoading(false);
-          return;
-        } else if (emailExists) {
-          toast.error('This Email Address is already registered.');
-          setLoading(false);
-          return;
-        }
-      }
-      // ------------------------------------
-
       const registrationRef = push(ref(db, 'registrations'));
       const trackingKey = registrationRef.key || `REG-${Date.now()}`;
       setGeneratedId(trackingKey);
